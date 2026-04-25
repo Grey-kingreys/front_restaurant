@@ -1,10 +1,16 @@
 "use client";
+// src/components/landing/Navbar.tsx — mise à jour avec lien de connexion réel
+
+import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface NavbarProps {
   scrolled: boolean;
 }
 
 export default function Navbar({ scrolled }: NavbarProps) {
+  const { isAuthenticated } = useAuth();
+
   return (
     <nav className={`navbar ${scrolled ? "scrolled" : "navbar-hero"}`}>
       {/* Logo */}
@@ -39,20 +45,32 @@ export default function Navbar({ scrolled }: NavbarProps) {
 
       {/* CTA */}
       <div className="flex items-center gap-3">
-        <a
-          href="#"
-          className="btn-outline hidden sm:block"
-          style={{ padding: "0.55rem 1.4rem", fontSize: "0.875rem" }}
-        >
-          Connexion
-        </a>
-        <a
-          href="#"
-          className="btn-primary"
-          style={{ padding: "0.55rem 1.4rem", fontSize: "0.875rem" }}
-        >
-          <span>Démo gratuite</span>
-        </a>
+        {isAuthenticated ? (
+          <Link
+            href="/dashboard"
+            className="btn-primary"
+            style={{ padding: "0.55rem 1.4rem", fontSize: "0.875rem" }}
+          >
+            <span>Mon espace</span>
+          </Link>
+        ) : (
+          <>
+            <Link
+              href="/auth/login"
+              className="btn-outline hidden sm:block"
+              style={{ padding: "0.55rem 1.4rem", fontSize: "0.875rem" }}
+            >
+              Connexion
+            </Link>
+            <Link
+              href="/auth/login"
+              className="btn-primary"
+              style={{ padding: "0.55rem 1.4rem", fontSize: "0.875rem" }}
+            >
+              <span>Démo gratuite</span>
+            </Link>
+          </>
+        )}
       </div>
     </nav>
   );
