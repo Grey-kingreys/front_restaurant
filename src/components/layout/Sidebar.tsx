@@ -1,14 +1,14 @@
 "use client";
 // src/components/layout/Sidebar.tsx
-// Desktop : fixe à gauche, toujours visible — pas de bouton
-// Mobile/tablette (<1024px) : drawer depuis la gauche, toggle via bouton hamburger
 
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { NAV_CONFIG, ROLE_LABELS, ROLE_COLORS } from "@/lib/navigation";
+import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 import type { Role } from "@/types";
+import { cssVar, typography, radius, spacing, roleBadge, avatarBase } from "@/theme/theme";
 
 // ── Icônes ─────────────────────────────────────────────────────────────────
 
@@ -49,8 +49,7 @@ function SidebarInner({ onNavClick }: { onNavClick?: () => void }) {
 
     const role = user.role as Role;
     const sections = NAV_CONFIG[role] ?? [];
-    const roleLabel = ROLE_LABELS[role];
-    const roleColor = ROLE_COLORS[role];
+    const rc = ROLE_COLORS[role];
 
     const initials = user.nom_complet
         ? user.nom_complet.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase()
@@ -62,19 +61,19 @@ function SidebarInner({ onNavClick }: { onNavClick?: () => void }) {
         const active = isActive(href);
         return (
             <Link key={label} href={href} onClick={onNavClick} style={{
-                display: "flex", alignItems: "center", gap: "0.6rem",
-                padding: "0.48rem 0.6rem", borderRadius: "0.5rem",
-                fontSize: "0.83rem", fontWeight: active ? 600 : 500,
-                color: active ? "var(--amber-glow)" : "var(--text-secondary)",
+                display: "flex", alignItems: "center", gap: spacing["2"],
+                padding: "0.48rem 0.6rem", borderRadius: radius.md,
+                fontSize: typography.base, fontWeight: active ? typography.semibold : typography.medium,
+                color: active ? cssVar.amberGlow : cssVar.textSecondary,
                 textDecoration: "none",
                 background: active ? "rgba(245,158,11,0.08)" : "transparent",
-                borderLeft: `2px solid ${active ? "var(--amber-glow)" : "transparent"}`,
+                borderLeft: `2px solid ${active ? cssVar.amberGlow : "transparent"}`,
                 transition: "all 0.15s ease",
             }}
-                onMouseEnter={e => { if (!active) { const el = e.currentTarget as HTMLAnchorElement; el.style.background = "var(--bg-section-alt)"; el.style.color = "var(--text-primary)"; } }}
-                onMouseLeave={e => { if (!active) { const el = e.currentTarget as HTMLAnchorElement; el.style.background = "transparent"; el.style.color = "var(--text-secondary)"; } }}
+                onMouseEnter={(e) => { if (!active) { const el = e.currentTarget as HTMLAnchorElement; el.style.background = cssVar.bgSectionAlt; el.style.color = cssVar.textPrimary; } }}
+                onMouseLeave={(e) => { if (!active) { const el = e.currentTarget as HTMLAnchorElement; el.style.background = "transparent"; el.style.color = cssVar.textSecondary; } }}
             >
-                <span style={{ color: active ? "var(--amber-glow)" : "var(--text-muted)", opacity: active ? 1 : 0.7 }}>
+                <span style={{ color: active ? cssVar.amberGlow : cssVar.textMuted, opacity: active ? 1 : 0.7 }}>
                     <Icon name={icon} />
                 </span>
                 <span style={{ flex: 1 }}>{label}</span>
@@ -86,73 +85,61 @@ function SidebarInner({ onNavClick }: { onNavClick?: () => void }) {
         <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
 
             {/* Logo */}
-            <div style={{ padding: "1.2rem 1rem 0.9rem", borderBottom: "1px solid var(--border-subtle)", flexShrink: 0 }}>
-                <Link href="/dashboard" onClick={onNavClick} style={{ display: "flex", alignItems: "center", gap: "0.55rem", textDecoration: "none" }}>
+            <div style={{ padding: `${spacing["5"]} ${spacing["4"]} ${spacing["4"]}`, borderBottom: `1px solid ${cssVar.borderSubtle}`, flexShrink: 0 }}>
+                <Link href="/dashboard" onClick={onNavClick} style={{ display: "flex", alignItems: "center", gap: spacing["2"], textDecoration: "none" }}>
                     <div style={{
-                        width: 32, height: 32, borderRadius: "0.55rem",
+                        width: 32, height: 32, borderRadius: radius.lg,
                         background: "linear-gradient(135deg, #f59e0b, #d97706)",
                         display: "flex", alignItems: "center", justifyContent: "center",
-                        fontWeight: 800, fontSize: "0.95rem", color: "#0c0a09",
-                        fontFamily: "var(--font-playfair), serif", flexShrink: 0,
+                        fontWeight: typography.extrabold, fontSize: typography.md, color: "#0c0a09",
+                        fontFamily: typography.fontSerif, flexShrink: 0,
                     }}>R</div>
-                    <span style={{ fontWeight: 700, fontSize: "1rem", fontFamily: "var(--font-playfair), serif", color: "var(--text-primary)" }}>
-                        Resto<span style={{ background: "var(--gradient-text)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Pro</span>
+                    <span style={{ fontWeight: typography.bold, fontSize: typography.lg, fontFamily: typography.fontSerif, color: cssVar.textPrimary }}>
+                        Resto<span style={{ background: cssVar.gradientText, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Pro</span>
                     </span>
                 </Link>
             </div>
 
             {/* Utilisateur */}
-            <div style={{ padding: "0.8rem 0.875rem", borderBottom: "1px solid var(--border-subtle)", flexShrink: 0 }}>
+            <div style={{ padding: `${spacing["3"]} ${spacing["3"]}`, borderBottom: `1px solid ${cssVar.borderSubtle}`, flexShrink: 0 }}>
                 <Link href="/profil" onClick={onNavClick} style={{
-                    display: "flex", alignItems: "center", gap: "0.6rem",
-                    padding: "0.55rem 0.65rem", borderRadius: "0.65rem",
-                    background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)",
+                    display: "flex", alignItems: "center", gap: spacing["2"],
+                    padding: "0.55rem 0.65rem", borderRadius: radius.xl,
+                    background: cssVar.bgSectionAlt, border: `1px solid ${cssVar.borderSubtle}`,
                     textDecoration: "none", transition: "border-color 0.2s",
                 }}
-                    onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--border-amber-hover)"}
-                    onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--border-subtle)"}
+                    onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.borderColor = cssVar.borderAmberHover}
+                    onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.borderColor = cssVar.borderSubtle}
                 >
-                    <div style={{
-                        width: 34, height: 34, borderRadius: "50%",
-                        background: "linear-gradient(135deg, #f59e0b, #d97706)",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontWeight: 700, fontSize: "0.75rem", color: "#0c0a09", flexShrink: 0,
-                    }}>{initials}</div>
+                    <div style={avatarBase(34)}>{initials}</div>
                     <div style={{ minWidth: 0, flex: 1 }}>
-                        <p style={{ fontWeight: 600, fontSize: "0.8rem", color: "var(--text-primary)", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        <p style={{ fontWeight: typography.semibold, fontSize: typography.sm, color: cssVar.textPrimary, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                             {user.nom_complet || user.login}
                         </p>
                         {user.restaurant_nom && (
-                            <p style={{ fontSize: "0.68rem", color: "var(--text-muted)", margin: "1px 0 0" }}>{user.restaurant_nom}</p>
+                            <p style={{ fontSize: typography.xs, color: cssVar.textMuted, margin: "1px 0 0" }}>{user.restaurant_nom}</p>
                         )}
                     </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" style={{ width: 12, height: 12, color: "var(--text-muted)", flexShrink: 0 }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" style={{ width: 12, height: 12, color: cssVar.textMuted, flexShrink: 0 }}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                     </svg>
                 </Link>
-                <div style={{ marginTop: "0.4rem", paddingLeft: "0.2rem" }}>
-                    <span style={{
-                        display: "inline-flex", alignItems: "center", gap: "0.3rem",
-                        padding: "0.15rem 0.5rem", borderRadius: "9999px",
-                        fontSize: "0.65rem", fontWeight: 700,
-                        background: roleColor.bg, color: roleColor.text, border: `1px solid ${roleColor.border}`,
-                    }}>
-                        <span style={{ width: 5, height: 5, borderRadius: "50%", background: roleColor.text }} />
-                        {roleLabel}
+                <div style={{ marginTop: spacing["1"], paddingLeft: "0.2rem" }}>
+                    <span style={roleBadge(rc.bg, rc.text, rc.border)}>
+                        <span style={{ width: 5, height: 5, borderRadius: "50%", background: rc.text }} />
+                        {ROLE_LABELS[role]}
                     </span>
                 </div>
             </div>
 
             {/* Nav principale */}
-            <nav style={{ flex: 1, overflowY: "auto", padding: "0.65rem 0.75rem 0.5rem" }}>
+            <nav style={{ flex: 1, overflowY: "auto", padding: `${spacing["3"]} ${spacing["3"]} ${spacing["2"]}` }}>
                 {sections.map((section, si) => (
-                    <div key={si} style={{ marginBottom: "1.1rem" }}>
+                    <div key={si} style={{ marginBottom: spacing["4"] }}>
                         {section.title && (
-                            <p style={{
-                                fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.12em",
-                                textTransform: "uppercase", color: "var(--text-muted)",
-                                padding: "0 0.35rem", marginBottom: "0.3rem",
-                            }}>{section.title}</p>
+                            <p style={{ fontSize: typography.xs, fontWeight: typography.bold, letterSpacing: "0.12em", textTransform: "uppercase", color: cssVar.textMuted, padding: "0 0.35rem", marginBottom: spacing["1"] }}>
+                                {section.title}
+                            </p>
                         )}
                         <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
                             {section.items.map((item) => navLink(item.href, item.icon, item.label))}
@@ -162,27 +149,29 @@ function SidebarInner({ onNavClick }: { onNavClick?: () => void }) {
             </nav>
 
             {/* Footer */}
-            <div style={{
-                padding: "0.65rem 0.75rem",
-                borderTop: "1px solid var(--border-subtle)",
-                display: "flex", flexDirection: "column", gap: "1px",
-                flexShrink: 0,
-            }}>
+            <div style={{ padding: `${spacing["3"]} ${spacing["3"]}`, borderTop: `1px solid ${cssVar.borderSubtle}`, display: "flex", flexDirection: "column", gap: "1px", flexShrink: 0 }}>
                 {navLink("/profil", "profile", "Mon profil")}
                 {navLink("/auth/change-password", "key", "Changer le mot de passe")}
-                <button onClick={async () => { setLoggingOut(true); await logout(); }}
+
+                {/* ThemeSwitcher */}
+                <div style={{ paddingTop: spacing["1"] }}>
+                    <ThemeSwitcher variant="sidebar" />
+                </div>
+
+                <button
+                    onClick={async () => { setLoggingOut(true); await logout(); }}
                     disabled={loggingOut}
                     style={{
-                        display: "flex", alignItems: "center", gap: "0.6rem",
-                        padding: "0.48rem 0.6rem", borderRadius: "0.5rem",
-                        fontSize: "0.83rem", fontWeight: 500,
-                        color: loggingOut ? "var(--text-muted)" : "#f87171",
+                        display: "flex", alignItems: "center", gap: spacing["2"],
+                        padding: "0.48rem 0.6rem", borderRadius: radius.md,
+                        fontSize: typography.base, fontWeight: typography.medium,
+                        color: loggingOut ? cssVar.textMuted : "#f87171",
                         background: "transparent", border: "none",
                         cursor: loggingOut ? "not-allowed" : "pointer",
                         width: "100%", textAlign: "left", transition: "all 0.15s",
                     }}
-                    onMouseEnter={e => { if (!loggingOut) (e.currentTarget as HTMLButtonElement).style.background = "rgba(248,113,113,0.07)"; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+                    onMouseEnter={(e) => { if (!loggingOut) (e.currentTarget as HTMLButtonElement).style.background = "rgba(248,113,113,0.07)"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
                 >
                     <Icon name="logout" />
                     {loggingOut ? "Déconnexion…" : "Se déconnecter"}
@@ -204,8 +193,8 @@ interface SidebarProps {
 export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
     const base: React.CSSProperties = {
         width: SIDEBAR_W,
-        background: "var(--bg-card)",
-        borderRight: "1px solid var(--border-amber)",
+        background: cssVar.bgCard,
+        borderRight: `1px solid ${cssVar.borderAmber}`,
         height: "100%",
         display: "flex",
         flexDirection: "column",
@@ -214,13 +203,12 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
 
     return (
         <>
-            {/* Desktop — toujours visible, pas de bouton toggle */}
-            <aside style={{ ...base, position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 40 }}
-                className="rp-sidebar-desktop">
+            {/* Desktop */}
+            <aside style={{ ...base, position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 40 }} className="rp-sidebar-desktop">
                 <SidebarInner />
             </aside>
 
-            {/* Mobile/tablette — overlay + drawer depuis la gauche */}
+            {/* Mobile */}
             <div className="rp-sidebar-mobile">
                 {mobileOpen && (
                     <div onClick={onMobileClose} style={{
@@ -235,13 +223,12 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
                     transition: "transform 0.27s cubic-bezier(0.4,0,0.2,1)",
                     boxShadow: mobileOpen ? "8px 0 32px rgba(0,0,0,0.22)" : "none",
                 }}>
-                    {/* Croix fermer */}
                     <button onClick={onMobileClose} style={{
                         position: "absolute", top: "0.7rem", right: "0.7rem", zIndex: 1,
-                        width: 28, height: 28, borderRadius: "0.45rem",
-                        background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)",
+                        width: 28, height: 28, borderRadius: radius.md,
+                        background: cssVar.bgSectionAlt, border: `1px solid ${cssVar.borderSubtle}`,
                         cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-                        color: "var(--text-muted)",
+                        color: cssVar.textMuted,
                     }}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" style={{ width: 14, height: 14 }}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
