@@ -30,6 +30,7 @@ export interface PlatCreatePayload {
     description?: string;
     prix_unitaire: number;
     categorie: Categorie;
+    disponible: boolean;
     necessite_validation_cuisine?: boolean;
     image?: File;
 }

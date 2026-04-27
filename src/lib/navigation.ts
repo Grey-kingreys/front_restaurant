@@ -1,13 +1,11 @@
 // src/lib/navigation.ts
-// Définition des liens de navigation par rôle
-
 import type { Role } from "@/types";
 
 export interface NavItem {
     label: string;
     href: string;
-    icon: string; // nom de l'icône (SVG inline dans Sidebar)
-    badge?: string; // badge optionnel (ex: nombre de commandes)
+    icon: string;
+    badge?: string;
 }
 
 export interface NavSection {
@@ -15,14 +13,12 @@ export interface NavSection {
     items: NavItem[];
 }
 
-// ── Navigation par rôle ────────────────────────────────────────────────────
-
 export const NAV_CONFIG: Record<Role, NavSection[]> = {
     Rsuper_admin: [
         {
             title: "Plateforme",
             items: [
-                { label: "Vue d'ensemble", href: "#", icon: "dashboard" },
+                { label: "Vue d'ensemble", href: "/dashboard", icon: "dashboard" },
                 { label: "Restaurants", href: "#", icon: "building" },
                 { label: "Statistiques", href: "#", icon: "chart" },
             ],
@@ -39,7 +35,7 @@ export const NAV_CONFIG: Record<Role, NavSection[]> = {
         {
             title: "Tableau de bord",
             items: [
-                { label: "Vue d'ensemble", href: "#", icon: "dashboard" },
+                { label: "Vue d'ensemble", href: "/dashboard", icon: "dashboard" },
                 { label: "Analytics", href: "#", icon: "chart" },
             ],
         },
@@ -48,8 +44,8 @@ export const NAV_CONFIG: Record<Role, NavSection[]> = {
             items: [
                 { label: "Équipe", href: "#", icon: "users" },
                 { label: "Tables & QR", href: "#", icon: "qr" },
-                { label: "Menu", href: "#", icon: "menu" },
-                { label: "Commandes", href: "#", icon: "orders" },
+                { label: "Menu", href: "/menu", icon: "menu" },
+                { label: "Commandes", href: "/commandes", icon: "orders" },
             ],
         },
         {
@@ -72,7 +68,7 @@ export const NAV_CONFIG: Record<Role, NavSection[]> = {
         {
             title: "Tableau de bord",
             items: [
-                { label: "Vue d'ensemble", href: "#", icon: "dashboard" },
+                { label: "Vue d'ensemble", href: "/dashboard", icon: "dashboard" },
                 { label: "Analytics", href: "#", icon: "chart" },
             ],
         },
@@ -81,8 +77,8 @@ export const NAV_CONFIG: Record<Role, NavSection[]> = {
             items: [
                 { label: "Équipe", href: "#", icon: "users" },
                 { label: "Tables & QR", href: "#", icon: "qr" },
-                { label: "Menu", href: "#", icon: "menu" },
-                { label: "Commandes", href: "#", icon: "orders" },
+                { label: "Menu", href: "/menu", icon: "menu" },
+                { label: "Commandes", href: "/commandes", icon: "orders" },
             ],
         },
         {
@@ -99,9 +95,8 @@ export const NAV_CONFIG: Record<Role, NavSection[]> = {
         {
             title: "Service",
             items: [
-                { label: "Tables en direct", href: "#", icon: "dashboard" },
-                { label: "Commandes à servir", href: "#", icon: "orders" },
-                { label: "Valider un paiement", href: "#", icon: "cash" },
+                { label: "Tables en direct", href: "/dashboard", icon: "dashboard" },
+                { label: "Toutes les commandes", href: "/commandes", icon: "orders" },
             ],
         },
         {
@@ -116,15 +111,15 @@ export const NAV_CONFIG: Record<Role, NavSection[]> = {
         {
             title: "Cuisine",
             items: [
-                { label: "File des commandes", href: "#", icon: "orders" },
-                { label: "Commandes en cours", href: "#", icon: "dashboard" },
+                { label: "File des commandes", href: "/commandes/cuisine", icon: "orders" },
+                { label: "Toutes les commandes", href: "/commandes", icon: "dashboard" },
             ],
         },
         {
             title: "Menu",
             items: [
-                { label: "Gérer les plats", href: "#", icon: "menu" },
-                { label: "Ajouter un plat", href: "#", icon: "plus" },
+                { label: "Gérer les plats", href: "/menu", icon: "menu" },
+                { label: "Ajouter un plat", href: "/menu/nouveau", icon: "plus" },
             ],
         },
     ],
@@ -133,7 +128,7 @@ export const NAV_CONFIG: Record<Role, NavSection[]> = {
         {
             title: "Cuisine",
             items: [
-                { label: "File des commandes", href: "#", icon: "orders" },
+                { label: "File des commandes", href: "/commandes/cuisine", icon: "orders" },
             ],
         },
     ],
@@ -160,15 +155,14 @@ export const NAV_CONFIG: Record<Role, NavSection[]> = {
         {
             title: "Ma commande",
             items: [
-                { label: "Le menu", href: "#", icon: "menu" },
-                { label: "Mon panier", href: "#", icon: "cart" },
-                { label: "Mes commandes", href: "#", icon: "orders" },
+                { label: "Le menu", href: "/menu", icon: "menu" },
+                { label: "Mon panier", href: "/commandes/panier", icon: "cart" },
+                { label: "Mes commandes", href: "/commandes/mes-commandes", icon: "orders" },
             ],
         },
     ],
 };
 
-// Labels lisibles pour chaque rôle
 export const ROLE_LABELS: Record<Role, string> = {
     Rsuper_admin: "Super Administrateur",
     Radmin: "Administrateur",
@@ -180,7 +174,6 @@ export const ROLE_LABELS: Record<Role, string> = {
     Rtable: "Table",
 };
 
-// Couleurs badge par rôle
 export const ROLE_COLORS: Record<Role, { bg: string; text: string; border: string }> = {
     Rsuper_admin: { bg: "rgba(239,68,68,0.12)", text: "#ef4444", border: "rgba(239,68,68,0.25)" },
     Radmin: { bg: "rgba(245,158,11,0.12)", text: "#f59e0b", border: "rgba(245,158,11,0.25)" },
