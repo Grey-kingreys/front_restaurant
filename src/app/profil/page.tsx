@@ -149,6 +149,7 @@ export default function ProfilPage() {
                             </div>
                         )}
 
+                        {role !== "Rtable" && (
                         <div style={{ marginTop: spacing["3"], display: "flex", gap: spacing["2"], flexWrap: "wrap" }}>
                             <Link href="/auth/change-password" style={{
                                 display: "inline-flex", alignItems: "center", gap: spacing["2"],
@@ -162,6 +163,7 @@ export default function ProfilPage() {
                                 Changer le mot de passe
                             </Link>
                         </div>
+                        )}
                     </div>
 
                     {/* Cards infos */}

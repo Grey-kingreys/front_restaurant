@@ -18,7 +18,7 @@ export const NAV_CONFIG: Record<Role, NavSection[]> = {
         {
             title: "Plateforme",
             items: [
-                { label: "Vue d'ensemble", href: "/dashboard", icon: "dashboard" },
+                { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
                 { label: "Restaurants", href: "#", icon: "building" },
                 { label: "Statistiques", href: "#", icon: "chart" },
             ],
@@ -33,9 +33,9 @@ export const NAV_CONFIG: Record<Role, NavSection[]> = {
 
     Radmin: [
         {
-            title: "Tableau de bord",
+            title: "Vue d'ensemble",
             items: [
-                { label: "Vue d'ensemble", href: "/dashboard", icon: "dashboard" },
+                { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
                 { label: "Analytics", href: "#", icon: "chart" },
             ],
         },
@@ -66,9 +66,9 @@ export const NAV_CONFIG: Record<Role, NavSection[]> = {
 
     Rmanager: [
         {
-            title: "Tableau de bord",
+            title: "Vue d'ensemble",
             items: [
-                { label: "Vue d'ensemble", href: "/dashboard", icon: "dashboard" },
+                { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
                 { label: "Analytics", href: "#", icon: "chart" },
             ],
         },
@@ -93,9 +93,14 @@ export const NAV_CONFIG: Record<Role, NavSection[]> = {
 
     Rserveur: [
         {
+            title: "Vue d'ensemble",
+            items: [
+                { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
+            ],
+        },
+        {
             title: "Service",
             items: [
-                { label: "Tables en direct", href: "/dashboard", icon: "dashboard" },
                 { label: "Toutes les commandes", href: "/commandes", icon: "orders" },
             ],
         },
@@ -109,10 +114,16 @@ export const NAV_CONFIG: Record<Role, NavSection[]> = {
 
     Rchef_cuisinier: [
         {
+            title: "Vue d'ensemble",
+            items: [
+                { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
+            ],
+        },
+        {
             title: "Cuisine",
             items: [
                 { label: "File des commandes", href: "/commandes/cuisine", icon: "orders" },
-                { label: "Toutes les commandes", href: "/commandes", icon: "dashboard" },
+                { label: "Toutes les commandes", href: "/commandes", icon: "orders" },
             ],
         },
         {
@@ -126,6 +137,12 @@ export const NAV_CONFIG: Record<Role, NavSection[]> = {
 
     Rcuisinier: [
         {
+            title: "Vue d'ensemble",
+            items: [
+                { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
+            ],
+        },
+        {
             title: "Cuisine",
             items: [
                 { label: "File des commandes", href: "/commandes/cuisine", icon: "orders" },
@@ -134,6 +151,12 @@ export const NAV_CONFIG: Record<Role, NavSection[]> = {
     ],
 
     Rcomptable: [
+        {
+            title: "Vue d'ensemble",
+            items: [
+                { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
+            ],
+        },
         {
             title: "Ma caisse",
             items: [
@@ -152,6 +175,12 @@ export const NAV_CONFIG: Record<Role, NavSection[]> = {
     ],
 
     Rtable: [
+        {
+            title: "Vue d'ensemble",
+            items: [
+                { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
+            ],
+        },
         {
             title: "Ma commande",
             items: [

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 
 const trustItems = [
   {
@@ -144,14 +145,14 @@ export default function HeroSection() {
 
       {/* CTA buttons */}
       <div className="hero-anim relative z-10 flex flex-wrap items-center justify-center gap-4">
-        <a href="#" className="btn-primary animate-pulse-glow flex items-center gap-2">
+        <Link href="/auth/login" className="btn-primary animate-pulse-glow flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 relative z-10">
             <path fillRule="evenodd" d="M10 1a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 1ZM5.05 3.05a.75.75 0 0 1 1.06 0l1.062 1.06A.75.75 0 1 1 6.11 5.173L5.05 4.11a.75.75 0 0 1 0-1.06Zm9.9 0a.75.75 0 0 1 0 1.06l-1.06 1.062a.75.75 0 0 1-1.062-1.061l1.061-1.06a.75.75 0 0 1 1.06 0ZM3 8a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 3 8Zm11 0a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 14 8Zm-6.828 2.828a.75.75 0 0 1 0 1.061L6.11 12.95a.75.75 0 0 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0Zm3.594-3.317a.75.75 0 0 1 1.06.01l1.95 2a.75.75 0 1 1-1.07 1.05L12 9.44V13.5a.75.75 0 0 1-1.5 0V9.44l-.706.731a.75.75 0 0 1-1.088-1.032l2-2.121a.75.75 0 0 1 .028-.03ZM10 15a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 15Z" clipRule="evenodd" />
           </svg>
           <span>Démarrer gratuitement</span>
-        </a>
+        </Link>
         <a
-          href="#"
+          href="#workflow"
           className="btn-outline flex items-center gap-2"
           style={{ color: "#fbbf24", borderColor: "rgba(251,191,36,0.5)" }}
         >

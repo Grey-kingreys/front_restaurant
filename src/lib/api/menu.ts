@@ -69,12 +69,17 @@ export async function createPlat(
     if (payload.image) {
         const form = new FormData();
         Object.entries(payload).forEach(([k, v]) => {
-            if (v !== undefined) form.append(k, v as string | Blob);
+            if (v !== undefined) {
+                if (typeof v === "boolean") {
+                    form.append(k, v ? "true" : "false");
+                } else {
+                    form.append(k, v as string | Blob);
+                }
+            }
         });
         return apiRequest("/menu/plats/", {
             method: "POST",
             body: form,
-            headers: {}, // laisser le navigateur définir Content-Type multipart
         });
     }
 
@@ -91,6 +96,24 @@ export async function updatePlat(
     id: number,
     payload: Partial<PlatCreatePayload>
 ): Promise<ApiResponse<Plat>> {
+    // Si image présente dans le patch, utiliser FormData
+    if (payload.image) {
+        const form = new FormData();
+        Object.entries(payload).forEach(([k, v]) => {
+            if (v !== undefined) {
+                if (typeof v === "boolean") {
+                    form.append(k, v ? "true" : "false");
+                } else {
+                    form.append(k, v as string | Blob);
+                }
+            }
+        });
+        return apiRequest(`/menu/plats/${id}/`, {
+            method: "PATCH",
+            body: form,
+        });
+    }
+
     return apiRequest(`/menu/plats/${id}/`, {
         method: "PATCH",
         body: JSON.stringify(payload),

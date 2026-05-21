@@ -24,6 +24,7 @@ export interface Commande {
     restaurant: number;
     table: number;
     table_numero: string;
+    table_login?: string;
     session: string | null;
     montant_total: string;
     statut: StatutCommande;
@@ -38,9 +39,14 @@ export interface Commande {
 export interface PanierItem {
     id: number;
     plat: number;
-    plat_nom: string;
+    plat_detail: {
+        id: number;
+        nom: string;
+        prix_unitaire: string;
+        image: string | null;
+    };
     quantite: number;
-    prix_unitaire: string;
+    sous_total: string;
     date_ajout: string;
 }
 
@@ -53,7 +59,7 @@ export async function getPanier(): Promise<ApiResponse<{ items: PanierItem[] }>>
 export async function addToPanier(platId: number, quantite: number = 1): Promise<ApiResponse<PanierItem>> {
     return apiRequest("/commandes/panier/", {
         method: "POST",
-        body: JSON.stringify({ plat: platId, quantite }),
+        body: JSON.stringify({ plat_id: platId, quantite }),
     });
 }
 
@@ -72,7 +78,7 @@ export async function removePanierItem(id: number): Promise<ApiResponse> {
  * Valider le panier → crée une commande EN_ATTENTE liée au token de session
  */
 export async function validerPanier(): Promise<ApiResponse<Commande>> {
-    return apiRequest("/commandes/panier/valider/", { method: "POST" });
+    return apiRequest("/commandes/valider/", { method: "POST" });
 }
 
 // ── Commandes ──────────────────────────────────────────────────────────────
@@ -116,7 +122,7 @@ export async function marquerServie(id: number): Promise<ApiResponse<Commande>> 
  * Valider le paiement (Serveur) → statut PAYÉE
  */
 export async function validerPaiement(id: number): Promise<ApiResponse<Commande>> {
-    return apiRequest(`/commandes/${id}/payer/`, { method: "POST" });
+    return apiRequest(`/commandes/${id}/payee/`, { method: "POST" });
 }
 
 /**

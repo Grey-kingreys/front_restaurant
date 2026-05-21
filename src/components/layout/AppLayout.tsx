@@ -5,6 +5,8 @@ import { useState, ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Sidebar, { SIDEBAR_W } from "./Sidebar";
+import ThemeSwitcher from "../ui/ThemeSwitcher";
+import { Menu } from "lucide-react";
 
 // Routes qui affichent la sidebar (préfixes)
 const PRIVATE_PREFIXES = [
@@ -26,10 +28,14 @@ function isPrivateRoute(pathname: string): boolean {
     return PRIVATE_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 }
 
+export const SIDEBAR_EXPANDED_W = "15rem";
+export const SIDEBAR_COLLAPSED_W = "4.5rem";
+
 export default function AppLayout({ children }: { children: ReactNode }) {
     const { isAuthenticated, isLoading } = useAuth();
     const pathname = usePathname();
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(false);
 
     // Loader global — uniquement pendant la vérification initiale du token
     if (isLoading) {
@@ -44,7 +50,6 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                     borderTopColor: "var(--amber-glow)",
                     animation: "spin 0.75s linear infinite",
                 }} />
-                <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
             </div>
         );
     }
@@ -62,40 +67,57 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     // Pages privées → layout avec sidebar à gauche
     return (
         <>
-            <Sidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
+            <Sidebar 
+                mobileOpen={mobileOpen} 
+                onMobileClose={() => setMobileOpen(false)} 
+                isCollapsed={isCollapsed}
+                toggleCollapse={() => setIsCollapsed(!isCollapsed)}
+            />
 
-            {/* Bouton hamburger — mobile/tablette uniquement */}
-            <button
-                onClick={() => setMobileOpen(true)}
-                className="rp-hamburger"
-                aria-label="Ouvrir le menu"
-                style={{
-                    position: "fixed", top: "0.875rem", left: "0.875rem", zIndex: 45,
-                    width: 40, height: 40, borderRadius: "0.65rem",
-                    background: "var(--bg-card)", border: "1px solid var(--border-amber)",
-                    cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-                    color: "var(--amber-glow)", boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
-                }}
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                    strokeWidth={2} stroke="currentColor" style={{ width: 18, height: 18 }}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
-            </button>
+            {/* Header Mobile — hamburger + theme switcher */}
+            <div className="rp-mobile-header" style={{
+                position: "fixed", top: 0, left: 0, right: 0, zIndex: 45,
+                height: "3.5rem", display: "flex", alignItems: "center",
+                padding: "0 0.75rem", background: "var(--bg-card)",
+                borderBottom: "1px solid var(--border-subtle)",
+                boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+            }}>
+
+                <button
+                    onClick={() => setMobileOpen(true)}
+                    aria-label="Ouvrir le menu"
+                    style={{
+                        width: 40, height: 40, borderRadius: "0.65rem",
+                        background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)",
+                        cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                        color: "var(--amber-glow)",
+                    }}
+                >
+                    <Menu size={18} />
+                </button>
+
+                <div style={{ marginLeft: "auto" }}>
+                    <ThemeSwitcher variant="navbar" />
+                </div>
+            </div>
 
             {/* Contenu principal décalé sur desktop */}
-            <main className="rp-main" style={{ minHeight: "100vh", background: "var(--bg-dark)" }}>
+            <main className="rp-main" style={{ 
+                minHeight: "100vh", 
+                background: "var(--bg-dark)",
+                transition: "margin-left 0.3s cubic-bezier(0.4,0,0.2,1)",
+            }}>
                 {children}
             </main>
 
             <style>{`
         @media (min-width: 1024px) {
-          .rp-main      { margin-left: ${SIDEBAR_W}; }
-          .rp-hamburger { display: none !important; }
+          .rp-main      { margin-left: ${isCollapsed ? SIDEBAR_COLLAPSED_W : SIDEBAR_EXPANDED_W}; }
+          .rp-mobile-header { display: none !important; }
         }
         @media (max-width: 1023px) {
-          .rp-main      { margin-left: 0; }
-          .rp-hamburger { display: flex !important; }
+          .rp-main      { margin-left: 0; padding-top: 3.5rem; }
+          .rp-mobile-header { display: flex !important; }
         }
       `}</style>
         </>

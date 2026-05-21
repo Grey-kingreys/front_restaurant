@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import ThemeSwitcher from "../ui/ThemeSwitcher";
 
 interface NavbarProps {
   scrolled: boolean;
@@ -31,20 +32,27 @@ export default function Navbar({ scrolled }: NavbarProps) {
 
       {/* Nav links */}
       <div className="hidden md:flex items-center gap-8">
-        {["Fonctionnalités", "Workflow", "Équipes", "Tarifs"].map((item) => (
+        {[
+          { label: "Fonctionnalités", href: "#features" },
+          { label: "Workflow", href: "#workflow" },
+          { label: "Équipes", href: "#roles" },
+          { label: "Tarifs", href: "#tarifs" },
+        ].map((item) => (
           <a
-            key={item}
-            href="#"
+            key={item.label}
+            href={item.href}
             className="text-sm font-medium transition-colors duration-200 hover:text-amber-500 nav-link"
             style={{ color: "var(--text-secondary)" }}
           >
-            {item}
+            {item.label}
           </a>
         ))}
       </div>
 
       {/* CTA */}
       <div className="flex items-center gap-3">
+        <ThemeSwitcher variant="navbar" />
+        <div className="w-[1px] h-6 bg-border-subtle mx-1 hidden sm:block" style={{ background: "var(--border-subtle)" }} />
         {isAuthenticated ? (
           <Link
             href="/dashboard"
