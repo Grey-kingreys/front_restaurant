@@ -22,10 +22,10 @@ export default function StatCard({ title, value, icon: Icon, trend, color = "var
             background: "var(--bg-card)",
             border: "1px solid var(--border-subtle)",
             borderRadius: "1.25rem",
-            padding: "1.25rem",
+            padding: "clamp(0.875rem, 3vw, 1.25rem)",
             display: "flex",
             flexDirection: "column",
-            gap: "0.75rem",
+            gap: "0.625rem",
             position: "relative",
             overflow: "hidden",
             transition: "all 0.2s ease",
@@ -78,12 +78,14 @@ export default function StatCard({ title, value, icon: Icon, trend, color = "var
                 </div>
             </div>
 
-            <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", flexWrap: "wrap" }}>
                 <span style={{ 
-                    fontSize: "1.75rem", 
+                    fontSize: "clamp(1.25rem, 3.5vw, 1.75rem)", 
                     fontWeight: 800, 
                     color: "var(--text-primary)",
-                    fontFamily: "var(--font-playfair), serif" 
+                    fontFamily: "var(--font-playfair), serif",
+                    lineHeight: 1.1,
+                    wordBreak: "break-all",
                 }}>
                     {value}
                 </span>

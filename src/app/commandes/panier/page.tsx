@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import {
     getPanier,
-    addToPanier,
+    updatePanierItem,
     removePanierItem,
     validerPanier,
     type PanierItem
@@ -68,26 +68,41 @@ export default function PanierPage() {
         setTimeout(() => setToast(null), 3000);
     };
 
-    const handleUpdateQty = async (platId: number, currentQty: number, delta: number) => {
+    const handleUpdateQty = async (itemId: number, platId: number, currentQty: number, delta: number) => {
         const newQty = currentQty + delta;
-        if (newQty < 1) return;
-        if (newQty > 10) return;
+        if (newQty < 1 || newQty > 10) return;
+
+        setItems(prev => prev.map(item =>
+            item.id === itemId
+                ? { ...item, quantite: newQty, sous_total: String(newQty * Number(item.plat_detail.prix_unitaire)) }
+                : item
+        ));
 
         try {
-            const res = await addToPanier(platId, newQty);
-            if (res.success) {
-                setItems(items.map(item => item.plat === platId ? { ...item, quantite: newQty } : item));
+            const res = await updatePanierItem(platId, newQty);
+            if (!res.success) {
+                setItems(prev => prev.map(item =>
+                    item.id === itemId
+                        ? { ...item, quantite: currentQty, sous_total: String(currentQty * Number(item.plat_detail.prix_unitaire)) }
+                        : item
+                ));
+                showToast("Erreur lors de la mise à jour", "error");
             }
         } catch {
+            setItems(prev => prev.map(item =>
+                item.id === itemId
+                    ? { ...item, quantite: currentQty, sous_total: String(currentQty * Number(item.plat_detail.prix_unitaire)) }
+                    : item
+            ));
             showToast("Erreur lors de la mise à jour", "error");
         }
     };
 
-    const handleRemove = async (platId: number) => {
+    const handleRemove = async (itemId: number, platId: number) => {
         try {
             const res = await removePanierItem(platId);
             if (res.success) {
-                setItems(items.filter(item => item.plat !== platId));
+                setItems(items.filter(item => item.id !== itemId));
                 showToast("Plat retiré du panier");
             }
         } catch {
@@ -122,7 +137,7 @@ export default function PanierPage() {
             <style>{`
                 @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
                 @keyframes slideIn { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
-                .panier-root { min-height:100vh; background:var(--bg-dark); padding: 1.25rem 1rem 5rem; }
+                .panier-root { min-height:100vh; background:var(--bg-dark); }
                 .panier-inner { max-width:800px; margin:0 auto; position:relative; z-index:1; }
                 .item-card { 
                     background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: radius.xl; 
@@ -130,20 +145,25 @@ export default function PanierPage() {
                     animation: fadeIn 0.3s ease forwards;
                 }
                 .qty-btn {
-                    width: 28px; height: 28px; border-radius: 0.5rem; border: 1px solid var(--border-subtle);
+                    width: 40px; height: 40px; border-radius: 0.5rem; border: 1px solid var(--border-subtle);
                     background: var(--bg-section-alt); color: var(--text-primary); cursor: pointer;
                     display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+                    flex-shrink: 0;
                 }
                 .qty-btn:hover { border-color: var(--amber-glow); color: var(--amber-glow); }
                 .qty-btn:disabled { opacity: 0.3; cursor: not-allowed; }
                 .checkout-bar {
                     position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card);
-                    border-top: 1px solid var(--border-amber); padding: 1rem 1.5rem;
-                    display: flex; align-items: center; justify-content: space-between;
+                    border-top: 1px solid var(--border-amber); padding: 0.875rem 1.25rem;
+                    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
                     box-shadow: 0 -4px 20px rgba(0,0,0,0.2); z-index: 100;
+                    padding-bottom: max(0.875rem, env(safe-area-inset-bottom));
                 }
                 @media(min-width:1024px) {
-                    .checkout-bar { left: 15rem; } /* Offset if sidebar is present */
+                    .checkout-bar { left: 15rem; }
+                }
+                @media(min-width:1024px) and (max-width:1279px) {
+                    .checkout-bar.collapsed { left: 4.5rem; }
                 }
             `}</style>
 
@@ -156,7 +176,7 @@ export default function PanierPage() {
                 </div>
             )}
 
-            <div className="panier-root">
+            <div className="panier-root rp-page-pad" style={{ paddingBottom: "6rem" }}>
                 <div className="panier-inner">
                     {/* Header */}
                     <div style={{ marginBottom: spacing["6"] }}>
@@ -164,7 +184,7 @@ export default function PanierPage() {
                             <ArrowLeft size={14} />
                             Retour au menu
                         </Link>
-                        <h1 style={{ margin: 0, fontSize: typography["2xl"], fontWeight: typography.bold, fontFamily: typography.fontSerif, color: "var(--text-primary)" }}>
+                        <h1 className="rp-h1" style={{ margin: 0, fontWeight: typography.bold, fontFamily: typography.fontSerif, color: "var(--text-primary)" }}>
                             Mon Panier
                         </h1>
                         <p style={{ margin: "0.2rem 0 0", fontSize: typography.sm, color: "var(--text-muted)" }}>
@@ -207,7 +227,7 @@ export default function PanierPage() {
                                     <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "var(--bg-section-alt)", padding: "0.25rem", borderRadius: "0.75rem", border: "1px solid var(--border-subtle)" }}>
                                         <button 
                                             className="qty-btn" 
-                                            onClick={() => handleUpdateQty(item.plat, item.quantite, -1)}
+                                            onClick={() => handleUpdateQty(item.id, item.plat_detail.id, item.quantite, -1)}
                                             disabled={item.quantite <= 1}
                                         >
                                             <Minus size={12} />
@@ -217,7 +237,7 @@ export default function PanierPage() {
                                         </span>
                                         <button 
                                             className="qty-btn" 
-                                            onClick={() => handleUpdateQty(item.plat, item.quantite, 1)}
+                                            onClick={() => handleUpdateQty(item.id, item.plat_detail.id, item.quantite, 1)}
                                             disabled={item.quantite >= 10}
                                         >
                                             <Plus size={12} />
@@ -225,7 +245,7 @@ export default function PanierPage() {
                                     </div>
 
                                     <button 
-                                        onClick={() => handleRemove(item.plat)}
+                                        onClick={() => handleRemove(item.id, item.plat_detail.id)}
                                         style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", padding: "0.5rem", display: "flex" }}
                                     >
                                         <Trash2 size={18} />

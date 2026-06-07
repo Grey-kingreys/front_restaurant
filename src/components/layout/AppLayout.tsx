@@ -20,6 +20,8 @@ const PRIVATE_PREFIXES = [
     "/caisse",
     "/equipe",
     "/tables",
+    "/remises",
+    "/restaurants",
     "/rapports",
     "/parametres",
 ];

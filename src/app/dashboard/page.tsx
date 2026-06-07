@@ -88,140 +88,39 @@ export default function DashboardPage() {
   return (
     <>
       <style>{`
-        .dash-root  { min-height:100vh; background:var(--bg-dark); padding:1.5rem 1rem 3rem; }
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @keyframes pulse{0%{opacity:0.6}50%{opacity:0.3}100%{opacity:0.6}}
+        .dash-root  { min-height:100vh; background:var(--bg-dark); }
         .dash-inner { max-width:1100px; margin:0 auto; position:relative; z-index:1; }
-
-        /* Hero */
-        .dash-hero  { 
-          background: var(--bg-card); 
-          border: 1px solid var(--border-subtle); 
-          border-radius: 1.25rem; 
-          padding: 1.5rem; 
-          margin-bottom: 2rem; 
-          display: flex; 
-          align-items: center; 
-          gap: 1.25rem; 
-          box-shadow: var(--shadow-card);
-          position: relative;
-          overflow: hidden;
-        }
-        .dash-hero::after {
-          content: "";
-          position: absolute;
-          top: 0; right: 0;
-          width: 30%; height: 100%;
-          background: linear-gradient(to left, rgba(245,158,11,0.03), transparent);
-          pointer-events: none;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-          display: grid;
-          gap: 1rem;
-          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          margin-bottom: 2rem;
-        }
-
-        /* Sections Grid */
-        .main-grid {
-          display: grid;
-          gap: 1.5rem;
-          grid-template-columns: 1fr;
-        }
-
-        @media(min-width: 1024px) {
-          .main-grid { grid-template-columns: 2fr 1fr; }
-        }
-
-        .section-card {
-          background: var(--bg-card);
-          border: 1px solid var(--border-subtle);
-          border-radius: 1.25rem;
-          overflow: hidden;
-        }
-        .section-header {
-          padding: 1.25rem;
-          border-bottom: 1px solid var(--border-subtle);
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-        .section-title {
-          font-size: 0.875rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          color: var(--text-muted);
-          margin: 0;
-        }
-
-        .quick-actions {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-          gap: 0.75rem;
-          padding: 1.25rem;
-        }
-        .action-btn {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-          padding: 1rem;
-          border-radius: 1rem;
-          background: var(--bg-section-alt);
-          border: 1px solid var(--border-subtle);
-          color: var(--text-secondary);
-          text-decoration: none;
-          transition: all 0.2s;
-          text-align: center;
-        }
-        .action-btn:hover {
-          border-color: var(--amber-glow);
-          color: var(--amber-glow);
-          transform: translateY(-2px);
-          background: var(--icon-bg);
-        }
-        .action-icon {
-          width: 2rem;
-          height: 2rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 0.5rem;
-          background: var(--icon-bg);
-          color: var(--icon-primary);
-        }
-
-        .activity-item {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          padding: 0.875rem 1.25rem;
-          border-bottom: 1px solid var(--border-subtle);
-          transition: background 0.2s;
-        }
-        .activity-item:last-child { border-bottom: none; }
-        .activity-item:hover { background: var(--bg-section-alt); }
-
+        .main-grid  { display:grid; gap:1.5rem; grid-template-columns:1fr; }
+        @media(min-width:1024px) { .main-grid { grid-template-columns: 2fr 1fr; } }
+        .section-card { background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:1.25rem; overflow:hidden; }
+        .section-header { padding:1rem 1.25rem; border-bottom:1px solid var(--border-subtle); display:flex; align-items:center; justify-content:space-between; }
+        .section-title { font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); margin:0; }
+        .action-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.5rem; padding:1rem 0.75rem; border-radius:1rem; background:var(--bg-section-alt); border:1px solid var(--border-subtle); color:var(--text-secondary); text-decoration:none; transition:all 0.2s; text-align:center; min-height:80px; }
+        .action-btn:hover { border-color:var(--amber-glow); color:var(--amber-glow); transform:translateY(-2px); background:var(--icon-bg); }
+        .action-icon { width:2.25rem; height:2.25rem; display:flex; align-items:center; justify-content:center; border-radius:0.5rem; background:var(--icon-bg); color:var(--icon-primary); flex-shrink:0; }
+        .activity-item { display:flex; align-items:center; gap:0.75rem; padding:0.875rem 1.25rem; border-bottom:1px solid var(--border-subtle); transition:background 0.2s; }
+        .activity-item:last-child { border-bottom:none; }
+        .activity-item:hover { background:var(--bg-section-alt); }
         .dash-footer { text-align:center; margin-top:2.5rem; font-size:0.75rem; color:var(--text-muted); }
       `}</style>
 
       {/* Glow fond */}
       <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "50vh", pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(245,158,11,0.08) 0%, transparent 80%)" }} />
 
-      <div className="dash-root">
+      <div className="dash-root rp-page-pad">
         <div className="dash-inner">
 
           {/* Header Dashboard */}
-          <div className="dash-hero">
-            <div style={avatarBase(56)}>{initials}</div>
+          <div className="rp-dash-hero">
+            <div style={avatarBase(48)}>{initials}</div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <h1 style={{ fontWeight: 800, fontSize: "1.5rem", color: cssVar.textPrimary, fontFamily: typography.fontSerif, margin: "0 0 0.25rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              <h1 className="rp-h1" style={{ fontWeight: 800, color: cssVar.textPrimary, fontFamily: typography.fontSerif, margin: "0 0 0.2rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 Bonjour, {firstName} !
               </h1>
-              <p style={{ fontSize: "0.875rem", color: cssVar.textMuted, margin: 0, lineHeight: 1.4 }}>{subtitle}</p>
-              <div style={{ marginTop: "0.75rem", display: "flex", alignItems: "center", gap: "0.75rem" }}>
+              <p className="rp-body" style={{ color: cssVar.textMuted, margin: 0, lineHeight: 1.5 }}>{subtitle}</p>
+              <div style={{ marginTop: "0.6rem", display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
                 <span style={roleBadge(rc.bg, rc.text, rc.border)}>
                   <span style={{ width: 6, height: 6, borderRadius: "50%", background: rc.text, display: "inline-block" }} />
                   {ROLE_LABELS[role]}
@@ -233,16 +132,16 @@ export default function DashboardPage() {
                 )}
               </div>
             </div>
-            <div style={{ display: "none" }} className="lg:block">
+            <div className="rp-dash-hero-meta">
                <Link href="/profil" style={btnOutline}>Mon profil</Link>
             </div>
           </div>
 
           {/* Widgets de Statistiques selon le rôle */}
-          <div className="stats-grid">
+          <div className="rp-stats-grid" style={{ marginBottom: "1.5rem" }}>
             {statsLoading ? (
               [1, 2, 3, 4].map(i => (
-                <div key={i} style={{ height: 120, background: "var(--bg-section-alt)", borderRadius: "1.25rem", animation: "pulse 1.5s infinite" }} />
+                <div key={i} style={{ height: 110, background: "var(--bg-section-alt)", borderRadius: "1.25rem", animation: "pulse 1.5s infinite" }} />
               ))
             ) : stats ? (
               <>
@@ -309,7 +208,6 @@ export default function DashboardPage() {
             ) : (
               <p style={{ color: "var(--text-muted)", fontSize: "0.875rem" }}>Impossible de charger les statistiques.</p>
             )}
-            <style>{`@keyframes pulse{0%{opacity:0.6}50%{opacity:0.3}100%{opacity:0.6}}`}</style>
           </div>
 
           <div className="main-grid">
@@ -319,7 +217,7 @@ export default function DashboardPage() {
                 <div className="section-header">
                   <h2 className="section-title">Accès Rapides</h2>
                 </div>
-                <div className="quick-actions">
+                <div className="rp-actions-grid" style={{ padding: "1rem" }}>
                   {sections.flatMap(s => s.items).slice(0, 8).map((item) => (
                     <Link key={item.label} href={item.href} className="action-btn">
                        {/* Icon mapping would be better here, but for now we use a generic arrow or specific for some */}
@@ -330,7 +228,7 @@ export default function DashboardPage() {
                            item.label.includes("Ajouter") ? <Plus size={18} /> :
                            <ArrowRight size={18} />}
                        </div>
-                       <span style={{ fontSize: "0.75rem", fontWeight: 600 }}>{item.label}</span>
+                       <span className="rp-label" style={{ fontWeight: 600, lineHeight: 1.3 }}>{item.label}</span>
                     </Link>
                   ))}
                 </div>

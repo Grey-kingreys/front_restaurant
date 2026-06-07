@@ -5,7 +5,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { listCommandes, marquerPrete, type Commande } from "@/lib/api/commandes";
+import { listCommandesCuisine, marquerPrete, type Commande } from "@/lib/api/commandes";
 import type { Role } from "@/types";
 import { cssVar, typography, radius, spacing, cardBase } from "@/theme/theme";
 import { Clock, CheckCircle2, RefreshCw, ChefHat, Flame, Utensils } from "lucide-react";
@@ -33,7 +33,7 @@ export default function CuisinePage() {
         setError(null);
         try {
             // On récupère uniquement les commandes "en_attente" pour la cuisine
-            const res = await listCommandes({ statut: "en_attente" });
+            const res = await listCommandesCuisine("en_attente");
             if (res.success && res.data) {
                 // Trier les plus anciennes en premier (FIFO)
                 const sorted = res.data.commandes.sort(
@@ -81,7 +81,7 @@ export default function CuisinePage() {
     if (!ROLES_AUTORISES.includes(user.role as Role)) return null;
 
     return (
-        <div className="kds-root">
+        <div className="kds-root rp-page-pad">
             <style>{`
                 @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
                 @keyframes pulse-amber { 
@@ -89,8 +89,7 @@ export default function CuisinePage() {
                     70% { box-shadow: 0 0 0 10px rgba(245,158,11, 0); } 
                     100% { box-shadow: 0 0 0 0 rgba(245,158,11, 0); } 
                 }
-                .kds-root { min-height: 100vh; background: var(--bg-dark); padding: 1.5rem; display: flex; flexDirection: column; }
-                .kds-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; align-items: start; }
+                .kds-root { min-height: 100vh; background: var(--bg-dark); display: flex; flex-direction: column; }
                 
                 .ticket-card {
                     background: var(--bg-card);
@@ -152,8 +151,8 @@ export default function CuisinePage() {
                     <div>
                         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
                             <ChefHat size={20} color="var(--amber-glow)" />
-                            <h1 style={{ margin: 0, fontSize: typography["3xl"], fontWeight: typography.bold, fontFamily: typography.fontSerif, color: cssVar.textPrimary }}>
-                                File d'Attente Cuisine
+                            <h1 className="rp-h1" style={{ margin: 0, fontWeight: typography.bold, fontFamily: typography.fontSerif, color: cssVar.textPrimary }}>
+                                File d&apos;Attente Cuisine
                             </h1>
                         </div>
                         <p style={{ margin: 0, color: cssVar.textMuted, fontSize: typography.sm }}>
@@ -163,8 +162,9 @@ export default function CuisinePage() {
 
                     <button onClick={fetchCommandes} disabled={loading} style={{ 
                         background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", 
-                        color: "var(--text-secondary)", padding: "0.5rem 1rem", borderRadius: radius.lg,
-                        display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontWeight: 600
+                        color: "var(--text-secondary)", padding: "0.6rem 1rem", borderRadius: radius.lg,
+                        display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontWeight: 600,
+                        minHeight: "44px",
                     }}>
                         <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
                         Actualiser
@@ -183,7 +183,7 @@ export default function CuisinePage() {
                         <p style={{ color: cssVar.textMuted }}>La cuisine est calme pour le moment. Bon travail !</p>
                     </div>
                 ) : (
-                    <div className="kds-grid">
+                    <div className="rp-kds-grid">
                         {commandes.map((cmd) => (
                             <TicketCommande 
                                 key={cmd.id} 

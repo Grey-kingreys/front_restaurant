@@ -210,7 +210,7 @@ export default function ProfilPage() {
                                     Choisissez le thème d'affichage de l'interface. Le mode Système suit automatiquement la préférence de votre appareil.
                                 </p>
                                 <div style={{ ...iconContainer(0), width: "auto", height: "auto", background: "none", border: "none", display: "block" }}>
-                                    <ThemeSwitcher variant="sidebar" />
+                                    <ThemeSwitcher variant="page" />
                                 </div>
                             </div>
                         </Card>

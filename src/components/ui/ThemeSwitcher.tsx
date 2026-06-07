@@ -28,14 +28,19 @@ const OPTIONS: { value: ThemeMode; label: string; icon: React.ReactNode }[] = [
 ];
 
 interface ThemeSwitcherProps {
-    /** "sidebar" → label visible + fond neutre ; "navbar" → compact icon-only trigger */
-    variant?: "sidebar" | "navbar";
+    /** "sidebar"   → label visible, dropdown vers le haut
+     *  "page"      → label visible, dropdown vers le bas
+     *  "collapsed" → icône seule 36×36, dropdown vers la droite
+     *  "navbar"    → compact icon-only trigger */
+    variant?: "sidebar" | "page" | "navbar" | "collapsed";
 }
 
 export default function ThemeSwitcher({ variant = "sidebar" }: ThemeSwitcherProps) {
     const { themeMode, setThemeMode } = useTheme();
     const [open, setOpen] = useState(false);
-    const ref = useRef<HTMLDivElement>(null);
+    const [dropRect, setDropRect] = useState<{ top: number; left: number; width: number } | null>(null);
+    const ref     = useRef<HTMLDivElement>(null);
+    const btnRef  = useRef<HTMLButtonElement>(null);
 
     const current = OPTIONS.find((o) => o.value === themeMode) ?? OPTIONS[2];
 
@@ -50,13 +55,106 @@ export default function ThemeSwitcher({ variant = "sidebar" }: ThemeSwitcherProp
         return () => document.removeEventListener("mousedown", handler);
     }, []);
 
-    const isSidebar = variant === "sidebar";
+    const isSidebar   = variant === "sidebar" || variant === "page";
+    const isCollapsed = variant === "collapsed";
+    const dropUp      = variant === "sidebar"; // sidebar → haut, page → bas
 
+    // Pour variant "page" : calcul position fixed depuis getBoundingClientRect
+    const handlePageToggle = () => {
+        if (!open && btnRef.current) {
+            const r = btnRef.current.getBoundingClientRect();
+            setDropRect({ top: r.bottom + 6, left: r.left, width: r.width });
+        }
+        setOpen((v) => !v);
+    };
+
+    // ── Variant collapsed : bouton icône seule ──────────────────────────────
+    if (isCollapsed) {
+        return (
+            <div ref={ref} style={{ position: "relative" }}>
+                <button
+                    onClick={() => setOpen((v) => !v)}
+                    title="Thème d'affichage"
+                    aria-label="Changer le thème"
+                    style={{
+                        width: 36, height: 36,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        borderRadius: radius.md,
+                        border: `1px solid ${open ? cssVar.borderAmberHover : cssVar.borderSubtle}`,
+                        background: open ? "rgba(245,158,11,0.08)" : "transparent",
+                        color: open ? cssVar.amberGlow : cssVar.textMuted,
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                        flexShrink: 0,
+                    }}
+                    onMouseEnter={(e) => {
+                        if (!open) { const el = e.currentTarget as HTMLButtonElement; el.style.background = cssVar.bgSectionAlt; el.style.color = cssVar.textPrimary; }
+                    }}
+                    onMouseLeave={(e) => {
+                        if (!open) { const el = e.currentTarget as HTMLButtonElement; el.style.background = "transparent"; el.style.color = cssVar.textMuted; }
+                    }}
+                >
+                    {current.icon}
+                </button>
+
+                {/* Dropdown → vers la droite */}
+                {open && (
+                    <div style={{
+                        position: "fixed",
+                        left: "5rem",
+                        bottom: "auto",
+                        marginTop: 0,
+                        minWidth: 160,
+                        background: cssVar.bgCard,
+                        border: `1px solid ${cssVar.borderAmber}`,
+                        borderRadius: radius.xl,
+                        boxShadow: "0 8px 32px rgba(0,0,0,0.22)",
+                        zIndex: 200,
+                        overflow: "hidden",
+                        padding: "0.3rem",
+                    }}>
+                        <p style={{ fontSize: typography.xs, fontWeight: 700, color: cssVar.textMuted, textTransform: "uppercase", letterSpacing: "0.08em", padding: "0.3rem 0.65rem 0.4rem", margin: 0 }}>
+                            Thème
+                        </p>
+                        {OPTIONS.map((opt) => {
+                            const active = opt.value === themeMode;
+                            return (
+                                <button
+                                    key={opt.value}
+                                    onClick={() => { setThemeMode(opt.value); setOpen(false); }}
+                                    style={{
+                                        display: "flex", alignItems: "center", gap: "0.55rem",
+                                        width: "100%", padding: "0.45rem 0.65rem",
+                                        borderRadius: radius.lg, border: "none",
+                                        background: active ? "rgba(245,158,11,0.10)" : "transparent",
+                                        color: active ? cssVar.amberGlow : cssVar.textSecondary,
+                                        fontWeight: active ? typography.semibold : typography.medium,
+                                        fontSize: typography.base, cursor: "pointer",
+                                        textAlign: "left", transition: "background 0.15s",
+                                        borderLeft: `2px solid ${active ? cssVar.amberGlow : "transparent"}`,
+                                    }}
+                                    onMouseEnter={(e) => { if (!active) (e.currentTarget as HTMLButtonElement).style.background = cssVar.bgSectionAlt; }}
+                                    onMouseLeave={(e) => { if (!active) (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+                                >
+                                    <span style={{ color: active ? cssVar.amberGlow : cssVar.textMuted, display: "flex" }}>{opt.icon}</span>
+                                    {opt.label}
+                                    {active && <Check size={12} style={{ marginLeft: "auto", color: cssVar.amberGlow }} />}
+                                </button>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
+        );
+    }
+
+    // ── Variants sidebar & navbar ────────────────────────────────────────────
     return (
         <div ref={ref} style={{ position: "relative" }}>
             {/* Trigger */}
             <button
-                onClick={() => setOpen((v) => !v)}
+                ref={variant === "page" ? btnRef : undefined}
+                onClick={variant === "page" ? handlePageToggle : () => setOpen((v) => !v)}
                 style={{
                     display: "flex",
                     alignItems: "center",
@@ -130,17 +228,17 @@ export default function ThemeSwitcher({ variant = "sidebar" }: ThemeSwitcherProp
             {/* Dropdown */}
             {open && (
                 <div style={{
-                    position: "absolute",
-                    bottom: isSidebar ? "calc(100% + 6px)" : "auto",
-                    top: isSidebar ? "auto" : "calc(100% + 6px)",
-                    left: 0,
-                    right: isSidebar ? 0 : "auto",
-                    minWidth: 160,
+                    position: variant === "page" && dropRect ? "fixed" : "absolute",
+                    top: variant === "page" && dropRect ? dropRect.top : (dropUp ? "auto" : "calc(100% + 6px)"),
+                    bottom: variant === "page" ? "auto" : (dropUp ? "calc(100% + 6px)" : "auto"),
+                    left: variant === "page" && dropRect ? dropRect.left : 0,
+                    right: variant === "page" ? "auto" : (isSidebar ? 0 : "auto"),
+                    minWidth: variant === "page" && dropRect ? dropRect.width : 160,
                     background: cssVar.bgCard,
                     border: `1px solid ${cssVar.borderAmber}`,
                     borderRadius: radius.xl,
                     boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
-                    zIndex: 100,
+                    zIndex: 9999,
                     overflow: "hidden",
                     padding: "0.3rem",
                 }}>

@@ -211,13 +211,15 @@ export function PlatForm({ plat }: PlatFormProps) {
                                 checked={disponible}
                                 onChange={setDisponible}
                                 label="Disponible à la commande"
+                                desc="Visible et commandable par les tables"
                                 colorOn="#22c55e"
                             />
                             {/* Toggle cuisine */}
                             <ToggleSwitch
                                 checked={cuisine}
                                 onChange={setCuisine}
-                                label="Validation cuisine requise"
+                                label="Passe par la cuisine"
+                                desc={cuisine ? "Le cuisinier doit valider avant service" : "Servi directement sans étape cuisine"}
                                 colorOn="#f97316"
                             />
                         </div>
@@ -316,11 +318,12 @@ export function PlatForm({ plat }: PlatFormProps) {
 // ── Toggle Switch ─────────────────────────────────────────────────────────
 
 function ToggleSwitch({
-    checked, onChange, label, colorOn,
+    checked, onChange, label, desc, colorOn,
 }: {
     checked: boolean;
     onChange: (v: boolean) => void;
     label: string;
+    desc?: string;
     colorOn: string;
 }) {
     return (
@@ -351,11 +354,15 @@ function ToggleSwitch({
                     boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
                 }} />
             </div>
-            <span style={{
-                fontSize: typography.sm, color: cssVar.textSecondary,
-                fontWeight: 500,
-            }}>
-                {label}
+            <span style={{ display: "flex", flexDirection: "column", gap: "0.1rem" }}>
+                <span style={{ fontSize: typography.sm, color: cssVar.textSecondary, fontWeight: 600 }}>
+                    {label}
+                </span>
+                {desc && (
+                    <span style={{ fontSize: "0.7rem", color: cssVar.textMuted, fontWeight: 400 }}>
+                        {desc}
+                    </span>
+                )}
             </span>
         </button>
     );

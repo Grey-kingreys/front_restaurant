@@ -111,11 +111,46 @@ function SidebarInner({
         );
     };
 
+    // ── Bouton icône générique pour le footer collapsed ──────────────────────
+    const iconBtn = (
+        icon: React.ReactNode,
+        onClick: () => void,
+        title: string,
+        color: string = cssVar.textSecondary,
+        hoverBg: string = cssVar.bgSectionAlt,
+        disabled = false,
+    ) => (
+        <button
+            onClick={onClick}
+            disabled={disabled}
+            title={title}
+            style={{
+                width: 36, height: 36,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                borderRadius: radius.md, border: `1px solid ${cssVar.borderSubtle}`,
+                background: "transparent", color, cursor: disabled ? "not-allowed" : "pointer",
+                transition: "all 0.15s", flexShrink: 0,
+                opacity: disabled ? 0.5 : 1,
+            }}
+            onMouseEnter={(e) => { if (!disabled) { const el = e.currentTarget as HTMLButtonElement; el.style.background = hoverBg; el.style.borderColor = cssVar.borderAmberHover; } }}
+            onMouseLeave={(e) => { const el = e.currentTarget as HTMLButtonElement; el.style.background = "transparent"; el.style.borderColor = cssVar.borderSubtle; }}
+        >
+            {icon}
+        </button>
+    );
+
     return (
         <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
 
-            {/* Logo & Toggle */}
-            <div style={{ padding: isCollapsed ? `${spacing["5"]} ${spacing["3"]} ${spacing["4"]}` : `${spacing["5"]} ${spacing["4"]} ${spacing["4"]}`, borderBottom: `1px solid ${cssVar.borderSubtle}`, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: isCollapsed ? "center" : "space-between" }}>
+            {/* ── Logo & Toggle ── */}
+            <div style={{
+                padding: isCollapsed ? `${spacing["4"]} ${spacing["3"]}` : `${spacing["5"]} ${spacing["4"]} ${spacing["4"]}`,
+                borderBottom: `1px solid ${cssVar.borderSubtle}`,
+                flexShrink: 0,
+                display: "flex", alignItems: "center",
+                justifyContent: isCollapsed ? "center" : "space-between",
+                minHeight: 60,
+            }}>
                 <Link href="/dashboard" onClick={onNavClick} style={{ display: "flex", alignItems: "center", gap: spacing["2"], textDecoration: "none" }}>
                     <div style={{
                         width: 32, height: 32, borderRadius: radius.lg,
@@ -130,26 +165,31 @@ function SidebarInner({
                         </span>
                     )}
                 </Link>
+                {/* Bouton réduire — visible uniquement en mode étendu */}
                 {toggleCollapse && !isCollapsed && (
-                    <button onClick={toggleCollapse} style={{ background: "transparent", border: "none", color: cssVar.textMuted, cursor: "pointer", display: "flex", alignItems: "center" }} title="Réduire">
+                    <button onClick={toggleCollapse} title="Réduire" style={{
+                        background: "transparent", border: "none", color: cssVar.textMuted,
+                        cursor: "pointer", display: "flex", alignItems: "center", padding: "0.25rem",
+                        borderRadius: radius.sm, transition: "color 0.15s",
+                    }}
+                        onMouseEnter={(e) => (e.currentTarget as HTMLButtonElement).style.color = cssVar.textPrimary}
+                        onMouseLeave={(e) => (e.currentTarget as HTMLButtonElement).style.color = cssVar.textMuted}
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" style={{ width: 18, height: 18 }}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="m18.75 4.5-7.5 7.5 7.5 7.5m-6-15L5.25 12l7.5 7.5" />
                         </svg>
                     </button>
                 )}
-                {toggleCollapse && isCollapsed && (
-                     <button onClick={toggleCollapse} style={{ background: "transparent", border: "none", color: cssVar.textMuted, cursor: "pointer", display: "flex", alignItems: "center", position: "absolute", bottom: "1rem", right: "50%", transform: "translateX(50%)" }} title="Agrandir">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" style={{ width: 18, height: 18 }}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
-                        </svg>
-                     </button>
-                )}
             </div>
 
-            {/* Utilisateur */}
-            <div style={{ padding: isCollapsed ? `${spacing["3"]} ${spacing["2"]}` : `${spacing["3"]} ${spacing["3"]}`, borderBottom: `1px solid ${cssVar.borderSubtle}`, flexShrink: 0, display: "flex", justifyContent: "center" }}>
+            {/* ── Utilisateur ── */}
+            <div style={{
+                padding: isCollapsed ? `${spacing["3"]} ${spacing["2"]}` : `${spacing["3"]} ${spacing["3"]}`,
+                borderBottom: `1px solid ${cssVar.borderSubtle}`,
+                flexShrink: 0, display: "flex", justifyContent: "center",
+            }}>
                 {isCollapsed ? (
-                    <Link href="/profil" onClick={onNavClick} style={{ textDecoration: "none" }} title="Mon profil">
+                    <Link href="/profil" onClick={onNavClick} style={{ textDecoration: "none" }} title={user.nom_complet || user.login}>
                         <div style={avatarBase(34)}>{initials}</div>
                     </Link>
                 ) : (
@@ -184,7 +224,7 @@ function SidebarInner({
                 )}
             </div>
 
-            {/* Nav principale */}
+            {/* ── Nav principale ── */}
             <nav style={{ flex: 1, overflowY: "auto", padding: isCollapsed ? `${spacing["3"]} ${spacing["1"]}` : `${spacing["3"]} ${spacing["3"]} ${spacing["2"]}` }}>
                 {sections.map((section, si) => (
                     <div key={si} style={{ marginBottom: spacing["4"] }}>
@@ -203,45 +243,84 @@ function SidebarInner({
                 ))}
             </nav>
 
-            {/* Footer */}
-            <div style={{ padding: isCollapsed ? `${spacing["3"]} ${spacing["1"]}` : `${spacing["3"]} ${spacing["3"]}`, borderTop: `1px solid ${cssVar.borderSubtle}`, display: "flex", flexDirection: "column", gap: "1px", flexShrink: 0, position: "relative" }}>
-                {!isCollapsed && navLink("/profil", "profile", "Mon profil")}
-                {!isCollapsed && navLink("/auth/change-password", "key", "Sécurité")}
-
-                {/* ThemeSwitcher */}
-                <div style={{ paddingTop: spacing["1"], display: "flex", justifyContent: isCollapsed ? "center" : "flex-start", paddingLeft: isCollapsed ? 0 : "0.5rem" }}>
-                    <ThemeSwitcher variant="sidebar" />
-                </div>
-
-                <button
-                    onClick={async () => { setLoggingOut(true); await logout(); }}
-                    disabled={loggingOut}
-                    title={isCollapsed ? "Se déconnecter" : undefined}
-                    style={{
-                        display: "flex", alignItems: "center", gap: isCollapsed ? 0 : spacing["2"],
-                        justifyContent: isCollapsed ? "center" : "flex-start",
-                        padding: "0.48rem 0.6rem", borderRadius: radius.md,
-                        fontSize: typography.base, fontWeight: typography.medium,
-                        color: loggingOut ? cssVar.textMuted : "#f87171",
-                        background: "transparent", border: "none",
-                        cursor: loggingOut ? "not-allowed" : "pointer",
-                        width: "100%", textAlign: "left", transition: "all 0.15s",
-                    }}
-                    onMouseEnter={(e) => { if (!loggingOut) (e.currentTarget as HTMLButtonElement).style.background = "rgba(248,113,113,0.07)"; }}
-                    onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
-                >
-                    <Icon name="logout" />
-                    {!isCollapsed && (loggingOut ? "Déconnexion…" : "Se déconnecter")}
-                </button>
-                
-                {toggleCollapse && isCollapsed && (
-                     <button onClick={toggleCollapse} style={{ background: "transparent", border: `1px solid ${cssVar.borderSubtle}`, borderRadius: radius.full, padding: "0.4rem", color: cssVar.textMuted, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", margin: "0.5rem auto 0 auto" }} title="Agrandir">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" style={{ width: 14, height: 14 }}>
+            {/* ── Footer ── */}
+            {isCollapsed ? (
+                /* Mode réduit : grille d'icônes centrées */
+                <div style={{
+                    borderTop: `1px solid ${cssVar.borderSubtle}`,
+                    padding: `${spacing["3"]} 0`,
+                    display: "flex", flexDirection: "column",
+                    alignItems: "center", gap: spacing["2"],
+                    flexShrink: 0,
+                }}>
+                    {/* Profil */}
+                    {iconBtn(
+                        <User size={16} />,
+                        () => { window.location.href = "/profil"; },
+                        "Mon profil",
+                    )}
+                    {/* Sécurité */}
+                    {iconBtn(
+                        <Key size={16} />,
+                        () => { window.location.href = "/auth/change-password"; },
+                        "Sécurité",
+                    )}
+                    {/* Thème */}
+                    <ThemeSwitcher variant="collapsed" />
+                    {/* Logout */}
+                    {iconBtn(
+                        loggingOut
+                            ? <div style={{ width: 14, height: 14, borderRadius: "50%", border: "2px solid currentColor", borderTopColor: "transparent", animation: "spin .6s linear infinite" }} />
+                            : <LogOut size={16} />,
+                        async () => { setLoggingOut(true); await logout(); },
+                        "Se déconnecter",
+                        "#f87171",
+                        "rgba(248,113,113,0.07)",
+                        loggingOut,
+                    )}
+                    {/* Expand */}
+                    {toggleCollapse && iconBtn(
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" style={{ width: 16, height: 16 }}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
-                        </svg>
-                     </button>
-                )}
-            </div>
+                        </svg>,
+                        toggleCollapse,
+                        "Agrandir la sidebar",
+                    )}
+                </div>
+            ) : (
+                /* Mode étendu : liens texte normaux */
+                <div style={{
+                    padding: `${spacing["3"]} ${spacing["3"]}`,
+                    borderTop: `1px solid ${cssVar.borderSubtle}`,
+                    display: "flex", flexDirection: "column", gap: "1px",
+                    flexShrink: 0,
+                }}>
+                    {navLink("/profil", "profile", "Mon profil")}
+                    {navLink("/auth/change-password", "key", "Sécurité")}
+                    <div style={{ paddingTop: spacing["1"] }}>
+                        <ThemeSwitcher variant="sidebar" />
+                    </div>
+                    <button
+                        onClick={async () => { setLoggingOut(true); await logout(); }}
+                        disabled={loggingOut}
+                        style={{
+                            display: "flex", alignItems: "center", gap: spacing["2"],
+                            justifyContent: "flex-start",
+                            padding: "0.48rem 0.6rem", borderRadius: radius.md,
+                            fontSize: typography.base, fontWeight: typography.medium,
+                            color: loggingOut ? cssVar.textMuted : "#f87171",
+                            background: "transparent", border: "none",
+                            cursor: loggingOut ? "not-allowed" : "pointer",
+                            width: "100%", textAlign: "left", transition: "all 0.15s",
+                        }}
+                        onMouseEnter={(e) => { if (!loggingOut) (e.currentTarget as HTMLButtonElement).style.background = "rgba(248,113,113,0.07)"; }}
+                        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+                    >
+                        <Icon name="logout" />
+                        {loggingOut ? "Déconnexion…" : "Se déconnecter"}
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

@@ -13,7 +13,8 @@ import {
     Pencil, 
     Trash2, 
     Check, 
-    Plus 
+    Plus,
+    Zap
 } from "lucide-react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ?? "http://localhost:8000";
@@ -179,8 +180,8 @@ export function PlatCardStaff({ plat, canEdit, onToggle, onDelete, toggling }: S
                     <Link
                         href={`/menu/${plat.id}/modifier`}
                         style={{
-                            flex: 1, padding: "0.6rem",
-                            textAlign: "center", fontSize: "0.75rem", fontWeight: 600,
+                            flex: 1, padding: "0.75rem 0.6rem", minHeight: "44px",
+                            textAlign: "center", fontSize: "0.8rem", fontWeight: 600,
                             color: "var(--text-secondary)", textDecoration: "none",
                             background: "transparent",
                             borderRight: "1px solid var(--border-subtle)",
@@ -204,8 +205,8 @@ export function PlatCardStaff({ plat, canEdit, onToggle, onDelete, toggling }: S
                         onClick={() => onToggle(plat.id)}
                         disabled={toggling}
                         style={{
-                            flex: 1, padding: "0.6rem",
-                            fontSize: "0.75rem", fontWeight: 600,
+                            flex: 1, padding: "0.75rem 0.6rem", minHeight: "44px",
+                            fontSize: "0.8rem", fontWeight: 600,
                             color: plat.disponible ? "#ef4444" : "#22c55e",
                             background: "transparent", border: "none", cursor: "pointer",
                             borderRight: onDelete ? "1px solid var(--border-subtle)" : "none",
@@ -236,8 +237,8 @@ export function PlatCardStaff({ plat, canEdit, onToggle, onDelete, toggling }: S
                         <button
                             onClick={() => onDelete(plat.id)}
                             style={{
-                                flex: 0, padding: "0.6rem 0.75rem",
-                                fontSize: "0.75rem", fontWeight: 600,
+                                flex: 0, padding: "0.75rem", minHeight: "44px", minWidth: "44px",
+                                fontSize: "0.8rem", fontWeight: 600,
                                 color: "#ef4444",
                                 background: "transparent", border: "none", cursor: "pointer",
                                 transition: "all 0.15s",
@@ -324,29 +325,52 @@ export function PlatCardTable({ plat, onAddToCart, quantiteInCart = 0, adding }:
                     </div>
                 )}
 
-                {/* Catégorie */}
+                {/* Bas gauche : catégorie seulement */}
                 <span style={{
                     position: "absolute", bottom: "0.4rem", left: "0.4rem",
                     padding: "0.15rem 0.45rem", borderRadius: "9999px",
-                    fontSize: "0.65rem", fontWeight: 700,
+                    fontSize: "0.62rem", fontWeight: 700,
+                    display: "flex", alignItems: "center", gap: "0.2rem",
                     background: "rgba(0,0,0,0.6)", color: "#fff",
                     backdropFilter: "blur(4px)",
+                    maxWidth: "55%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
                 }}>
-                    <cat.icon size={10} /> {cat.label}
+                    <cat.icon size={9} />
+                    <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{cat.label}</span>
                 </span>
 
-                {/* Badge quantité dans panier */}
-                {quantiteInCart > 0 && (
-                    <div style={{
-                        position: "absolute", top: "0.4rem", right: "0.4rem",
-                        width: 22, height: 22, borderRadius: "50%",
-                        background: "var(--gradient-btn)",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: "0.7rem", fontWeight: 800, color: "#0c0a09",
+                {/* Haut droite : cuisine + panier empilés */}
+                <div style={{
+                    position: "absolute", top: "0.4rem", right: "0.4rem",
+                    display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.25rem",
+                }}>
+                    {quantiteInCart > 0 && (
+                        <div style={{
+                            width: 22, height: 22, borderRadius: "50%",
+                            background: "var(--gradient-btn)",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            fontSize: "0.7rem", fontWeight: 800, color: "#0c0a09",
+                        }}>
+                            {quantiteInCart}
+                        </div>
+                    )}
+                    <span style={{
+                        padding: "0.18rem 0.45rem", borderRadius: "9999px",
+                        fontSize: "0.6rem", fontWeight: 700,
+                        display: "flex", alignItems: "center", gap: "0.2rem",
+                        backdropFilter: "blur(4px)",
+                        background: plat.necessite_validation_cuisine
+                            ? "rgba(249,115,22,0.88)"
+                            : "rgba(34,197,94,0.82)",
+                        color: "#fff",
+                        whiteSpace: "nowrap",
                     }}>
-                        {quantiteInCart}
-                    </div>
-                )}
+                        {plat.necessite_validation_cuisine
+                            ? <><ChefHat size={8} /> Cuisine</>
+                            : <><Zap size={8} /> Direct</>
+                        }
+                    </span>
+                </div>
             </div>
 
             {/* Contenu */}
@@ -391,7 +415,7 @@ export function PlatCardTable({ plat, onAddToCart, quantiteInCart = 0, adding }:
                             onClick={() => onAddToCart(plat)}
                             disabled={adding}
                             style={{
-                                width: 30, height: 30,
+                                width: 44, height: 44,
                                 borderRadius: "50%",
                                 background: quantiteInCart > 0 ? "var(--gradient-btn)" : "var(--icon-bg)",
                                 border: `1px solid ${quantiteInCart > 0 ? "transparent" : "var(--icon-border)"}`,

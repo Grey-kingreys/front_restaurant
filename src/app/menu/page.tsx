@@ -99,28 +99,25 @@ export default function MenuPage() {
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes toastIn { from { opacity:0; transform: translateX(60px) scale(0.95); } to { opacity:1; transform: translateX(0) scale(1); } }
         @keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
-        .menu-root { min-height:100vh; background:var(--bg-dark); padding: 1.25rem 1rem 3rem; }
+        .menu-root { min-height:100vh; background:var(--bg-dark); }
         .menu-inner { max-width:1100px; margin:0 auto; }
-        .plats-grid { display:grid; gap:0.875rem; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); animation: fadeIn 0.3s ease; }
-        @media(min-width:640px) { .menu-root { padding: 1.5rem 1.5rem 3rem; } }
-        @media(min-width:1024px) { .menu-root { padding: 2rem 2rem 3rem; } }
         .cat-btn {
-          padding: 0.4rem 0.875rem; border-radius: 9999px; border: 1px solid var(--border-subtle);
-          background: transparent; cursor: pointer; font-size: 0.78rem; font-weight: 600;
+          padding: 0.5rem 0.875rem; border-radius: 9999px; border: 1px solid var(--border-subtle);
+          background: transparent; cursor: pointer; font-size: 0.875rem; font-weight: 600;
           color: var(--text-muted); transition: all 0.15s; white-space: nowrap;
-          display:flex; align-items:center; gap:0.3rem;
+          display:flex; align-items:center; gap:0.35rem; min-height:40px;
         }
         .cat-btn.active { background: var(--gradient-btn); color: #0c0a09; border-color: transparent; }
         .cat-btn:not(.active):hover { border-color: var(--border-amber); color: var(--text-primary); }
         .filter-toggle {
-          padding: 0.4rem 0.75rem; border-radius: 9999px;
+          padding: 0.5rem 0.875rem; border-radius: 9999px;
           border: 1px solid var(--border-subtle); background: transparent;
-          cursor: pointer; font-size: 0.75rem; font-weight: 600;
+          cursor: pointer; font-size: 0.875rem; font-weight: 600;
           color: var(--text-muted); transition: all 0.15s;
-          display:flex; align-items:center; gap:0.3rem;
+          display:flex; align-items:center; gap:0.35rem; min-height:40px; white-space:nowrap;
         }
         .filter-toggle.active { border-color: var(--amber-glow); color: var(--amber-glow); background: rgba(245,158,11,0.08); }
-        .stat-pill { padding:0.45rem 0.875rem; border-radius:0.65rem; background:var(--bg-card); border:1px solid var(--border-subtle); display:flex; align-items:center; gap:0.4rem; }
+        .stat-pill { padding:0.5rem 0.875rem; border-radius:0.65rem; background:var(--bg-card); border:1px solid var(--border-subtle); display:flex; align-items:center; gap:0.4rem; white-space:nowrap; }
       `}</style>
 
             {/* Background glow */}
@@ -145,7 +142,7 @@ export default function MenuPage() {
                 </div>
             )}
 
-            <div className="menu-root">
+            <div className="menu-root rp-page-pad">
                 <div className="menu-inner" style={{ position: "relative", zIndex: 1 }}>
 
                     {/* Header */}
@@ -158,7 +155,7 @@ export default function MenuPage() {
                                 <ChevronRight size={10} style={{ color: "var(--text-muted)" }} />
                                 <span style={{ fontSize: typography.xs, color: cssVar.textSecondary }}>Menu</span>
                             </nav>
-                            <h1 style={{ margin: 0, fontSize: typography["2xl"], fontWeight: typography.bold, fontFamily: typography.fontSerif, color: cssVar.textPrimary }}>
+                            <h1 className="rp-h1" style={{ margin: 0, fontWeight: typography.bold, fontFamily: typography.fontSerif, color: cssVar.textPrimary }}>
                                 {isTable ? "Notre Menu" : "Gestion du Menu"}
                             </h1>
                             <p style={{ margin: "0.2rem 0 0", fontSize: typography.sm, color: cssVar.textMuted }}>
@@ -168,7 +165,7 @@ export default function MenuPage() {
                             </p>
                         </div>
 
-                        <div style={{ display: "flex", gap: spacing["2"], alignItems: "center", flexWrap: "wrap" }}>
+                        <div className="rp-header-actions" style={{ display: "flex", gap: spacing["2"], alignItems: "center", flexWrap: "wrap" }}>
                             {isTable && totalCart > 0 && (
                                 <Link href="/commandes/panier" style={{
                                     display: "inline-flex", alignItems: "center", gap: "0.4rem",
@@ -200,7 +197,7 @@ export default function MenuPage() {
 
                     {/* Stats rapides (Staff) */}
                     {isStaff && !isTable && (
-                        <div style={{ display: "flex", gap: "0.625rem", marginBottom: spacing["5"], flexWrap: "wrap" }}>
+                        <div className="rp-scroll-x" style={{ marginBottom: spacing["5"] }}>
                             {[
                                 { label: "Total", value: stats.total, color: cssVar.amberGlow },
                                 { label: "Disponibles", value: stats.disponibles, color: "#22c55e" },
@@ -244,7 +241,7 @@ export default function MenuPage() {
                         </div>
 
                         {/* Catégories */}
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
+                        <div className="rp-scroll-x" style={{ alignItems: "center" }}>
                             <span style={{ display: "flex", color: cssVar.textMuted, marginRight: "0.2rem" }}>
                                 <Filter size={14} />
                             </span>
@@ -301,7 +298,7 @@ export default function MenuPage() {
                     ) : plats.length === 0 ? (
                         <EmptyState search={search} canEdit={canEdit} categorie={categorie} />
                     ) : (
-                        <div className="plats-grid">
+                        <div className="rp-plats-grid" style={{ animation: "fadeIn 0.3s ease" }}>
                             {isTable
                                 ? plats.map((plat) => (
                                     <PlatCardTable
