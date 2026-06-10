@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Check } from "lucide-react";
 import { createPlat, updatePlat } from "@/lib/api/menu";
 import { ImageUploader } from "./ImageUploader";
 import type { Plat, Categorie } from "@/lib/api/menu";
@@ -142,7 +143,7 @@ export function PlatForm({ plat }: PlatFormProps) {
                     >
                         {CATEGORIE_OPTIONS.map((c) => (
                             <option key={c.value} value={c.value}>
-                                {c.emoji} {c.label}
+                                {c.label}
                             </option>
                         ))}
                     </select>
@@ -177,8 +178,8 @@ export function PlatForm({ plat }: PlatFormProps) {
                             value={prix}
                             onChange={(e) => setPrix(e.target.value)}
                             placeholder="Ex : 45000"
-                            min={1}
-                            step={500}
+                            min={0}
+                            step={1}
                             style={{
                                 ...inputStyle,
                                 paddingRight: "3.5rem",
@@ -210,13 +211,15 @@ export function PlatForm({ plat }: PlatFormProps) {
                                 checked={disponible}
                                 onChange={setDisponible}
                                 label="Disponible à la commande"
+                                desc="Visible et commandable par les tables"
                                 colorOn="#22c55e"
                             />
                             {/* Toggle cuisine */}
                             <ToggleSwitch
                                 checked={cuisine}
                                 onChange={setCuisine}
-                                label="Validation cuisine requise"
+                                label="Passe par la cuisine"
+                                desc={cuisine ? "Le cuisinier doit valider avant service" : "Servi directement sans étape cuisine"}
                                 colorOn="#f97316"
                             />
                         </div>
@@ -260,9 +263,7 @@ export function PlatForm({ plat }: PlatFormProps) {
                     fontSize: "0.82rem",
                     display: "flex", alignItems: "center", gap: "0.4rem",
                 }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" style={{ width: 16, height: 16 }}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                    </svg>
+                    <Check size={16} />
                     {isEdit ? "Plat mis à jour !" : "Plat créé avec succès !"} Redirection…
                 </div>
             )}
@@ -317,11 +318,12 @@ export function PlatForm({ plat }: PlatFormProps) {
 // ── Toggle Switch ─────────────────────────────────────────────────────────
 
 function ToggleSwitch({
-    checked, onChange, label, colorOn,
+    checked, onChange, label, desc, colorOn,
 }: {
     checked: boolean;
     onChange: (v: boolean) => void;
     label: string;
+    desc?: string;
     colorOn: string;
 }) {
     return (
@@ -352,11 +354,15 @@ function ToggleSwitch({
                     boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
                 }} />
             </div>
-            <span style={{
-                fontSize: typography.sm, color: cssVar.textSecondary,
-                fontWeight: 500,
-            }}>
-                {label}
+            <span style={{ display: "flex", flexDirection: "column", gap: "0.1rem" }}>
+                <span style={{ fontSize: typography.sm, color: cssVar.textSecondary, fontWeight: 600 }}>
+                    {label}
+                </span>
+                {desc && (
+                    <span style={{ fontSize: "0.7rem", color: cssVar.textMuted, fontWeight: 400 }}>
+                        {desc}
+                    </span>
+                )}
             </span>
         </button>
     );

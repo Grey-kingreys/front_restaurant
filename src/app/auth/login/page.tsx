@@ -63,7 +63,7 @@ export default function LoginPage() {
     }, [mode, email, loginVal, password, setUser, router]);
 
     return (
-        <div style={authPageRoot}>
+        <div style={{ ...authPageRoot, padding: "1.5rem" }}>
             <div style={glowOverlay} />
             <div style={{
                 position: "absolute", top: "30%", left: "10%",
@@ -71,7 +71,7 @@ export default function LoginPage() {
                 background: "rgba(245,158,11,0.04)", filter: "blur(80px)", pointerEvents: "none",
             }} />
 
-            <div style={{ width: "100%", maxWidth: 420, position: "relative", zIndex: 1 }}>
+            <div style={{ width: "100%", maxWidth: 440, position: "relative", zIndex: 1 }}>
 
                 {/* Logo */}
                 <div style={{ textAlign: "center", marginBottom: spacing["8"] }}>
@@ -93,7 +93,7 @@ export default function LoginPage() {
                 </div>
 
                 {/* Card */}
-                <div style={{ ...cardBase, padding: spacing["8"] }}>
+                <div style={{ ...cardBase, padding: "clamp(1.25rem, 5vw, 2rem)" }}>
 
                     {/* Tabs */}
                     <div style={{
@@ -180,7 +180,7 @@ export default function LoginPage() {
                         {error && <div style={alertError}>{error}</div>}
 
                         <button type="submit" disabled={loading}
-                            style={loading ? btnPrimaryDisabled : btnPrimary}>
+                            style={{ ...(loading ? btnPrimaryDisabled : btnPrimary), width: "100%", minHeight: "48px", fontSize: "1rem" }}>
                             {loading ? (
                                 <><div style={spinnerBase} />Connexion…</>
                             ) : "Se connecter"}

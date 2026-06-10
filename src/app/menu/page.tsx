@@ -1,5 +1,6 @@
 "use client";
 // src/app/menu/page.tsx
+// Module Menu complet — liste, filtres, actions staff et table
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -10,11 +11,20 @@ import { PlatCardStaff, PlatCardTable } from "@/components/menu/PlatCard";
 import { addToPanier } from "@/lib/api/commandes";
 import type { Plat } from "@/lib/api/menu";
 import type { Role } from "@/types";
-import { cssVar, typography, radius, spacing, palette } from "@/theme/theme";
+import { cssVar, typography, radius, spacing } from "@/theme/theme";
+import {
+    Plus,
+    Search,
+    X,
+    ShoppingCart,
+    Filter,
+    Check,
+    RefreshCw,
+    ChevronRight,
+    ClipboardList
+} from "lucide-react";
 
-// Rôles qui peuvent éditer le menu
 const CAN_EDIT: Role[] = ["Radmin", "Rmanager", "Rchef_cuisinier"];
-// Rôles qui peuvent voir le menu (Staff)
 const IS_STAFF: Role[] = ["Radmin", "Rmanager", "Rchef_cuisinier", "Rcuisinier", "Rserveur", "Rcomptable", "Rsuper_admin"];
 
 export default function MenuPage() {
@@ -30,12 +40,8 @@ export default function MenuPage() {
         handleToggle, handleDelete, refetch,
     } = useMenu({ tableMode: isTable });
 
-    // Panier state (pour Table)
-    const [cartMap, setCartMap] = useState<Record<number, number>>({}); // id → quantité
+    const [cartMap, setCartMap] = useState<Record<number, number>>({});
     const [addingId, setAddingId] = useState<number | null>(null);
-    const [cartFeedback, setCartFeedback] = useState<string | null>(null);
-
-    // Toast feedback
     const [toastMsg, setToastMsg] = useState<string | null>(null);
     const [toastType, setToastType] = useState<"success" | "error">("success");
 
@@ -66,10 +72,10 @@ export default function MenuPage() {
 
     const handleToggleWithToast = async (id: number) => {
         const plat = allPlats.find((p) => p.id === id);
+        if (!plat) return;
+        const etaitDisponible = plat.disponible;
         await handleToggle(id);
-        if (plat) {
-            showToast(`« ${plat.nom} » ${plat.disponible ? "désactivé" : "activé"}`);
-        }
+        showToast(`« ${plat.nom} » ${etaitDisponible ? "désactivé" : "activé"}`);
     };
 
     const handleDeleteWithConfirm = (id: number) => {
@@ -91,78 +97,65 @@ export default function MenuPage() {
         <>
             <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes slideIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
-        @keyframes toastIn { from { opacity:0; transform: translateX(100%); } to { opacity:1; transform: translateX(0); } }
-        .menu-root { min-height:100vh; background:var(--bg-dark); padding: 1.25rem 1rem 3rem; }
+        @keyframes toastIn { from { opacity:0; transform: translateX(60px) scale(0.95); } to { opacity:1; transform: translateX(0) scale(1); } }
+        @keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
+        .menu-root { min-height:100vh; background:var(--bg-dark); }
         .menu-inner { max-width:1100px; margin:0 auto; }
-        .plats-grid { display:grid; gap:0.875rem; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
-        @media(min-width:640px)  { .menu-root { padding: 1.5rem 1.5rem 3rem; } }
-        @media(min-width:1024px) { .menu-root { padding: 2rem 2rem 3rem; } }
-        .cat-btn { 
-          padding: 0.45rem 0.875rem; border-radius: 9999px; border: 1px solid var(--border-subtle);
-          background: transparent; cursor: pointer; font-size: 0.78rem; font-weight: 600;
+        .cat-btn {
+          padding: 0.5rem 0.875rem; border-radius: 9999px; border: 1px solid var(--border-subtle);
+          background: transparent; cursor: pointer; font-size: 0.875rem; font-weight: 600;
           color: var(--text-muted); transition: all 0.15s; white-space: nowrap;
+          display:flex; align-items:center; gap:0.35rem; min-height:40px;
         }
         .cat-btn.active { background: var(--gradient-btn); color: #0c0a09; border-color: transparent; }
         .cat-btn:not(.active):hover { border-color: var(--border-amber); color: var(--text-primary); }
-        .filter-toggle { 
-          padding: 0.4rem 0.75rem; border-radius: 9999px;
+        .filter-toggle {
+          padding: 0.5rem 0.875rem; border-radius: 9999px;
           border: 1px solid var(--border-subtle); background: transparent;
-          cursor: pointer; font-size: 0.75rem; font-weight: 600;
+          cursor: pointer; font-size: 0.875rem; font-weight: 600;
           color: var(--text-muted); transition: all 0.15s;
+          display:flex; align-items:center; gap:0.35rem; min-height:40px; white-space:nowrap;
         }
         .filter-toggle.active { border-color: var(--amber-glow); color: var(--amber-glow); background: rgba(245,158,11,0.08); }
+        .stat-pill { padding:0.5rem 0.875rem; border-radius:0.65rem; background:var(--bg-card); border:1px solid var(--border-subtle); display:flex; align-items:center; gap:0.4rem; white-space:nowrap; }
       `}</style>
 
-            {/* Glow fond */}
-            <div style={{
-                position: "fixed", top: 0, left: 0, right: 0, height: "35vh",
-                pointerEvents: "none", zIndex: 0,
-                background: "radial-gradient(ellipse 70% 35% at 50% -5%, rgba(245,158,11,0.06) 0%, transparent 70%)",
-            }} />
+            {/* Background glow */}
+            <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "35vh", pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 70% 35% at 50% -5%, rgba(245,158,11,0.06) 0%, transparent 70%)" }} />
 
             {/* Toast */}
             {toastMsg && (
                 <div style={{
                     position: "fixed", bottom: "1.5rem", right: "1.5rem", zIndex: 200,
-                    padding: "0.75rem 1.25rem",
-                    borderRadius: radius.xl,
-                    background: toastType === "success" ? "rgba(34,197,94,0.95)" : "rgba(239,68,68,0.95)",
+                    padding: "0.75rem 1.25rem", borderRadius: radius.xl,
+                    background: toastType === "success" ? "rgba(34,197,94,0.96)" : "rgba(239,68,68,0.96)",
                     color: "#fff", fontWeight: 600, fontSize: "0.85rem",
                     boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
                     animation: "toastIn 0.3s ease",
                     display: "flex", alignItems: "center", gap: "0.5rem",
                     backdropFilter: "blur(8px)",
                 }}>
-                    {toastType === "success" ? "✓" : "✗"} {toastMsg}
+                    {toastType === "success"
+                        ? <Check size={16} />
+                        : <X size={16} />}
+                    {toastMsg}
                 </div>
             )}
 
-            <div className="menu-root">
+            <div className="menu-root rp-page-pad">
                 <div className="menu-inner" style={{ position: "relative", zIndex: 1 }}>
 
-                    {/* ── Header ── */}
-                    <div style={{
-                        display: "flex", alignItems: "flex-start",
-                        justifyContent: "space-between", gap: spacing["3"],
-                        marginBottom: spacing["5"],
-                        flexWrap: "wrap",
-                    }}>
+                    {/* Header */}
+                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: spacing["3"], marginBottom: spacing["5"], flexWrap: "wrap" }}>
                         <div>
-                            {/* Breadcrumb */}
                             <nav style={{ display: "flex", alignItems: "center", gap: "0.3rem", marginBottom: "0.4rem" }}>
                                 <Link href="/dashboard" style={{ fontSize: typography.xs, color: cssVar.textMuted, textDecoration: "none" }}>
                                     Tableau de bord
                                 </Link>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" style={{ width: 10, height: 10, color: cssVar.textMuted }}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                                </svg>
+                                <ChevronRight size={10} style={{ color: "var(--text-muted)" }} />
                                 <span style={{ fontSize: typography.xs, color: cssVar.textSecondary }}>Menu</span>
                             </nav>
-                            <h1 style={{
-                                margin: 0, fontSize: typography["2xl"], fontWeight: typography.bold,
-                                fontFamily: typography.fontSerif, color: cssVar.textPrimary,
-                            }}>
+                            <h1 className="rp-h1" style={{ margin: 0, fontWeight: typography.bold, fontFamily: typography.fontSerif, color: cssVar.textPrimary }}>
                                 {isTable ? "Notre Menu" : "Gestion du Menu"}
                             </h1>
                             <p style={{ margin: "0.2rem 0 0", fontSize: typography.sm, color: cssVar.textMuted }}>
@@ -172,104 +165,62 @@ export default function MenuPage() {
                             </p>
                         </div>
 
-                        <div style={{ display: "flex", gap: spacing["2"], alignItems: "center", flexWrap: "wrap" }}>
-                            {/* Bouton panier (Table) */}
+                        <div className="rp-header-actions" style={{ display: "flex", gap: spacing["2"], alignItems: "center", flexWrap: "wrap" }}>
                             {isTable && totalCart > 0 && (
                                 <Link href="/commandes/panier" style={{
                                     display: "inline-flex", alignItems: "center", gap: "0.4rem",
-                                    padding: "0.55rem 1rem",
-                                    borderRadius: radius.lg,
-                                    background: "var(--gradient-btn)",
-                                    color: "#0c0a09", fontWeight: 700,
-                                    fontSize: typography.sm, textDecoration: "none",
-                                    position: "relative",
+                                    padding: "0.55rem 1rem", borderRadius: radius.lg,
+                                    background: "var(--gradient-btn)", color: "#0c0a09",
+                                    fontWeight: 700, fontSize: typography.sm, textDecoration: "none",
                                 }}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" style={{ width: 15, height: 15 }}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-                                    </svg>
+                                    <ShoppingCart size={15} />
                                     Mon panier
-                                    <span style={{
-                                        background: "#0c0a09", color: "var(--amber-glow)",
-                                        borderRadius: "9999px", padding: "0.1rem 0.4rem",
-                                        fontSize: "0.65rem", fontWeight: 800,
-                                    }}>
+                                    <span style={{ background: "#0c0a09", color: "var(--amber-glow)", borderRadius: "9999px", padding: "0.1rem 0.4rem", fontSize: "0.65rem", fontWeight: 800 }}>
                                         {totalCart}
                                     </span>
                                 </Link>
                             )}
 
-                            {/* Bouton ajouter plat (Staff éditeur) */}
                             {canEdit && (
                                 <Link href="/menu/nouveau" style={{
                                     display: "inline-flex", alignItems: "center", gap: "0.4rem",
-                                    padding: "0.55rem 1rem",
-                                    borderRadius: radius.lg,
-                                    background: "var(--gradient-btn)",
-                                    color: "#0c0a09", fontWeight: 700,
-                                    fontSize: typography.sm, textDecoration: "none",
+                                    padding: "0.55rem 1rem", borderRadius: radius.lg,
+                                    background: "var(--gradient-btn)", color: "#0c0a09",
+                                    fontWeight: 700, fontSize: typography.sm, textDecoration: "none",
                                 }}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" style={{ width: 14, height: 14 }}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                    </svg>
+                                    <Plus size={14} />
                                     Ajouter un plat
                                 </Link>
                             )}
                         </div>
                     </div>
 
-                    {/* ── Stats rapides (Staff seulement) ── */}
+                    {/* Stats rapides (Staff) */}
                     {isStaff && !isTable && (
-                        <div style={{
-                            display: "flex", gap: "0.625rem",
-                            marginBottom: spacing["5"],
-                            flexWrap: "wrap",
-                        }}>
+                        <div className="rp-scroll-x" style={{ marginBottom: spacing["5"] }}>
                             {[
                                 { label: "Total", value: stats.total, color: cssVar.amberGlow },
                                 { label: "Disponibles", value: stats.disponibles, color: "#22c55e" },
                                 { label: "Indisponibles", value: stats.indisponibles, color: "#ef4444" },
                                 ...stats.parCategorie.filter((c) => c.count > 0).map((c) => ({
-                                    label: `${c.emoji} ${c.label}`,
-                                    value: c.count,
-                                    color: cssVar.textMuted,
+                                    label: c.label, value: c.count, color: cssVar.textMuted,
                                 })),
                             ].map((s) => (
-                                <div key={s.label} style={{
-                                    padding: "0.45rem 0.875rem",
-                                    borderRadius: radius.lg,
-                                    background: "var(--bg-card)",
-                                    border: "1px solid var(--border-subtle)",
-                                    display: "flex", alignItems: "center", gap: "0.4rem",
-                                }}>
-                                    <span style={{ fontSize: typography.lg, fontWeight: 800, color: s.color }}>
-                                        {s.value}
-                                    </span>
-                                    <span style={{ fontSize: typography.xs, color: cssVar.textMuted }}>
-                                        {s.label}
-                                    </span>
+                                <div key={s.label} className="stat-pill">
+                                    <span style={{ fontSize: typography.lg, fontWeight: 800, color: s.color }}>{s.value}</span>
+                                    <span style={{ fontSize: typography.xs, color: cssVar.textMuted }}>{s.label}</span>
                                 </div>
                             ))}
                         </div>
                     )}
 
-                    {/* ── Filtres ── */}
-                    <div style={{
-                        background: "var(--bg-card)",
-                        border: "1px solid var(--border-subtle)",
-                        borderRadius: radius.xl,
-                        padding: "0.875rem",
-                        marginBottom: spacing["5"],
-                        display: "flex", flexDirection: "column", gap: "0.625rem",
-                    }}>
+                    {/* Filtres */}
+                    <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: radius.xl, padding: "0.875rem", marginBottom: spacing["5"], display: "flex", flexDirection: "column", gap: "0.625rem" }}>
                         {/* Recherche */}
                         <div style={{ position: "relative" }}>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{
-                                position: "absolute", left: "0.75rem", top: "50%",
-                                transform: "translateY(-50%)",
-                                width: 15, height: 15, color: cssVar.textMuted, pointerEvents: "none",
-                            }}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                            </svg>
+                            <span style={{ position: "absolute", left: "0.75rem", top: "50%", transform: "translateY(-50%)", color: cssVar.textMuted, pointerEvents: "none", display: "flex" }}>
+                                <Search size={15} />
+                            </span>
                             <input
                                 type="text"
                                 value={search}
@@ -277,44 +228,34 @@ export default function MenuPage() {
                                 placeholder="Rechercher un plat…"
                                 style={{
                                     width: "100%", padding: "0.6rem 0.875rem 0.6rem 2.25rem",
-                                    borderRadius: radius.lg,
-                                    border: "1px solid var(--border-subtle)",
-                                    background: "var(--bg-section-alt)",
-                                    color: cssVar.textPrimary,
-                                    fontSize: typography.base, outline: "none",
-                                    boxSizing: "border-box",
+                                    borderRadius: radius.lg, border: "1px solid var(--border-subtle)",
+                                    background: "var(--bg-section-alt)", color: cssVar.textPrimary,
+                                    fontSize: typography.base, outline: "none", boxSizing: "border-box",
                                 }}
                             />
                             {search && (
-                                <button
-                                    onClick={() => setSearch("")}
-                                    style={{
-                                        position: "absolute", right: "0.75rem", top: "50%",
-                                        transform: "translateY(-50%)",
-                                        background: "none", border: "none", cursor: "pointer",
-                                        color: cssVar.textMuted, padding: 0,
-                                    }}
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" style={{ width: 14, height: 14 }}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                    </svg>
+                                <button onClick={() => setSearch("")} style={{ position: "absolute", right: "0.75rem", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: cssVar.textMuted, padding: 0, display: "flex" }}>
+                                    <X size={14} />
                                 </button>
                             )}
                         </div>
 
-                        {/* Catégories + dispo filter */}
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
+                        {/* Catégories */}
+                        <div className="rp-scroll-x" style={{ alignItems: "center" }}>
+                            <span style={{ display: "flex", color: cssVar.textMuted, marginRight: "0.2rem" }}>
+                                <Filter size={14} />
+                            </span>
                             {CATEGORIES.map((c) => (
                                 <button
                                     key={c.value}
                                     onClick={() => setCategorie(c.value as typeof categorie)}
                                     className={`cat-btn${categorie === c.value ? " active" : ""}`}
                                 >
-                                    {c.emoji} {c.label}
+                                    <c.icon size={16} />
+                                    {c.label}
                                 </button>
                             ))}
 
-                            {/* Filtre dispo (Staff seulement) */}
                             {isStaff && !isTable && (
                                 <>
                                     <div style={{ width: 1, height: 20, background: "var(--border-subtle)", margin: "0 0.25rem" }} />
@@ -322,84 +263,42 @@ export default function MenuPage() {
                                         onClick={() => setDisponibleFilter(disponibleFilter === true ? undefined : true)}
                                         className={`filter-toggle${disponibleFilter === true ? " active" : ""}`}
                                     >
-                                        ✓ Disponibles
+                                        <Check size={12} />
+                                        Disponibles
                                     </button>
                                     <button
                                         onClick={() => setDisponibleFilter(disponibleFilter === false ? undefined : false)}
                                         className={`filter-toggle${disponibleFilter === false ? " active" : ""}`}
                                     >
-                                        ✗ Indisponibles
+                                        <X size={12} />
+                                        Indisponibles
                                     </button>
                                 </>
                             )}
                         </div>
                     </div>
 
-                    {/* ── Contenu ── */}
+                    {/* Contenu principal */}
                     {loading ? (
-                        <div style={{
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            minHeight: 300, gap: "0.75rem", color: cssVar.textMuted,
-                        }}>
-                            <div style={{
-                                width: 28, height: 28, borderRadius: "50%",
-                                border: "3px solid var(--border-amber)",
-                                borderTopColor: "var(--amber-glow)",
-                                animation: "spin 0.75s linear infinite",
-                            }} />
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: 300, gap: "0.75rem", color: cssVar.textMuted }}>
+                            <div style={{ width: 28, height: 28, borderRadius: "50%", border: "3px solid var(--border-amber)", borderTopColor: "var(--amber-glow)", animation: "spin 0.75s linear infinite" }} />
                             Chargement du menu…
                         </div>
                     ) : error ? (
-                        <div style={{
-                            textAlign: "center", padding: "3rem",
-                            background: "var(--bg-card)", borderRadius: radius.xl,
-                            border: "1px solid rgba(239,68,68,0.2)",
-                        }}>
-                            <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>⚠️</div>
+                        <div style={{ textAlign: "center", padding: "3rem", background: "var(--bg-card)", borderRadius: radius.xl, border: "1px solid rgba(239,68,68,0.2)" }}>
+                            <div style={{ display: "flex", justifyContent: "center", marginBottom: "0.75rem", color: "#ef4444" }}>
+                                <X size={32} />
+                            </div>
                             <p style={{ color: cssVar.textSecondary, marginBottom: "1rem" }}>{error}</p>
-                            <button
-                                onClick={refetch}
-                                style={{
-                                    padding: "0.55rem 1.25rem", borderRadius: radius.lg,
-                                    border: "1px solid var(--border-amber)",
-                                    background: "transparent", color: "var(--amber-glow)",
-                                    cursor: "pointer", fontSize: typography.sm, fontWeight: 600,
-                                }}
-                            >
+                            <button onClick={refetch} style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.55rem 1.25rem", borderRadius: radius.lg, border: "1px solid var(--border-amber)", background: "transparent", color: "var(--amber-glow)", cursor: "pointer", fontSize: typography.sm, fontWeight: 600 }}>
+                                <RefreshCw size={14} />
                                 Réessayer
                             </button>
                         </div>
                     ) : plats.length === 0 ? (
-                        <div style={{
-                            textAlign: "center", padding: "4rem 2rem",
-                            background: "var(--bg-card)", borderRadius: radius.xl,
-                            border: "1px solid var(--border-subtle)",
-                        }}>
-                            <div style={{ fontSize: "3rem", marginBottom: "0.75rem" }}>🍽️</div>
-                            <h3 style={{ margin: "0 0 0.5rem", color: cssVar.textPrimary }}>
-                                {search ? "Aucun résultat" : "Aucun plat"}
-                            </h3>
-                            <p style={{ margin: "0 0 1.5rem", color: cssVar.textMuted, fontSize: typography.sm }}>
-                                {search
-                                    ? `Aucun plat ne correspond à « ${search} »`
-                                    : canEdit
-                                        ? "Commencez par ajouter votre premier plat."
-                                        : "Le menu est vide pour l'instant."}
-                            </p>
-                            {canEdit && !search && (
-                                <Link href="/menu/nouveau" style={{
-                                    display: "inline-flex", alignItems: "center", gap: "0.4rem",
-                                    padding: "0.65rem 1.5rem",
-                                    borderRadius: radius.lg,
-                                    background: "var(--gradient-btn)",
-                                    color: "#0c0a09", fontWeight: 700, textDecoration: "none",
-                                }}>
-                                    + Ajouter le premier plat
-                                </Link>
-                            )}
-                        </div>
+                        <EmptyState search={search} canEdit={canEdit} categorie={categorie} />
                     ) : (
-                        <div className="plats-grid">
+                        <div className="rp-plats-grid" style={{ animation: "fadeIn 0.3s ease" }}>
                             {isTable
                                 ? plats.map((plat) => (
                                     <PlatCardTable
@@ -422,15 +321,12 @@ export default function MenuPage() {
                         </div>
                     )}
 
-                    {/* Résumé résultats */}
+                    {/* Résumé */}
                     {!loading && plats.length > 0 && (
-                        <p style={{
-                            textAlign: "center", marginTop: spacing["6"],
-                            fontSize: typography.xs, color: cssVar.textMuted,
-                        }}>
+                        <p style={{ textAlign: "center", marginTop: spacing["6"], fontSize: typography.xs, color: cssVar.textMuted }}>
                             {plats.length} plat{plats.length > 1 ? "s" : ""}
                             {search ? ` pour « ${search} »` : ""}
-                            {categorie ? ` dans ${CATEGORIES.find((c) => c.value === categorie)?.label}` : ""}
+                            {categorie ? ` · ${CATEGORIES.find((c) => c.value === categorie)?.label}` : ""}
                         </p>
                     )}
                 </div>
@@ -439,18 +335,42 @@ export default function MenuPage() {
     );
 }
 
+// ── Sub-components ─────────────────────────────────────────────────────────
+
+
+
+function EmptyState({ search, canEdit, categorie }: { search: string; canEdit: boolean; categorie: string }) {
+    return (
+        <div style={{ textAlign: "center", padding: "4rem 2rem", background: "var(--bg-card)", borderRadius: radius.xl, border: "1px solid var(--border-subtle)" }}>
+            <div style={{ width: 64, height: 64, borderRadius: "50%", background: "var(--icon-bg)", border: "1px solid var(--icon-border)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1rem", color: "var(--icon-primary)" }}>
+                <ClipboardList size={28} />
+            </div>
+            <h3 style={{ margin: "0 0 0.5rem", color: "var(--text-primary)" }}>
+                {search ? "Aucun résultat" : "Aucun plat"}
+            </h3>
+            <p style={{ margin: "0 0 1.5rem", color: "var(--text-muted)", fontSize: typography.sm }}>
+                {search
+                    ? `Aucun plat ne correspond à « ${search} »`
+                    : canEdit
+                        ? "Commencez par ajouter votre premier plat."
+                        : "Le menu est vide pour l'instant."}
+            </p>
+            {canEdit && !search && (
+                <Link href="/menu/nouveau" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.65rem 1.5rem", borderRadius: radius.lg, background: "var(--gradient-btn)", color: "#0c0a09", fontWeight: 700, textDecoration: "none" }}>
+                    <Plus size={14} />
+                    Ajouter le premier plat
+                </Link>
+            )}
+        </div>
+    );
+}
+
+
+
 function PageLoader() {
     return (
-        <div style={{
-            minHeight: "100vh", display: "flex", alignItems: "center",
-            justifyContent: "center", background: cssVar.bgDark,
-        }}>
-            <div style={{
-                width: 34, height: 34, borderRadius: "50%",
-                border: "3px solid var(--border-amber)",
-                borderTopColor: "var(--amber-glow)",
-                animation: "spin .75s linear infinite",
-            }} />
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-dark)" }}>
+            <div style={{ width: 34, height: 34, borderRadius: "50%", border: "3px solid var(--border-amber)", borderTopColor: "var(--amber-glow)", animation: "spin .75s linear infinite" }} />
             <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
         </div>
     );

@@ -96,9 +96,13 @@ export async function apiRequest<T = unknown>(
     const { skipAuth = false, skipRefresh = false, ...fetchOptions } = options;
 
     const headers: Record<string, string> = {
-        "Content-Type": "application/json",
         ...(fetchOptions.headers as Record<string, string>),
     };
+
+    // Si le corps n'est pas un FormData, on ajoute par défaut application/json
+    if (!(fetchOptions.body instanceof FormData) && !headers["Content-Type"]) {
+        headers["Content-Type"] = "application/json";
+    }
 
     if (!skipAuth) {
         const token = getAccessToken();

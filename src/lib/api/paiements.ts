@@ -102,43 +102,43 @@ export async function validerRemise(
 // ── Caisse Comptable ───────────────────────────────────────────────────────
 
 export async function getMaCaisseComptable(): Promise<ApiResponse<CaisseComptable>> {
-    return apiRequest("/paiements/caisse-comptable/ma-caisse/");
+    return apiRequest("/paiements/caisse-comptable/active/");
 }
 
 export async function ouvrirCaisseComptable(): Promise<ApiResponse<CaisseComptable>> {
     return apiRequest("/paiements/caisse-comptable/ouvrir/", { method: "POST" });
 }
 
-export async function fermerCaisseComptable(payload: {
-    montant_physique: number;
-    motif_ecart?: string;
-}): Promise<ApiResponse<CaisseComptable>> {
-    return apiRequest("/paiements/caisse-comptable/fermer/", {
+export async function fermerCaisseComptable(
+    pk: number,
+    payload: { montant_physique: number; motif_ecart?: string }
+): Promise<ApiResponse<CaisseComptable>> {
+    return apiRequest(`/paiements/caisse-comptable/${pk}/fermer/`, {
         method: "POST",
         body: JSON.stringify(payload),
     });
 }
 
-export async function approvisionnerCaisse(payload: {
-    montant: number;
-    motif: string;
-}): Promise<ApiResponse<MouvementCaisse>> {
-    return apiRequest("/paiements/caisse-comptable/approvisionner/", {
+export async function approvisionnerCaisse(
+    pk: number,
+    payload: { montant: number; motif: string }
+): Promise<ApiResponse<CaisseComptable>> {
+    return apiRequest(`/paiements/caisse-comptable/${pk}/approvisionner/`, {
         method: "POST",
         body: JSON.stringify(payload),
     });
 }
 
-export async function enregistrerDepense(payload: {
-    montant: number;
-    motif: string;
-}): Promise<ApiResponse<MouvementCaisse>> {
-    return apiRequest("/paiements/caisse-comptable/depense/", {
+export async function enregistrerDepense(
+    pk: number,
+    payload: { montant: number; motif: string }
+): Promise<ApiResponse<{ id: number; montant: string; motif: string; created_at: string }>> {
+    return apiRequest(`/paiements/caisse-comptable/${pk}/depense/`, {
         method: "POST",
         body: JSON.stringify(payload),
     });
 }
 
-export async function getMouvements(): Promise<ApiResponse<{ mouvements: MouvementCaisse[] }>> {
-    return apiRequest("/paiements/caisse-comptable/mouvements/");
+export async function getMouvementsCaisse(pk: number): Promise<ApiResponse<{ depenses: MouvementCaisse[] }>> {
+    return apiRequest(`/paiements/caisse-comptable/${pk}/depenses/`);
 }

@@ -149,6 +149,7 @@ export default function ProfilPage() {
                             </div>
                         )}
 
+                        {role !== "Rtable" && (
                         <div style={{ marginTop: spacing["3"], display: "flex", gap: spacing["2"], flexWrap: "wrap" }}>
                             <Link href="/auth/change-password" style={{
                                 display: "inline-flex", alignItems: "center", gap: spacing["2"],
@@ -162,6 +163,7 @@ export default function ProfilPage() {
                                 Changer le mot de passe
                             </Link>
                         </div>
+                        )}
                     </div>
 
                     {/* Cards infos */}
@@ -208,7 +210,7 @@ export default function ProfilPage() {
                                     Choisissez le thème d'affichage de l'interface. Le mode Système suit automatiquement la préférence de votre appareil.
                                 </p>
                                 <div style={{ ...iconContainer(0), width: "auto", height: "auto", background: "none", border: "none", display: "block" }}>
-                                    <ThemeSwitcher variant="sidebar" />
+                                    <ThemeSwitcher variant="page" />
                                 </div>
                             </div>
                         </Card>
