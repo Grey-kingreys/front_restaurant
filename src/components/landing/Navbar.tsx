@@ -5,7 +5,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import ThemeSwitcher from "../ui/ThemeSwitcher";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShoppingBag, ChefHat } from "lucide-react";
 
 const NAV_LINKS = [
   { label: "Fonctionnalités", href: "#features" },
@@ -19,10 +19,13 @@ interface NavbarProps {
 }
 
 export default function Navbar({ scrolled }: NavbarProps) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const closeMobile = () => setMobileOpen(false);
+
+  const isClient = isAuthenticated && user?.role === "Rclient";
+  const isStaff  = isAuthenticated && user?.role !== "Rclient";
 
   return (
     <>
@@ -64,16 +67,53 @@ export default function Navbar({ scrolled }: NavbarProps) {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
             <div style={{ width: 1, height: 24, background: "var(--border-subtle)" }} />
-            {isAuthenticated ? (
-              <Link href="/dashboard" className="btn-primary" style={{ padding: "0.55rem 1.4rem", fontSize: "0.875rem" }}>
+
+            {isStaff && (
+              <Link href="/dashboard" className="btn-primary" style={{ padding: "0.55rem 1.4rem", fontSize: "0.875rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                <ChefHat size={14} />
                 Mon espace
               </Link>
-            ) : (
+            )}
+
+            {isClient && (
               <>
-                <Link href="/auth/login" className="btn-outline" style={{ padding: "0.55rem 1.4rem", fontSize: "0.875rem" }}>
-                  Connexion
+                <span style={{ fontSize: "0.82rem", color: "var(--text-muted)" }}>{user?.nom_complet?.split(" ")[0]}</span>
+                <Link href="/client" className="btn-outline" style={{ padding: "0.55rem 1.2rem", fontSize: "0.875rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                  <ChefHat size={14} />
+                  Mon espace
                 </Link>
-                <Link href="/auth/login" className="btn-primary" style={{ padding: "0.55rem 1.4rem", fontSize: "0.875rem" }}>
+                <Link href="/client/restaurants" className="btn-primary" style={{ padding: "0.55rem 1.2rem", fontSize: "0.875rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                  <ShoppingBag size={14} />
+                  Commander
+                </Link>
+              </>
+            )}
+
+            {!isAuthenticated && (
+              <>
+                {/* Bouton client — commander */}
+                <Link
+                  href="/auth/client/register"
+                  style={{
+                    display: "flex", alignItems: "center", gap: "0.4rem",
+                    padding: "0.55rem 1.2rem", borderRadius: "0.625rem",
+                    background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.35)",
+                    color: "#fbbf24", fontSize: "0.875rem", fontWeight: 600,
+                    textDecoration: "none", whiteSpace: "nowrap",
+                  }}
+                >
+                  <ShoppingBag size={14} />
+                  Commander
+                </Link>
+
+                {/* Séparateur */}
+                <div style={{ width: 1, height: 20, background: "var(--border-subtle)" }} />
+
+                {/* Bouton restaurant — connexion staff */}
+                <Link href="/auth/login" className="btn-outline" style={{ padding: "0.55rem 1.2rem", fontSize: "0.875rem" }}>
+                  Restaurants
+                </Link>
+                <Link href="/auth/login" className="btn-primary" style={{ padding: "0.55rem 1.2rem", fontSize: "0.875rem" }}>
                   Démo gratuite
                 </Link>
               </>
@@ -130,19 +170,41 @@ export default function Navbar({ scrolled }: NavbarProps) {
               ))}
             </nav>
 
-            {/* Actions */}
+            {/* Actions mobile */}
             <div className="nav-mobile-actions">
-              {isAuthenticated ? (
-                <Link href="/dashboard" className="btn-primary" onClick={closeMobile} style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "48px", fontSize: "1rem" }}>
-                  Mon espace
+              {isStaff && (
+                <Link href="/dashboard" className="btn-primary" onClick={closeMobile} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", minHeight: "48px", fontSize: "1rem" }}>
+                  <ChefHat size={16} /> Mon espace restaurant
                 </Link>
-              ) : (
+              )}
+
+              {isClient && (
                 <>
-                  <Link href="/auth/login" className="btn-outline" onClick={closeMobile} style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "48px", fontSize: "1rem" }}>
-                    Connexion
+                  <Link href="/client" className="btn-outline" onClick={closeMobile} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", minHeight: "48px", fontSize: "1rem" }}>
+                    <ChefHat size={16} /> Mon espace
                   </Link>
+                  <Link href="/client/restaurants" className="btn-primary" onClick={closeMobile} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", minHeight: "48px", fontSize: "1rem" }}>
+                    <ShoppingBag size={16} /> Commander
+                  </Link>
+                </>
+              )}
+
+              {!isAuthenticated && (
+                <>
+                  <Link href="/auth/client/register" onClick={closeMobile}
+                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", minHeight: "48px", fontSize: "1rem", borderRadius: "0.75rem", background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.35)", color: "#fbbf24", fontWeight: 700, textDecoration: "none" }}>
+                    <ShoppingBag size={16} /> Créer un compte client
+                  </Link>
+                  <Link href="/auth/login" className="btn-outline" onClick={closeMobile} style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "48px", fontSize: "1rem" }}>
+                    Déjà client ? Se connecter
+                  </Link>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", margin: "0.25rem 0" }}>
+                    <div style={{ flex: 1, height: 1, background: "var(--border-subtle)" }} />
+                    <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", whiteSpace: "nowrap" }}>Je suis un restaurant</span>
+                    <div style={{ flex: 1, height: 1, background: "var(--border-subtle)" }} />
+                  </div>
                   <Link href="/auth/login" className="btn-primary" onClick={closeMobile} style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "48px", fontSize: "1rem" }}>
-                    Démo gratuite
+                    Accès restaurant / Démo
                   </Link>
                 </>
               )}

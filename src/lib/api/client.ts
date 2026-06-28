@@ -26,6 +26,29 @@ export function clearTokens(): void {
     localStorage.removeItem("user");
 }
 
+// ── Session admin (impersonation) ──────────────────────────────────────────
+
+export function saveAdminSession(access: string, refresh: string, user: unknown): void {
+    localStorage.setItem("admin_access_token", access);
+    localStorage.setItem("admin_refresh_token", refresh);
+    localStorage.setItem("admin_user", JSON.stringify(user));
+}
+
+export function getAdminSession(): { access: string; refresh: string; user: unknown } | null {
+    if (typeof window === "undefined") return null;
+    const access = localStorage.getItem("admin_access_token");
+    const refresh = localStorage.getItem("admin_refresh_token");
+    const raw = localStorage.getItem("admin_user");
+    if (!access || !refresh || !raw) return null;
+    try { return { access, refresh, user: JSON.parse(raw) }; } catch { return null; }
+}
+
+export function clearAdminSession(): void {
+    localStorage.removeItem("admin_access_token");
+    localStorage.removeItem("admin_refresh_token");
+    localStorage.removeItem("admin_user");
+}
+
 export function saveUser(user: unknown): void {
     localStorage.setItem("user", JSON.stringify(user));
 }

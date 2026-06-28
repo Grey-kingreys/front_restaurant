@@ -27,6 +27,7 @@ import {
     UserX,
     KeyRound,
     Pencil,
+    Play,
 } from "lucide-react";
 
 const ROLES_AUTORISES: Role[] = ["Radmin", "Rmanager", "Rsuper_admin"];
@@ -286,7 +287,7 @@ function ResetPasswordForm({ user, onSubmit, onClose, loading, error }: {
 type ModalMode = "create" | "edit" | "reset" | null;
 
 export default function EquipePage() {
-    const { user, isAuthenticated, isLoading } = useAuth();
+    const { user, isAuthenticated, isLoading, impersonate, hasPermission } = useAuth();
     const router = useRouter();
 
     const [users, setUsers]             = useState<User[]>([]);
@@ -304,7 +305,7 @@ export default function EquipePage() {
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) router.replace("/auth/login");
-        if (!isLoading && user && !ROLES_AUTORISES.includes(user.role as Role)) router.replace("/dashboard");
+        if (!isLoading && user && !hasPermission("manage_equipe")) router.replace("/dashboard");
     }, [isLoading, isAuthenticated, user, router]);
 
     const fetchUsers = useCallback(async () => {
@@ -411,10 +412,20 @@ export default function EquipePage() {
         }
     };
 
-    if (isLoading || !user) return <PageLoader />;
-    if (!ROLES_AUTORISES.includes(user.role as Role)) return null;
+    const ROLES_SIMULABLES: Role[] = ["Rmanager", "Rserveur", "Rchef_cuisinier", "Rcuisinier", "Rcomptable", "Rtable"];
 
-    const isAdmin = user.role === "Radmin" || user.role === "Rsuper_admin";
+    const handleSimuler = async (u: User) => {
+        try {
+            await impersonate(u.id);
+        } catch {
+            showToast("Impossible de simuler cet utilisateur.", "error");
+        }
+    };
+
+    if (isLoading || !user) return <PageLoader />;
+    if (!hasPermission("manage_equipe")) return null;
+
+    const isAdmin = hasPermission("impersonate");
 
     const filtered = users.filter(u => {
         if (!search) return true;
@@ -447,6 +458,8 @@ export default function EquipePage() {
                 .search-input:focus { border-color:var(--border-amber); }
                 select.filter-sel { background:var(--bg-section-alt); border:1px solid var(--border-subtle); border-radius:0.625rem; padding:0.55rem 2rem 0.55rem 0.75rem; color:var(--text-primary); font-size:0.8rem; font-weight:600; outline:none; appearance:none; cursor:pointer; }
                 select.filter-sel:focus { border-color:var(--border-amber); }
+                @media (min-width: 1024px) { .rp-cards-mobile { display:none !important; } }
+                @media (max-width: 1023px) { .rp-table-desktop { display:none !important; } }
             `}</style>
 
             {/* Glow */}
@@ -628,6 +641,16 @@ export default function EquipePage() {
                                                         >
                                                             {u.actif ? <UserX size={13} /> : <UserCheck size={13} />}
                                                         </button>
+                                                        {isAdmin && ROLES_SIMULABLES.includes(u.role as Role) && u.actif && u.id !== user.id && (
+                                                            <button
+                                                                title="Simuler cet utilisateur"
+                                                                className="icon-btn"
+                                                                onClick={() => handleSimuler(u)}
+                                                                style={{ color: "#7c3aed", borderColor: "rgba(124,58,237,0.3)" }}
+                                                            >
+                                                                <Play size={13} />
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -669,6 +692,11 @@ export default function EquipePage() {
                                             <button onClick={() => handleToggle(u)} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "0.5rem", border: `1px solid ${u.actif ? "rgba(239,68,68,0.3)" : "rgba(34,197,94,0.3)"}`, background: "transparent", color: u.actif ? "#ef4444" : "#22c55e", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
                                                 {u.actif ? <><UserX size={12} /> Désactiver</> : <><UserCheck size={12} /> Activer</>}
                                             </button>
+                                            {isAdmin && ROLES_SIMULABLES.includes(u.role as Role) && u.actif && u.id !== user.id && (
+                                                <button onClick={() => handleSimuler(u)} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem 0.6rem", borderRadius: "0.5rem", border: "1px solid rgba(124,58,237,0.3)", background: "transparent", color: "#7c3aed", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
+                                                    <Play size={12} /> Simuler
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 ))}

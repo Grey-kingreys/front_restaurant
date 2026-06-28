@@ -1,9 +1,9 @@
 "use client";
-// src/app/auth/login/page.tsx
+// src/app/auth/login/page.tsx — Page de connexion unifiée (staff, table, client)
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { loginWithEmail, loginWithLogin } from "@/lib/api/auth";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -26,6 +26,8 @@ type LoginMode = "email" | "login";
 
 export default function LoginPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const nextUrl = searchParams?.get("next") ?? null;
     const { setUser } = useAuth();
     const [mode, setMode] = useState<LoginMode>("email");
     const [email, setEmail] = useState("");
@@ -46,7 +48,14 @@ export default function LoginPage() {
 
             if (res.success && res.data) {
                 setUser(res.data.user);
-                router.push("/dashboard");
+                const role = res.data.user.role;
+                if (nextUrl) {
+                    router.push(nextUrl);
+                } else if (role === "Rclient") {
+                    router.push("/client");
+                } else {
+                    router.push("/dashboard");
+                }
             } else {
                 setError(res.message || "Identifiants invalides.");
             }
@@ -60,7 +69,7 @@ export default function LoginPage() {
         } finally {
             setLoading(false);
         }
-    }, [mode, email, loginVal, password, setUser, router]);
+    }, [mode, email, loginVal, password, setUser, router, nextUrl]);
 
     return (
         <div style={{ ...authPageRoot, padding: "1.5rem" }}>
@@ -110,15 +119,15 @@ export default function LoginPage() {
                                 background: mode === m ? cssVar.gradientBtn : "transparent",
                                 color: mode === m ? palette.btnText : cssVar.textMuted,
                             }}>
-                                {m === "email" ? "Connexion Staff" : "Connexion Table"}
+                                {m === "email" ? "Email" : "Identifiant"}
                             </button>
                         ))}
                     </div>
 
                     <p style={{ fontSize: typography.xs, color: cssVar.textMuted, marginBottom: spacing["5"] }}>
                         {mode === "email"
-                            ? "Pour les administrateurs, managers, serveurs, cuisiniers et comptables."
-                            : "Pour les tables — via QR Code ou identifiants fournis par l'admin."}
+                            ? "Clients, administrateurs, managers, serveurs, cuisiniers et comptables."
+                            : "Pour les tables — identifiants fournis par l'administrateur."}
                     </p>
 
                     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: spacing["4"] }}>
@@ -186,6 +195,19 @@ export default function LoginPage() {
                             ) : "Se connecter"}
                         </button>
                     </form>
+
+                    {/* Lien inscription client */}
+                    {mode === "email" && (
+                        <p style={{ textAlign: "center", marginTop: spacing["5"], fontSize: typography.sm, color: cssVar.textMuted }}>
+                            Pas encore de compte ?{" "}
+                            <Link
+                                href={`/auth/client/register${nextUrl ? `?next=${encodeURIComponent(nextUrl)}` : ""}`}
+                                style={{ color: cssVar.amberGlow, textDecoration: "none", fontWeight: typography.semibold }}
+                            >
+                                Créer un compte client
+                            </Link>
+                        </p>
+                    )}
                 </div>
 
                 <p style={{ textAlign: "center", marginTop: spacing["6"], fontSize: typography.xs, color: cssVar.textMuted }}>

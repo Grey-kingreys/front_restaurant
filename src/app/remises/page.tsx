@@ -44,7 +44,7 @@ function StatutBadge({ valide }: { valide: boolean }) {
 }
 
 export default function RemisesPage() {
-    const { user, isAuthenticated, isLoading } = useAuth();
+    const { user, isAuthenticated, isLoading, hasPermission } = useAuth();
     const router = useRouter();
 
     const [remises, setRemises]         = useState<RemiseServeur[]>([]);
@@ -55,7 +55,7 @@ export default function RemisesPage() {
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) router.replace("/auth/login");
-        if (!isLoading && user && !ROLES_AUTORISES.includes(user.role as Role)) router.replace("/dashboard");
+        if (!isLoading && user && !hasPermission("view_remises")) router.replace("/dashboard");
     }, [isLoading, isAuthenticated, user, router]);
 
     const fetchRemises = useCallback(async () => {
@@ -86,7 +86,7 @@ export default function RemisesPage() {
         v ? `${Number(v).toLocaleString("fr-FR")} GNF` : "—";
 
     if (isLoading || !user) return <PageLoader />;
-    if (!ROLES_AUTORISES.includes(user.role as Role)) return null;
+    if (!hasPermission("view_remises")) return null;
 
     const totalVirtuels = remises.reduce((s, r) => s + parseFloat(r.montant_virtuel || "0"), 0);
     const validees = remises.filter(r => r.valide);

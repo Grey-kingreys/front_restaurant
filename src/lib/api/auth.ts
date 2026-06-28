@@ -56,16 +56,24 @@ export async function loginWithLogin(
 }
 
 /**
- * Connexion automatique via QR Code (token dans l'URL)
- * La route backend est /api/accounts/qr/<token>/
+ * Connexion automatique via QR Code avec validation GPS.
+ * Envoie la position GPS si disponible — requise si le restaurant a des coordonnées.
  */
 export async function loginViaQR(
-    qrToken: string
+    qrToken: string,
+    coords?: { lat: number; lng: number }
 ): Promise<LoginResponse> {
+    const body: Record<string, number> = {};
+    if (coords) {
+        body.lat = coords.lat;
+        body.lng = coords.lng;
+    }
+
     const data = await apiRequest<LoginResponse>(
         `/accounts/qr/${qrToken}/`,
         {
-            method: "GET",
+            method: "POST",
+            body: JSON.stringify(body),
             skipAuth: true,
         }
     );
@@ -73,6 +81,9 @@ export async function loginViaQR(
     if (data.success && data.data) {
         setTokens(data.data.access, data.data.refresh);
         saveUser(data.data.user);
+        if (data.data.expires_at) {
+            localStorage.setItem("session_expires_at", data.data.expires_at);
+        }
     }
 
     return data;
@@ -102,6 +113,20 @@ export async function logout(refreshToken: string): Promise<ApiResponse> {
  */
 export async function getMe(): Promise<ApiResponse<User>> {
     return apiRequest<ApiResponse<User>>("/accounts/auth/me/");
+}
+
+/**
+ * L'utilisateur modifie son propre profil (nom, email, téléphone)
+ */
+export async function updateMe(payload: {
+    nom_complet?: string;
+    email?: string;
+    telephone?: string;
+}): Promise<ApiResponse<User>> {
+    return apiRequest<ApiResponse<User>>("/accounts/auth/me/", {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+    });
 }
 
 // ── CHANGEMENT MOT DE PASSE ────────────────────────────────────────────────
@@ -212,6 +237,17 @@ export async function deleteUser(id: number): Promise<ApiResponse> {
     return apiRequest<ApiResponse>(`/accounts/auth/users/${id}/`, {
         method: "DELETE",
     });
+}
+
+/**
+ * Simuler un utilisateur (Admin uniquement)
+ * Retourne de vrais tokens JWT pour l'utilisateur cible
+ */
+export async function impersonateUser(userId: number): Promise<ApiResponse<{ access: string; refresh: string; user: User }>> {
+    return apiRequest<ApiResponse<{ access: string; refresh: string; user: User }>>(
+        `/accounts/auth/users/${userId}/impersonate/`,
+        { method: "POST" }
+    );
 }
 
 /**

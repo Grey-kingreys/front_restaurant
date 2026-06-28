@@ -17,7 +17,7 @@ export interface Plat {
     nom: string;
     description: string | null;
     prix_unitaire: string;
-    image: string | null;
+    image_url: string | null;
     disponible: boolean;
     categorie: Categorie;
     necessite_validation_cuisine: boolean;

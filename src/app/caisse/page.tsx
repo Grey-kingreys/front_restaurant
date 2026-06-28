@@ -6,12 +6,11 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-    getMaCaisseComptable,
+    getMaCaisseActive,
     ouvrirCaisseComptable,
     fermerCaisseComptable,
     approvisionnerCaisse,
-    enregistrerDepense,
-    getMouvementsCaisse,
+    creerDepense,
     listRemises,
     validerRemise,
     type CaisseComptable,
@@ -63,7 +62,7 @@ type TabKey = "mouvements" | "remises";
 type ModalMode = "ouvrir" | "fermer" | "appro" | "depense" | "remise" | null;
 
 export default function CaissePage() {
-    const { user, isAuthenticated, isLoading } = useAuth();
+    const { user, isAuthenticated, isLoading, hasPermission } = useAuth();
     const router = useRouter();
 
     const [caisse, setCaisse]           = useState<CaisseComptable | null>(null);
@@ -84,26 +83,21 @@ export default function CaissePage() {
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) router.replace("/auth/login");
-        if (!isLoading && user && !ROLES_AUTORISES.includes(user.role as Role)) router.replace("/dashboard");
-    }, [isLoading, isAuthenticated, user, router]);
+        if (!isLoading && user && !hasPermission("manage_caisse_comptable")) router.replace("/dashboard");
+    }, [isLoading, isAuthenticated, user, router, hasPermission]);
 
     const fetchAll = useCallback(async () => {
         setLoadingMain(true);
         try {
-            const cRes = await getMaCaisseComptable();
-            let activeCaisse: CaisseComptable | null = null;
+            const cRes = await getMaCaisseActive();
             if (cRes.success && cRes.data) {
-                activeCaisse = cRes.data;
                 setCaisse(cRes.data);
+                setMouvements(cRes.data.mouvements ?? []);
             } else {
                 setCaisse(null);
             }
-            const [mRes, rRes] = await Promise.allSettled([
-                activeCaisse ? getMouvementsCaisse(activeCaisse.id) : Promise.resolve({ success: false, data: null, message: "" }),
-                listRemises(),
-            ]);
-            if (mRes.status === "fulfilled" && mRes.value.success && mRes.value.data) setMouvements((mRes.value.data as { depenses: MouvementCaisse[] }).depenses ?? []);
-            if (rRes.status === "fulfilled" && rRes.value.success && rRes.value.data) setRemises((rRes.value.data as { remises: RemiseServeur[] }).remises ?? []);
+            const rRes = await listRemises();
+            if (rRes.success && rRes.data) setRemises(rRes.data.remises ?? []);
         } finally {
             setLoadingMain(false);
         }
@@ -161,7 +155,8 @@ export default function CaissePage() {
         setFormLoading(true);
         setFormError(null);
         try {
-            const res = await enregistrerDepense(caisse.id, { montant: parseFloat(fMontant), motif: fMotif });
+            const today = new Date().toISOString().split("T")[0];
+            const res = await creerDepense(caisse.id, { montant: parseFloat(fMontant), motif: fMotif, date_depense: today });
             if (res.success) { showToast("Dépense enregistrée."); closeModal(); fetchAll(); }
             else setFormError("Impossible d'enregistrer.");
         } catch { setFormError("Erreur."); }
@@ -185,7 +180,7 @@ export default function CaissePage() {
     const fmtMontant = (v: string) => `${Number(v).toLocaleString("fr-FR")} GNF`;
 
     if (isLoading || !user) return <PageLoader />;
-    if (!ROLES_AUTORISES.includes(user.role as Role)) return null;
+    if (!hasPermission("manage_caisse_comptable")) return null;
 
     const remisesEnAttente = remises.filter(r => !r.valide);
 

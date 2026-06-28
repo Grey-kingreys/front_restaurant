@@ -12,6 +12,8 @@ import {
     deleteTable,
     regenerateQRCode,
     type Table,
+    type TableCreatePayload,
+    type TableUpdatePayload,
 } from "@/lib/api/restaurant";
 import type { Role } from "@/types";
 import { cssVar, typography, radius } from "@/theme/theme";
@@ -57,19 +59,61 @@ function StatutBadge({ statut }: { statut: string }) {
 
 // ── Formulaire table ─────────────────────────────────────────────────────────
 
-function TableForm({ initial, onSubmit, onClose, loading, error }: {
+function slugifyLogin(s: string) {
+    return s.toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
+}
+
+function TableForm({ initial, onSubmitCreate, onSubmitUpdate, onClose, loading, error }: {
     initial?: Table | null;
-    onSubmit: (data: { numero_table: string; nombre_places: number }) => Promise<void>;
+    onSubmitCreate: (data: TableCreatePayload) => Promise<void>;
+    onSubmitUpdate: (data: TableUpdatePayload) => Promise<void>;
     onClose: () => void;
     loading: boolean;
     error: string | null;
 }) {
-    const [numero, setNumero]   = useState(initial?.numero_table ?? "");
-    const [places, setPlaces]   = useState(String(initial?.nombre_places ?? 4));
+    const isEdit = !!initial;
+
+    const [numero,      setNumero]      = useState(initial?.numero_table ?? "");
+    const [places,      setPlaces]      = useState(String(initial?.nombre_places ?? 4));
+    const [login,       setLogin]       = useState("");
+    const [loginTouched, setLoginTouched] = useState(false);
+    const [nomComplet,  setNomComplet]  = useState(
+        initial ? (initial as Table & { utilisateur_nom?: string }).utilisateur_nom ?? "" : ""
+    );
+
+    // Auto-suggestion du login à partir du numéro de table (création seulement)
+    const handleNumeroChange = (val: string) => {
+        setNumero(val);
+        if (!isEdit && !loginTouched) {
+            setLogin(slugifyLogin(`table_${val}`));
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        await onSubmit({ numero_table: numero, nombre_places: parseInt(places, 10) || 4 });
+        if (isEdit) {
+            const payload: TableUpdatePayload = { numero_table: numero, nombre_places: parseInt(places, 10) || 4 };
+            if (nomComplet.trim()) payload.nom_complet = nomComplet.trim();
+            await onSubmitUpdate(payload);
+        } else {
+            await onSubmitCreate({
+                numero_table: numero,
+                nombre_places: parseInt(places, 10) || 4,
+                login: login.trim(),
+                nom_complet: nomComplet.trim() || undefined,
+            });
+        }
+    };
+
+    const inputStyle: React.CSSProperties = {
+        width: "100%", padding: "0.6rem 0.75rem", borderRadius: radius.lg,
+        border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)",
+        color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box",
+    };
+    const labelStyle: React.CSSProperties = {
+        display: "block", fontSize: typography.xs, fontWeight: 700,
+        textTransform: "uppercase", letterSpacing: "0.06em",
+        color: cssVar.textMuted, marginBottom: "0.375rem",
     };
 
     return (
@@ -79,25 +123,20 @@ function TableForm({ initial, onSubmit, onClose, loading, error }: {
                     {error}
                 </div>
             )}
+
+            {/* Numéro de table */}
             <div>
-                <label style={{ display: "block", fontSize: typography.xs, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: cssVar.textMuted, marginBottom: "0.375rem" }}>Numéro / Nom de la table *</label>
-                <input
-                    type="text"
-                    value={numero}
-                    onChange={e => setNumero(e.target.value)}
-                    placeholder="Ex: T1, Table VIP, Terrasse 3…"
-                    required
-                    style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }}
-                />
+                <label style={labelStyle}>Numéro / Nom de la table *</label>
+                <input type="text" value={numero} onChange={e => handleNumeroChange(e.target.value)}
+                    placeholder="Ex: 01, VIP, Terrasse 3…" required style={inputStyle} />
             </div>
+
+            {/* Nombre de places */}
             <div>
-                <label style={{ display: "block", fontSize: typography.xs, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: cssVar.textMuted, marginBottom: "0.375rem" }}>Nombre de places *</label>
+                <label style={labelStyle}>Nombre de places *</label>
                 <div style={{ position: "relative" }}>
-                    <select
-                        value={places}
-                        onChange={e => setPlaces(e.target.value)}
-                        style={{ width: "100%", padding: "0.6rem 2rem 0.6rem 0.75rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textPrimary, fontSize: typography.sm, appearance: "none" }}
-                    >
+                    <select value={places} onChange={e => setPlaces(e.target.value)}
+                        style={{ ...inputStyle, padding: "0.6rem 2rem 0.6rem 0.75rem", appearance: "none" }}>
                         {[1, 2, 3, 4, 5, 6, 7, 8, 10, 12].map(n => (
                             <option key={n} value={n}>{n} place{n > 1 ? "s" : ""}</option>
                         ))}
@@ -105,11 +144,34 @@ function TableForm({ initial, onSubmit, onClose, loading, error }: {
                     <ChevronDown size={14} style={{ position: "absolute", right: "0.65rem", top: "50%", transform: "translateY(-50%)", color: cssVar.textMuted, pointerEvents: "none" }} />
                 </div>
             </div>
+
+            {/* Nom affiché (optionnel) */}
+            <div>
+                <label style={labelStyle}>Nom affiché {!isEdit && "(optionnel)"}</label>
+                <input type="text" value={nomComplet} onChange={e => setNomComplet(e.target.value)}
+                    placeholder={`Ex: Table ${numero || "01"}`} style={inputStyle} />
+                {!isEdit && <p style={{ margin: "3px 0 0", fontSize: "0.68rem", color: cssVar.textMuted }}>Si vide, le numéro de table est utilisé.</p>}
+            </div>
+
+            {/* Login — création uniquement */}
+            {!isEdit && (
+                <div>
+                    <label style={labelStyle}>Login du compte table *</label>
+                    <input type="text" value={login}
+                        onChange={e => { setLogin(slugifyLogin(e.target.value)); setLoginTouched(true); }}
+                        placeholder="Ex: lebaobab_table_01" required
+                        style={{ ...inputStyle, fontFamily: "monospace" }} />
+                    <p style={{ margin: "3px 0 0", fontSize: "0.68rem", color: cssVar.textMuted }}>
+                        Identifiant unique (lettres minuscules, chiffres, _). Utilisé pour la connexion QR.
+                    </p>
+                </div>
+            )}
+
             <div style={{ display: "flex", gap: "0.5rem", paddingTop: "0.25rem" }}>
                 <button type="button" onClick={onClose} style={{ flex: 1, padding: "0.65rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textSecondary, fontWeight: 700, fontSize: typography.sm, cursor: "pointer" }}>Annuler</button>
                 <button type="submit" disabled={loading} style={{ flex: 2, padding: "0.65rem", borderRadius: radius.lg, border: "none", background: "var(--gradient-btn)", color: "#0c0a09", fontWeight: 700, fontSize: typography.sm, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>
                     {loading && <div style={{ width: 13, height: 13, borderRadius: "50%", border: "2px solid #0c0a09", borderTopColor: "transparent", animation: "spin .6s linear infinite" }} />}
-                    {initial ? "Enregistrer" : "Créer la table"}
+                    {isEdit ? "Enregistrer" : "Créer la table"}
                 </button>
             </div>
         </form>
@@ -121,7 +183,7 @@ function TableForm({ initial, onSubmit, onClose, loading, error }: {
 type ModalMode = "create" | "edit" | "delete" | "qr" | null;
 
 export default function TablesPage() {
-    const { user, isAuthenticated, isLoading } = useAuth();
+    const { user, isAuthenticated, isLoading, hasPermission } = useAuth();
     const router = useRouter();
 
     const [tables, setTables]           = useState<Table[]>([]);
@@ -137,7 +199,7 @@ export default function TablesPage() {
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) router.replace("/auth/login");
-        if (!isLoading && user && !ROLES_AUTORISES.includes(user.role as Role)) router.replace("/dashboard");
+        if (!isLoading && user && !hasPermission("view_tables") && !hasPermission("manage_tables")) router.replace("/dashboard");
     }, [isLoading, isAuthenticated, user, router]);
 
     const fetchTables = useCallback(async () => {
@@ -163,7 +225,7 @@ export default function TablesPage() {
 
     const closeModal = () => { setModal(null); setSelectedTable(null); setFormError(null); setQrUrl(null); };
 
-    const handleCreate = async (data: { numero_table: string; nombre_places: number }) => {
+    const handleCreate = async (data: TableCreatePayload) => {
         setFormLoading(true);
         setFormError(null);
         try {
@@ -174,7 +236,7 @@ export default function TablesPage() {
                 fetchTables();
             } else {
                 const errs = res.errors;
-                setFormError(errs ? Object.values(errs).flat().join(" — ") : "Erreur de création.");
+                setFormError(errs ? Object.values(errs).flat().join(" — ") : res.message || "Erreur de création.");
             }
         } catch {
             setFormError("Erreur de connexion.");
@@ -183,7 +245,7 @@ export default function TablesPage() {
         }
     };
 
-    const handleEdit = async (data: { numero_table: string; nombre_places: number }) => {
+    const handleEdit = async (data: TableUpdatePayload) => {
         if (!selectedTable) return;
         setFormLoading(true);
         setFormError(null);
@@ -194,7 +256,8 @@ export default function TablesPage() {
                 closeModal();
                 fetchTables();
             } else {
-                setFormError("Erreur de mise à jour.");
+                const errs = res.errors;
+                setFormError(errs ? Object.values(errs).flat().join(" — ") : "Erreur de mise à jour.");
             }
         } catch {
             setFormError("Erreur de connexion.");
@@ -254,9 +317,9 @@ export default function TablesPage() {
     };
 
     if (isLoading || !user) return <PageLoader />;
-    if (!ROLES_AUTORISES.includes(user.role as Role)) return null;
+    if (!hasPermission("view_tables") && !hasPermission("manage_tables")) return null;
 
-    const isAdmin = user.role === "Radmin" || user.role === "Rsuper_admin";
+    const isAdmin = hasPermission("manage_tables");
     const libres = tables.filter(t => (t as unknown as { statut_courant: string }).statut_courant === "libre").length;
     const occupees = tables.length - libres;
 
@@ -304,7 +367,8 @@ export default function TablesPage() {
                             {(modal === "create" || modal === "edit") && (
                                 <TableForm
                                     initial={modal === "edit" ? selectedTable : null}
-                                    onSubmit={modal === "edit" ? handleEdit : handleCreate}
+                                    onSubmitCreate={handleCreate}
+                                    onSubmitUpdate={handleEdit}
                                     onClose={closeModal}
                                     loading={formLoading}
                                     error={formError}

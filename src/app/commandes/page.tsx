@@ -43,6 +43,23 @@ const STATUT_CONFIG: Record<StatutCommande, { label: string; color: string; bg: 
     payee:      { label: "Terminée",    color: "#22c55e", bg: "rgba(34,197,94,0.1)",   border: "rgba(34,197,94,0.25)" },
 };
 
+// Type de commande — différencie une commande sur place (table) d'une commande client en ligne
+const TYPE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
+    sur_table: { label: "Sur table", color: "#22c55e", bg: "rgba(34,197,94,0.1)",  border: "rgba(34,197,94,0.25)" },
+    livraison: { label: "Livraison", color: "#8b5cf6", bg: "rgba(139,92,246,0.1)", border: "rgba(139,92,246,0.25)" },
+    emporter:  { label: "À emporter", color: "#f59e0b", bg: "rgba(245,158,11,0.1)", border: "rgba(245,158,11,0.25)" },
+};
+
+function TypeBadge({ type, label }: { type?: string; label?: string }) {
+    if (!type) return null;
+    const c = TYPE_CONFIG[type] ?? { label: label ?? type, color: "#9ca3af", bg: "rgba(156,163,175,0.1)", border: "rgba(156,163,175,0.25)" };
+    return (
+        <span style={{ alignSelf: "flex-start", display: "inline-block", padding: "1px 7px", borderRadius: "9999px", fontSize: "0.66rem", fontWeight: 700, color: c.color, background: c.bg, border: `1px solid ${c.border}` }}>
+            {label ?? c.label}
+        </span>
+    );
+}
+
 const FILTER_TABS: { value: StatutCommande | ""; label: string }[] = [
     { value: "", label: "Toutes" },
     { value: "en_attente", label: "En attente" },
@@ -52,7 +69,7 @@ const FILTER_TABS: { value: StatutCommande | ""; label: string }[] = [
 ];
 
 export default function CommandesPage() {
-    const { user, isAuthenticated, isLoading } = useAuth();
+    const { user, isAuthenticated, isLoading, hasPermission } = useAuth();
     const router = useRouter();
 
     const [commandes, setCommandes] = useState<Commande[]>([]);
@@ -66,7 +83,7 @@ export default function CommandesPage() {
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) router.replace("/auth/login");
-        if (!isLoading && user && !ROLES_AUTORISES.includes(user.role as Role)) router.replace("/dashboard");
+        if (!isLoading && user && !hasPermission("view_commandes") && !hasPermission("manage_commandes")) router.replace("/dashboard");
     }, [isLoading, isAuthenticated, user, router]);
 
     const fetchCommandes = useCallback(async () => {
@@ -164,11 +181,10 @@ export default function CommandesPage() {
     };
 
     if (isLoading || !user) return <PageLoader />;
-    if (!ROLES_AUTORISES.includes(user.role as Role)) return null;
+    if (!hasPermission("view_commandes") && !hasPermission("manage_commandes")) return null;
 
-    const role = user.role as Role;
-    const isServeur = role === "Rserveur";
-    const isCuisinier = role === "Rchef_cuisinier" || role === "Rcuisinier";
+    const isServeur = hasPermission("manage_commandes");
+    const isCuisinier = hasPermission("manage_cuisine") || hasPermission("view_cuisine");
 
     return (
         <>
@@ -202,6 +218,8 @@ export default function CommandesPage() {
         .items-table th { text-align:left; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); padding:0 0 0.4rem; border-bottom:1px solid var(--border-subtle); }
         .items-table td { padding:0.45rem 0; border-bottom:1px solid var(--border-subtle); color:var(--text-secondary); vertical-align:middle; }
         .items-table tr:last-child td { border-bottom:none; }
+        @media (min-width: 1024px) { .rp-cards-mobile { display:none !important; } }
+        @media (max-width: 1023px) { .rp-table-desktop { display:none !important; } }
       `}</style>
 
             <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "35vh", pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 70% 35% at 50% -5%, rgba(245,158,11,0.05) 0%, transparent 70%)" }} />
@@ -266,7 +284,7 @@ export default function CommandesPage() {
                                     <thead style={{ background: "var(--bg-section-alt)" }}>
                                         <tr>
                                             <th>N°</th>
-                                            <th>Table</th>
+                                            <th>Client / Table</th>
                                             <th>Statut</th>
                                             <th>Montant</th>
                                             <th>Articles</th>
@@ -284,7 +302,10 @@ export default function CommandesPage() {
                                                         <span style={{ fontWeight: 700, color: cssVar.amberGlow, fontFamily: "monospace" }}>#{cmd.id}</span>
                                                     </td>
                                                     <td>
-                                                        <span style={{ fontSize: typography.sm, fontWeight: 600, color: cssVar.textPrimary }}>{cmd.table_login}</span>
+                                                        <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", alignItems: "flex-start" }}>
+                                                            <span style={{ fontSize: typography.sm, fontWeight: 600, color: cssVar.textPrimary }}>{cmd.client_display ?? cmd.table_login}</span>
+                                                            <TypeBadge type={cmd.type_commande} label={cmd.type_commande_display} />
+                                                        </div>
                                                     </td>
                                                     <td>
                                                         <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.6rem", borderRadius: "9999px", fontSize: "0.72rem", fontWeight: 700, color: sc.color, background: sc.bg, border: `1px solid ${sc.border}` }}>
@@ -443,7 +464,10 @@ function CommandeCard({ cmd, isServeur, isCuisinier, actionLoading, onAction, on
                 </span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: typography.sm, fontWeight: 600, color: cssVar.textPrimary }}>{cmd.table_login}</span>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", alignItems: "flex-start", minWidth: 0 }}>
+                    <span style={{ fontSize: typography.sm, fontWeight: 600, color: cssVar.textPrimary }}>{cmd.client_display ?? cmd.table_login}</span>
+                    <TypeBadge type={cmd.type_commande} label={cmd.type_commande_display} />
+                </div>
                 <span style={{ fontWeight: 700, color: cssVar.textPrimary, fontSize: typography.sm }}>
                     {Number(cmd.montant_total).toLocaleString("fr-FR")} GNF
                 </span>
@@ -562,6 +586,7 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
                                 {sc.label}
                             </span>
                         )}
+                        {cmd?.type_commande && <TypeBadge type={cmd.type_commande} label={cmd.type_commande_display} />}
                     </div>
                     <button onClick={onClose} style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "0.5rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", cursor: "pointer", color: cssVar.textMuted }}>
                         <X size={15} />
@@ -580,12 +605,21 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
                         <div className="drawer-section">
                             <p className="drawer-section-title">Résumé</p>
                             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem 1rem" }}>
-                                {[
-                                    { label: "Table",   value: cmd.table_login ?? "—" },
-                                    { label: "Montant", value: `${Number(cmd.montant_total).toLocaleString("fr-FR")} GNF` },
-                                    { label: "Articles", value: `${cmd.items.length} article${cmd.items.length > 1 ? "s" : ""}` },
-                                    { label: "Passée le", value: fmt(cmd.date_commande) ?? "—" },
-                                ].map((r) => (
+                                {(() => {
+                                    const isOnline = cmd.type_commande === "livraison" || cmd.type_commande === "emporter";
+                                    const nb = cmd.nb_items ?? cmd.items?.length ?? 0;
+                                    const rows: { label: string; value: string }[] = [
+                                        { label: isOnline ? "Client" : "Table", value: cmd.client_display ?? cmd.table_login ?? "—" },
+                                        { label: "Type", value: cmd.type_commande_display ?? (isOnline ? "En ligne" : "Sur table") },
+                                        { label: "Montant", value: `${Number(cmd.montant_total).toLocaleString("fr-FR")} GNF` },
+                                        { label: "Articles", value: `${nb} article${nb > 1 ? "s" : ""}` },
+                                        { label: "Passée le", value: fmt(cmd.date_commande) ?? "—" },
+                                    ];
+                                    if (isOnline && cmd.client_telephone) rows.push({ label: "Téléphone", value: cmd.client_telephone });
+                                    if (cmd.type_commande === "livraison" && cmd.client_adresse_livraison) rows.push({ label: "Adresse", value: cmd.client_adresse_livraison });
+                                    if (isOnline && cmd.mode_paiement_display) rows.push({ label: "Paiement", value: cmd.mode_paiement_display });
+                                    return rows;
+                                })().map((r) => (
                                     <div key={r.label}>
                                         <p style={{ margin: 0, fontSize: "0.68rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: cssVar.textMuted }}>{r.label}</p>
                                         <p style={{ margin: "2px 0 0", fontSize: typography.sm, fontWeight: 600, color: cssVar.textPrimary }}>{r.value}</p>
@@ -595,7 +629,7 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
                         </div>
 
                         {/* Articles */}
-                        {cmd.items.length > 0 && (
+                        {(cmd.items?.length ?? 0) > 0 && (
                             <div className="drawer-section">
                                 <p className="drawer-section-title">Articles commandés</p>
                                 <table className="items-table">
@@ -607,7 +641,7 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {cmd.items.map((item) => (
+                                        {(cmd.items ?? []).map((item) => (
                                             <tr key={item.id}>
                                                 <td>
                                                     <span style={{ fontWeight: 600, color: cssVar.textPrimary }}>{item.plat_nom}</span>

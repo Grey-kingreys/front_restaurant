@@ -13,7 +13,7 @@ import {
     getPlatformStats,
     type Restaurant,
     type RestaurantCreatePayload,
-    type RestaurantStats,
+    type PlatformStats,
 } from "@/lib/api/company";
 import type { Role } from "@/types";
 import { cssVar, typography, radius } from "@/theme/theme";
@@ -133,7 +133,7 @@ export default function RestaurantsPage() {
     const router = useRouter();
 
     const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
-    const [stats, setStats]             = useState<RestaurantStats | null>(null);
+    const [stats, setStats]             = useState<PlatformStats | null>(null);
     const [loading, setLoading]         = useState(true);
     const [error, setError]             = useState<string | null>(null);
     const [search, setSearch]           = useState("");
@@ -218,7 +218,7 @@ export default function RestaurantsPage() {
         if (!selected) return;
         setFormLoading(true);
         try {
-            const res = await toggleRestaurant(selected.id);
+            const res = await toggleRestaurant(selected.id, selected.is_active);
             if (res.success) {
                 showToast(`Restaurant ${selected.is_active ? "suspendu" : "activé"}.`);
                 closeModal();
@@ -266,6 +266,8 @@ export default function RestaurantsPage() {
                 .search-input { background:var(--bg-section-alt); border:1px solid var(--border-subtle); border-radius:0.625rem; padding:0.55rem 0.75rem 0.55rem 2.25rem; color:var(--text-primary); font-size:0.875rem; outline:none; width:100%; box-sizing:border-box; transition:border-color 0.15s; }
                 .search-input:focus { border-color:var(--border-amber); }
                 .filter-sel { background:var(--bg-section-alt); border:1px solid var(--border-subtle); border-radius:0.625rem; padding:0.55rem 2rem 0.55rem 0.75rem; color:var(--text-primary); font-size:0.8rem; font-weight:600; outline:none; appearance:none; cursor:pointer; }
+                @media (min-width: 1024px) { .rp-cards-mobile { display:none !important; } }
+                @media (max-width: 1023px) { .rp-table-desktop { display:none !important; } }
             `}</style>
 
             <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "35vh", pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 70% 35% at 50% -5%, rgba(245,158,11,0.05) 0%, transparent 70%)" }} />
@@ -339,9 +341,9 @@ export default function RestaurantsPage() {
                             </div>
                             {stats && (
                                 <p style={{ margin: 0, fontSize: typography.sm, color: cssVar.textMuted }}>
-                                    {stats.total_restaurants} restaurant{stats.total_restaurants > 1 ? "s" : ""} ·{" "}
-                                    <span style={{ color: "#22c55e" }}>{stats.actifs} actif{stats.actifs > 1 ? "s" : ""}</span> ·{" "}
-                                    <span style={{ color: "#ef4444" }}>{stats.suspendus} suspendu{stats.suspendus > 1 ? "s" : ""}</span>
+                                    {stats.restaurants_total} restaurant{stats.restaurants_total > 1 ? "s" : ""} ·{" "}
+                                    <span style={{ color: "#22c55e" }}>{stats.restaurants_actifs} actif{stats.restaurants_actifs > 1 ? "s" : ""}</span> ·{" "}
+                                    <span style={{ color: "#ef4444" }}>{stats.restaurants_suspendus} suspendu{stats.restaurants_suspendus > 1 ? "s" : ""}</span>
                                 </p>
                             )}
                         </div>
@@ -354,9 +356,9 @@ export default function RestaurantsPage() {
                     {stats && (
                         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "0.75rem", marginBottom: "1.5rem" }}>
                             {[
-                                { label: "Total", val: stats.total_restaurants, color: "var(--amber-glow)" },
-                                { label: "Actifs", val: stats.actifs, color: "#22c55e" },
-                                { label: "Suspendus", val: stats.suspendus, color: "#ef4444" },
+                                { label: "Total", val: stats.restaurants_total, color: "var(--amber-glow)" },
+                                { label: "Actifs", val: stats.restaurants_actifs, color: "#22c55e" },
+                                { label: "Suspendus", val: stats.restaurants_suspendus, color: "#ef4444" },
                             ].map(s => (
                                 <div key={s.label} style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "0.875rem", padding: "0.875rem 1rem" }}>
                                     <p style={{ margin: "0 0 2px", fontSize: typography.xs, color: cssVar.textMuted, textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 700 }}>{s.label}</p>

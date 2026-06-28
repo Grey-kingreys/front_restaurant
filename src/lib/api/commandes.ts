@@ -28,6 +28,15 @@ export interface Commande {
     table_login?: string;
     table_numero?: string;
     session: string | null;
+    // Type de commande : sur place (table) ou en ligne (client)
+    type_commande?: "sur_table" | "livraison" | "emporter";
+    type_commande_display?: string;
+    client_display?: string;
+    client_nom?: string | null;
+    client_telephone?: string | null;
+    client_adresse_livraison?: string | null;
+    mode_paiement?: string;
+    mode_paiement_display?: string;
     montant_total: string;
     statut: StatutCommande;
     statut_display?: string;

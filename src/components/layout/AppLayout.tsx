@@ -4,27 +4,37 @@
 import { useState, ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import Sidebar, { SIDEBAR_W } from "./Sidebar";
+import Sidebar from "./Sidebar";
+import ImpersonationBanner, { BANNER_H } from "./ImpersonationBanner";
 import ThemeSwitcher from "../ui/ThemeSwitcher";
 import { Menu } from "lucide-react";
+import { useTableGeoCheck } from "@/hooks/useTableGeoCheck";
+import { SessionCountdown } from "@/components/table/SessionCountdown";
 
 // Routes qui affichent la sidebar (préfixes)
 const PRIVATE_PREFIXES = [
     "/dashboard",
+    "/client",            // espace client (sidebar)
     "/profil",
     "/auth/change-password",
-    "/restaur",   // /restaurant/*
+    "/restaurants",       // liste restaurants (super admin)
+    "/restaurant/",       // flux commande client (menu/checkout/confirmation) + paramètres restaurant
     "/menu",
     "/commandes",
     "/paiements",
     "/caisse",
+    "/caisse-generale",
     "/equipe",
     "/tables",
     "/remises",
-    "/restaurants",
+    "/reservations",
+    "/statistiques",
     "/rapports",
     "/parametres",
+    "/roles",
 ];
+// NB : le flux /restaurant/<slug> affiche la sidebar pour un utilisateur connecté ;
+// un visiteur anonyme garde le header public sans sidebar (showSidebar exige isAuthenticated).
 
 function isPrivateRoute(pathname: string): boolean {
     return PRIVATE_PREFIXES.some((prefix) => pathname.startsWith(prefix));
@@ -33,11 +43,25 @@ function isPrivateRoute(pathname: string): boolean {
 export const SIDEBAR_EXPANDED_W = "15rem";
 export const SIDEBAR_COLLAPSED_W = "4.5rem";
 
+type CountdownReason = "all_paid" | "expired" | null;
+
 export default function AppLayout({ children }: { children: ReactNode }) {
-    const { isAuthenticated, isLoading } = useAuth();
+    const { isAuthenticated, isLoading, isImpersonating, user, logout } = useAuth();
+    const topOffset = isImpersonating ? BANNER_H : "0px";
     const pathname = usePathname();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [outOfRangeWarning, setOutOfRangeWarning] = useState<string | null>(null);
+    const [countdownReason, setCountdownReason] = useState<CountdownReason>(null);
+
+    const isRtable = isAuthenticated && user?.role === "Rtable";
+
+    useTableGeoCheck(isRtable, {
+        onOutOfRange: (_strikes, message) => setOutOfRangeWarning(message),
+        onDisconnect: () => logout(),
+        onAllPaid: () => setCountdownReason("all_paid"),
+        onExpiredWarn: () => setOutOfRangeWarning("Votre session a expiré, mais vos commandes sont en cours. Vous serez déconnecté après le paiement."),
+    });
 
     // Loader global — uniquement pendant la vérification initiale du token
     if (isLoading) {
@@ -69,11 +93,35 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     // Pages privées → layout avec sidebar à gauche
     return (
         <>
-            <Sidebar 
-                mobileOpen={mobileOpen} 
-                onMobileClose={() => setMobileOpen(false)} 
+            {/* Bannière GPS hors zone (Rtable) */}
+            {outOfRangeWarning && (
+                <div style={{
+                    position: "fixed", top: 0, left: 0, right: 0, zIndex: 9998,
+                    background: "rgba(239,68,68,0.95)", color: "#fff",
+                    padding: "0.6rem 1rem", textAlign: "center",
+                    fontSize: "0.82rem", fontWeight: 600,
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem",
+                }}>
+                    <span>⚠️ {outOfRangeWarning}</span>
+                    <button onClick={() => setOutOfRangeWarning(null)} style={{ background: "none", border: "none", color: "#fff", cursor: "pointer", fontSize: "1rem", lineHeight: 1, marginLeft: "0.5rem" }}>✕</button>
+                </div>
+            )}
+
+            {/* Compte à rebours post-paiement ou session expirée (Rtable) */}
+            {countdownReason && (
+                <SessionCountdown
+                    reason={countdownReason}
+                    onLogout={() => { setCountdownReason(null); logout(); }}
+                />
+            )}
+
+            <ImpersonationBanner />
+            <Sidebar
+                mobileOpen={mobileOpen}
+                onMobileClose={() => setMobileOpen(false)}
                 isCollapsed={isCollapsed}
                 toggleCollapse={() => setIsCollapsed(!isCollapsed)}
+                topOffset={topOffset}
             />
 
             {/* Header Mobile — hamburger + theme switcher */}
@@ -104,9 +152,10 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             </div>
 
             {/* Contenu principal décalé sur desktop */}
-            <main className="rp-main" style={{ 
-                minHeight: "100vh", 
+            <main className="rp-main" style={{
+                minHeight: "100vh",
                 background: "var(--bg-dark)",
+                paddingTop: topOffset,
                 transition: "margin-left 0.3s cubic-bezier(0.4,0,0.2,1)",
             }}>
                 {children}
@@ -118,8 +167,8 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           .rp-mobile-header { display: none !important; }
         }
         @media (max-width: 1023px) {
-          .rp-main      { margin-left: 0; padding-top: 3.5rem; }
-          .rp-mobile-header { display: flex !important; }
+          .rp-main      { margin-left: 0; padding-top: calc(3.5rem + ${topOffset}); }
+          .rp-mobile-header { display: flex !important; top: ${topOffset}; }
         }
       `}</style>
         </>

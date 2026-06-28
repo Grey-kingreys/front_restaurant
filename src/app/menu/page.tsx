@@ -28,7 +28,7 @@ const CAN_EDIT: Role[] = ["Radmin", "Rmanager", "Rchef_cuisinier"];
 const IS_STAFF: Role[] = ["Radmin", "Rmanager", "Rchef_cuisinier", "Rcuisinier", "Rserveur", "Rcomptable", "Rsuper_admin"];
 
 export default function MenuPage() {
-    const { user, isAuthenticated, isLoading } = useAuth();
+    const { user, isAuthenticated, isLoading, hasPermission } = useAuth();
     const router = useRouter();
     const isTable = user?.role === "Rtable";
 
@@ -88,9 +88,8 @@ export default function MenuPage() {
 
     if (isLoading || !user) return <PageLoader />;
 
-    const role = user.role as Role;
-    const canEdit = CAN_EDIT.includes(role);
-    const isStaff = IS_STAFF.includes(role);
+    const canEdit = hasPermission("manage_menu");
+    const isStaff = !isTable;
     const totalCart = Object.values(cartMap).reduce((a, b) => a + b, 0);
 
     return (
@@ -240,25 +239,41 @@ export default function MenuPage() {
                             )}
                         </div>
 
-                        {/* Catégories */}
-                        <div className="rp-scroll-x" style={{ alignItems: "center" }}>
-                            <span style={{ display: "flex", color: cssVar.textMuted, marginRight: "0.2rem" }}>
-                                <Filter size={14} />
-                            </span>
-                            {CATEGORIES.map((c) => (
-                                <button
-                                    key={c.value}
-                                    onClick={() => setCategorie(c.value as typeof categorie)}
-                                    className={`cat-btn${categorie === c.value ? " active" : ""}`}
+                        {/* Catégories + disponibilité */}
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                            {/* Dropdown catégorie */}
+                            <div style={{ position: "relative", flexShrink: 0 }}>
+                                <span style={{ position: "absolute", left: "0.65rem", top: "50%", transform: "translateY(-50%)", color: cssVar.textMuted, pointerEvents: "none", display: "flex" }}>
+                                    <Filter size={13} />
+                                </span>
+                                <select
+                                    value={categorie ?? ""}
+                                    onChange={(e) => setCategorie((e.target.value || undefined) as typeof categorie)}
+                                    style={{
+                                        padding: "0.5rem 2rem 0.5rem 2rem",
+                                        borderRadius: radius.lg,
+                                        border: `1px solid ${categorie ? "var(--border-amber)" : "var(--border-subtle)"}`,
+                                        background: categorie ? "rgba(245,158,11,0.08)" : "var(--bg-section-alt)",
+                                        color: categorie ? "var(--amber-glow)" : "var(--text-secondary)",
+                                        fontSize: typography.sm, fontWeight: 600,
+                                        cursor: "pointer", outline: "none",
+                                        appearance: "none", WebkitAppearance: "none",
+                                        minWidth: 160,
+                                    }}
                                 >
-                                    <c.icon size={16} />
-                                    {c.label}
-                                </button>
-                            ))}
+                                    {CATEGORIES.map((c) => (
+                                        <option key={c.value ?? ""} value={c.value ?? ""}>
+                                            {c.label}
+                                        </option>
+                                    ))}
+                                </select>
+                                {/* Chevron */}
+                                <span style={{ position: "absolute", right: "0.65rem", top: "50%", transform: "translateY(-50%)", color: cssVar.textMuted, pointerEvents: "none", fontSize: "0.65rem" }}>▼</span>
+                            </div>
 
+                            {/* Filtres disponibilité (staff uniquement) */}
                             {isStaff && !isTable && (
                                 <>
-                                    <div style={{ width: 1, height: 20, background: "var(--border-subtle)", margin: "0 0.25rem" }} />
                                     <button
                                         onClick={() => setDisponibleFilter(disponibleFilter === true ? undefined : true)}
                                         className={`filter-toggle${disponibleFilter === true ? " active" : ""}`}
@@ -315,7 +330,7 @@ export default function MenuPage() {
                                         plat={plat}
                                         canEdit={canEdit}
                                         onToggle={handleToggleWithToast}
-                                        onDelete={role === "Radmin" ? handleDeleteWithConfirm : undefined}
+                                        onDelete={canEdit ? handleDeleteWithConfirm : undefined}
                                     />
                                 ))}
                         </div>

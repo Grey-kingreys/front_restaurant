@@ -9,3 +9,4 @@ export * as menuApi from "./menu";
 export * as commandesApi from "./commandes";
 export * as paiementsApi from "./paiements";
 export * as dashboardApi from "./dashboard";
+export * as rolesApi from "./roles";

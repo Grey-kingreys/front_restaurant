@@ -1,16 +1,38 @@
 // src/lib/api/paiements.ts
-// Gestion des caisses (Générale, Globale, Comptable) et des remises serveurs
 
 import { apiRequest } from "./client";
 import type { ApiResponse } from "@/types";
 
-export interface CaisseGenerale {
+// ── Types ──────────────────────────────────────────────────────────────────
+
+export interface MouvementCaisse {
+    id: number;
+    type_mouvement: "approvisionnement" | "depense";
+    type_mouvement_display: string;
+    montant: string;
+    montant_formate: string;
+    motif: string;
+    effectue_par: number;
+    effectue_par_login: string | null;
+    created_at: string;
+}
+
+export interface CaisseComptable {
     id: number;
     restaurant: number;
+    restaurant_nom: string;
+    comptable: number;
+    comptable_nom: string;
+    comptable_login: string;
     solde: string;
-    solde_initial: string;
-    created_at: string;
-    updated_at: string;
+    solde_formate: string;
+    is_closed: boolean;
+    statut: "ouverte" | "fermee";
+    opened_at: string;
+    closed_at: string | null;
+    montant_physique_fermeture: string | null;
+    motif_ecart: string | null;
+    mouvements: MouvementCaisse[];
 }
 
 export interface CaisseGlobale {
@@ -26,39 +48,50 @@ export interface CaisseGlobale {
     created_at: string;
 }
 
-export interface CaisseComptable {
+export interface CaisseGenerale {
     id: number;
     restaurant: number;
-    comptable: number;
+    restaurant_nom: string;
     solde: string;
-    is_closed: boolean;
-    opened_at: string;
-    closed_at: string | null;
-    motif_ecart: string | null;
-    montant_physique_fermeture: string | null;
+    solde_formate: string;
+    solde_initial: string;
+    created_at: string;
+    updated_at: string;
 }
 
-export interface MouvementCaisse {
+export interface Depense {
     id: number;
     caisse_comptable: number;
-    type_mouvement: "approvisionnement" | "depense";
-    montant: string;
     motif: string;
-    effectue_par: number;
-    created_at: string;
+    montant: string;
+    montant_formate: string;
+    date_depense: string;
+    date_enregistrement: string;
+    enregistree_par: number | null;
+    enregistree_par_login: string | null;
 }
+
+export type RemiseStatut = "validee" | "en_attente_validation" | "en_attente_remise";
 
 export interface RemiseServeur {
     id: number;
     caisse_globale: number;
     paiement: number;
-    montant_virtuel: string;
-    montant_physique: string | null;
-    motif_ecart: string | null;
-    valide: boolean;
-    validee_par: number | null;
+    commande_id: number;
     serveur: number;
+    serveur_login: string | null;
+    montant_virtuel: string;
+    montant_virtuel_formate: string;
+    montant_physique: string | null;
+    montant_physique_formate: string | null;
+    motif_ecart: string | null;
+    ecart_formate: string | null;
+    valide: boolean;
+    statut: RemiseStatut;
+    validee_par: number | null;
+    validee_par_login: string | null;
     created_at: string;
+    updated_at: string;
 }
 
 // ── Caisse Générale ────────────────────────────────────────────────────────
@@ -67,56 +100,14 @@ export async function getCaisseGenerale(): Promise<ApiResponse<CaisseGenerale>> 
     return apiRequest("/paiements/caisse-generale/");
 }
 
-// ── Caisse Globale ─────────────────────────────────────────────────────────
-
-export async function getCaisseGlobaleActive(): Promise<ApiResponse<CaisseGlobale>> {
-    return apiRequest("/paiements/caisse-globale/active/");
-}
-
-export async function fermerCaisseGlobale(payload: {
-    montant_physique: number;
-    motif_ecart?: string;
-}): Promise<ApiResponse<CaisseGlobale>> {
-    return apiRequest("/paiements/caisse-globale/fermer/", {
-        method: "POST",
-        body: JSON.stringify(payload),
-    });
-}
-
-// ── Remises Serveur ────────────────────────────────────────────────────────
-
-export async function listRemises(): Promise<ApiResponse<{ remises: RemiseServeur[] }>> {
-    return apiRequest("/paiements/remises/");
-}
-
-export async function validerRemise(
-    id: number,
-    payload: { montant_physique: number; motif_ecart?: string }
-): Promise<ApiResponse<RemiseServeur>> {
-    return apiRequest(`/paiements/remises/${id}/valider/`, {
-        method: "POST",
-        body: JSON.stringify(payload),
-    });
-}
-
 // ── Caisse Comptable ───────────────────────────────────────────────────────
 
-export async function getMaCaisseComptable(): Promise<ApiResponse<CaisseComptable>> {
+export async function getMaCaisseActive(): Promise<ApiResponse<CaisseComptable>> {
     return apiRequest("/paiements/caisse-comptable/active/");
 }
 
 export async function ouvrirCaisseComptable(): Promise<ApiResponse<CaisseComptable>> {
     return apiRequest("/paiements/caisse-comptable/ouvrir/", { method: "POST" });
-}
-
-export async function fermerCaisseComptable(
-    pk: number,
-    payload: { montant_physique: number; motif_ecart?: string }
-): Promise<ApiResponse<CaisseComptable>> {
-    return apiRequest(`/paiements/caisse-comptable/${pk}/fermer/`, {
-        method: "POST",
-        body: JSON.stringify(payload),
-    });
 }
 
 export async function approvisionnerCaisse(
@@ -129,16 +120,67 @@ export async function approvisionnerCaisse(
     });
 }
 
-export async function enregistrerDepense(
+export async function fermerCaisseComptable(
     pk: number,
-    payload: { montant: number; motif: string }
-): Promise<ApiResponse<{ id: number; montant: string; motif: string; created_at: string }>> {
+    payload: { montant_physique: number; motif_ecart?: string }
+): Promise<ApiResponse<CaisseComptable>> {
+    return apiRequest(`/paiements/caisse-comptable/${pk}/fermer/`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+    });
+}
+
+export async function creerDepense(
+    pk: number,
+    payload: { motif: string; montant: number; date_depense: string }
+): Promise<ApiResponse<Depense>> {
     return apiRequest(`/paiements/caisse-comptable/${pk}/depense/`, {
         method: "POST",
         body: JSON.stringify(payload),
     });
 }
 
-export async function getMouvementsCaisse(pk: number): Promise<ApiResponse<{ depenses: MouvementCaisse[] }>> {
+export async function listDepenses(
+    pk: number
+): Promise<ApiResponse<{ count: number; depenses: Depense[] }>> {
     return apiRequest(`/paiements/caisse-comptable/${pk}/depenses/`);
+}
+
+// ── Caisse Globale ─────────────────────────────────────────────────────────
+
+export async function getCaisseGlobaleActive(): Promise<ApiResponse<CaisseGlobale>> {
+    return apiRequest("/paiements/caisse-globale/active/");
+}
+
+export async function listCaissesGlobales(): Promise<ApiResponse<{ count: number; caisses: CaisseGlobale[] }>> {
+    return apiRequest("/paiements/caisse-globale/");
+}
+
+export async function fermerCaisseGlobale(payload: {
+    montant_physique: number;
+    motif_ecart?: string;
+}): Promise<ApiResponse<CaisseGlobale>> {
+    return apiRequest("/paiements/caisse-globale/active/fermer/", {
+        method: "POST",
+        body: JSON.stringify(payload),
+    });
+}
+
+// ── Remises Serveur ────────────────────────────────────────────────────────
+
+export async function listRemises(params?: {
+    valide?: boolean;
+}): Promise<ApiResponse<{ count: number; remises: RemiseServeur[] }>> {
+    const qs = params?.valide !== undefined ? `?valide=${params.valide}` : "";
+    return apiRequest(`/paiements/remises/${qs}`);
+}
+
+export async function validerRemise(
+    pk: number,
+    payload: { montant_physique: number; motif_ecart?: string }
+): Promise<ApiResponse<RemiseServeur>> {
+    return apiRequest(`/paiements/remises/${pk}/valider/`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+    });
 }

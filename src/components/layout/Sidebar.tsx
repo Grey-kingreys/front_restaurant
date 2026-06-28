@@ -5,29 +5,32 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { NAV_CONFIG, ROLE_LABELS, ROLE_COLORS } from "@/lib/navigation";
+import { getNavSections, ROLE_LABELS, ROLE_COLORS } from "@/lib/navigation";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 import type { Role } from "@/types";
 import { cssVar, typography, radius, spacing, roleBadge, avatarBase } from "@/theme/theme";
 
-import { 
-    LayoutDashboard, 
-    BarChart3, 
-    Building2, 
-    Users, 
-    QrCode, 
-    Menu, 
-    ClipboardList, 
-    Banknote, 
-    Download, 
-    Settings, 
-    ShoppingCart, 
-    Plus, 
-    User, 
-    Key, 
+import {
+    LayoutDashboard,
+    BarChart3,
+    Building2,
+    Users,
+    QrCode,
+    Menu,
+    ClipboardList,
+    Banknote,
+    Download,
+    Settings,
+    ShoppingCart,
+    Plus,
+    CalendarDays,
+    User,
+    Key,
     LogOut,
     ChevronRight,
-    X
+    X,
+    ShieldCheck,
+    GitBranch,
 } from "lucide-react";
 
 // ── Icônes ─────────────────────────────────────────────────────────────────
@@ -47,6 +50,9 @@ function Icon({ name }: { name: string }) {
         settings: <Settings size={16} />,
         cart: <ShoppingCart size={16} />,
         plus: <Plus size={16} />,
+        calendar: <CalendarDays size={16} />,
+        shield: <ShieldCheck size={16} />,
+        workflow: <GitBranch size={16} />,
         profile: <User size={16} />,
         key: <Key size={16} />,
         logout: <LogOut size={16} />,
@@ -76,8 +82,9 @@ function SidebarInner({
     if (!user) return null;
 
     const role = user.role as Role;
-    const sections = NAV_CONFIG[role] ?? [];
+    const sections = getNavSections(user);
     const rc = ROLE_COLORS[role];
+    const homeHref = "/";
 
     const initials = user.nom_complet
         ? user.nom_complet.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase()
@@ -151,7 +158,7 @@ function SidebarInner({
                 justifyContent: isCollapsed ? "center" : "space-between",
                 minHeight: 60,
             }}>
-                <Link href="/dashboard" onClick={onNavClick} style={{ display: "flex", alignItems: "center", gap: spacing["2"], textDecoration: "none" }}>
+                <Link href={homeHref} onClick={onNavClick} style={{ display: "flex", alignItems: "center", gap: spacing["2"], textDecoration: "none" }}>
                     <div style={{
                         width: 32, height: 32, borderRadius: radius.lg,
                         background: "linear-gradient(135deg, #f59e0b, #d97706)",
@@ -334,9 +341,10 @@ interface SidebarProps {
     onMobileClose: () => void;
     isCollapsed?: boolean;
     toggleCollapse?: () => void;
+    topOffset?: string;
 }
 
-export default function Sidebar({ mobileOpen, onMobileClose, isCollapsed, toggleCollapse }: SidebarProps) {
+export default function Sidebar({ mobileOpen, onMobileClose, isCollapsed, toggleCollapse, topOffset = "0px" }: SidebarProps) {
     const base: React.CSSProperties = {
         width: isCollapsed ? "4.5rem" : SIDEBAR_W,
         background: cssVar.bgCard,
@@ -351,7 +359,7 @@ export default function Sidebar({ mobileOpen, onMobileClose, isCollapsed, toggle
     return (
         <>
             {/* Desktop */}
-            <aside style={{ ...base, position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 40 }} className="rp-sidebar-desktop">
+            <aside style={{ ...base, position: "fixed", top: topOffset, left: 0, bottom: 0, zIndex: 40 }} className="rp-sidebar-desktop">
                 <SidebarInner isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
             </aside>
 

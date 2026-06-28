@@ -40,11 +40,7 @@ interface StaffCardProps {
 
 export function PlatCardStaff({ plat, canEdit, onToggle, onDelete, toggling }: StaffCardProps) {
     const cat = getCatInfo(plat.categorie);
-    const imgSrc = plat.image
-        ? plat.image.startsWith("http")
-            ? plat.image
-            : `${API_BASE}${plat.image}`
-        : null;
+    const imgSrc = plat.image_url ?? null;
 
     return (
         <div style={{
@@ -271,11 +267,7 @@ interface TableCardProps {
 
 export function PlatCardTable({ plat, onAddToCart, quantiteInCart = 0, adding }: TableCardProps) {
     const cat = getCatInfo(plat.categorie);
-    const imgSrc = plat.image
-        ? plat.image.startsWith("http")
-            ? plat.image
-            : `${API_BASE}${plat.image}`
-        : null;
+    const imgSrc = plat.image_url ?? null;
 
     return (
         <div style={{

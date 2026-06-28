@@ -26,10 +26,10 @@
       "computedHash": "db85045827ebeb83ac8dbc992b69188755eeb74dcf01cbf5e694d58aa494a106"
     },
     "ui-ux-pro-max": {
-      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "source": "pixel-process-ug/superkit-agents",
       "sourceType": "github",
-      "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
-      "computedHash": "6337038fe1fe6bbe1b9f252ab678ee575859190bab6f0f246f4061824eb40875"
+      "skillPath": "templates/skills/ui-ux-pro-max/SKILL.md",
+      "computedHash": "38d2b5622f5d28c4a4a61b7b9f2f25d03387f6e0ece29c2b7e2cd11a99c39a45"
     }
   }
 }

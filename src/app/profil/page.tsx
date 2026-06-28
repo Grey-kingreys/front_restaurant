@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
-import { getMe } from "@/lib/api/auth";
+import { getMe, updateMe } from "@/lib/api/auth";
 import { ROLE_LABELS, ROLE_COLORS } from "@/lib/navigation";
 import type { User, Role } from "@/types";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
@@ -34,6 +34,16 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
     );
 }
 
+function ProfilField({ label, value, onChange, type = "text", placeholder }: { label: string; value: string; onChange: (v: string) => void; type?: string; placeholder?: string }) {
+    return (
+        <div style={{ padding: `${spacing["2"]} 0` }}>
+            <label style={{ display: "block", fontSize: typography.xs, color: cssVar.textMuted, marginBottom: "4px" }}>{label}</label>
+            <input type={type} value={value} placeholder={placeholder} onChange={(e) => onChange(e.target.value)}
+                style={{ width: "100%", padding: "0.5rem 0.7rem", borderRadius: radius.md, border: `1px solid ${cssVar.borderSubtle}`, background: cssVar.bgSectionAlt, color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box", outline: "none" }} />
+        </div>
+    );
+}
+
 function Card({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
     return (
         <div style={cardSection}>
@@ -52,10 +62,18 @@ const iconClock = <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0
 const iconPalette = <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: 16, height: 16 }}><path strokeLinecap="round" strokeLinejoin="round" d="M4.098 19.902a3.75 3.75 0 0 0 5.304 0l6.401-6.402M6.75 21A3.75 3.75 0 0 1 3 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 0 0 3.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008Z" /></svg>;
 
 export default function ProfilPage() {
-    const { user: ctxUser, isAuthenticated, isLoading } = useAuth();
+    const { user: ctxUser, isAuthenticated, isLoading, setUser: setCtxUser } = useAuth();
     const router = useRouter();
     const [user, setUser] = useState<User | null>(null);
     const [fetching, setFetching] = useState(true);
+
+    // Édition du profil
+    const [editing, setEditing] = useState(false);
+    const [fNom, setFNom] = useState("");
+    const [fEmail, setFEmail] = useState("");
+    const [fTel, setFTel] = useState("");
+    const [saving, setSaving] = useState(false);
+    const [saveMsg, setSaveMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) router.replace("/auth/login");
@@ -68,6 +86,34 @@ export default function ProfilPage() {
             .catch(() => { if (ctxUser) setUser(ctxUser); })
             .finally(() => setFetching(false));
     }, [isAuthenticated, ctxUser]);
+
+    const startEdit = () => {
+        if (!user) return;
+        setFNom(user.nom_complet ?? "");
+        setFEmail(user.email ?? "");
+        setFTel(user.telephone ?? "");
+        setSaveMsg(null);
+        setEditing(true);
+    };
+
+    const handleSave = async () => {
+        setSaving(true); setSaveMsg(null);
+        try {
+            const res = await updateMe({ nom_complet: fNom, email: fEmail, telephone: fTel });
+            if (res.success && res.data) {
+                setUser(res.data);
+                setCtxUser(res.data);
+                setEditing(false);
+                setSaveMsg({ type: "ok", text: "Profil mis à jour." });
+            } else {
+                const e = res.errors ? Object.values(res.errors as Record<string, string[]>).flat()[0] : null;
+                setSaveMsg({ type: "err", text: e || res.message || "Mise à jour impossible." });
+            }
+        } catch {
+            setSaveMsg({ type: "err", text: "Serveur indisponible." });
+        }
+        setSaving(false);
+    };
 
     if (isLoading || fetching) {
         return (
@@ -106,7 +152,7 @@ export default function ProfilPage() {
 
                     {/* Breadcrumb */}
                     <nav className="profil-bc">
-                        <Link href="/dashboard">Tableau de bord</Link>
+                        <Link href={role === "Rclient" ? "/client" : "/dashboard"}>{role === "Rclient" ? "Mon espace" : "Tableau de bord"}</Link>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" style={{ width: 11, height: 11, color: cssVar.textMuted }}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                         </svg>
@@ -170,14 +216,49 @@ export default function ProfilPage() {
                     <div className="profil-grid">
 
                         <Card title="Informations personnelles" icon={iconUser}>
-                            <InfoRow label="Nom complet" value={user.nom_complet} />
-                            <InfoRow label="Email" value={user.email} />
-                            <InfoRow label="Téléphone" value={user.telephone} />
-                            <InfoRow label="Login" value={
-                                <span style={{ fontFamily: "monospace", fontSize: typography.xs, background: cssVar.bgSectionAlt, padding: "0.1rem 0.35rem", borderRadius: radius.sm }}>
-                                    {user.login}
-                                </span>
-                            } />
+                            {editing ? (
+                                <div style={{ padding: `${spacing["3"]} 0` }}>
+                                    <ProfilField label="Nom complet" value={fNom} onChange={setFNom} placeholder="Votre nom" />
+                                    <ProfilField label="Email" type="email" value={fEmail} onChange={setFEmail} placeholder="vous@exemple.com" />
+                                    <ProfilField label="Téléphone" value={fTel} onChange={setFTel} placeholder="+224 …" />
+                                    <InfoRow label="Login" value={
+                                        <span style={{ fontFamily: "monospace", fontSize: typography.xs, background: cssVar.bgSectionAlt, padding: "0.1rem 0.35rem", borderRadius: radius.sm }}>{user.login}</span>
+                                    } />
+                                    {saveMsg && (
+                                        <p style={{ margin: `${spacing["2"]} 0 0`, fontSize: typography.xs, color: saveMsg.type === "ok" ? palette.green[500] : palette.red[500] }}>{saveMsg.text}</p>
+                                    )}
+                                    <div style={{ display: "flex", gap: spacing["2"], marginTop: spacing["3"] }}>
+                                        <button onClick={handleSave} disabled={saving}
+                                            style={{ display: "inline-flex", alignItems: "center", gap: spacing["2"], padding: `${spacing["2"]} ${spacing["4"]}`, borderRadius: radius.lg, border: "none", background: saving ? cssVar.bgSectionAlt : cssVar.gradientBtn, color: palette.btnText, fontWeight: typography.bold, fontSize: typography.sm, cursor: saving ? "not-allowed" : "pointer" }}>
+                                            {saving ? "Enregistrement…" : "Enregistrer"}
+                                        </button>
+                                        <button onClick={() => { setEditing(false); setSaveMsg(null); }} disabled={saving}
+                                            style={{ padding: `${spacing["2"]} ${spacing["4"]}`, borderRadius: radius.lg, border: `1px solid ${cssVar.borderSubtle}`, background: "transparent", color: cssVar.textMuted, fontWeight: typography.semibold, fontSize: typography.sm, cursor: "pointer" }}>
+                                            Annuler
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <InfoRow label="Nom complet" value={user.nom_complet} />
+                                    <InfoRow label="Email" value={user.email} />
+                                    <InfoRow label="Téléphone" value={user.telephone} />
+                                    <InfoRow label="Login" value={
+                                        <span style={{ fontFamily: "monospace", fontSize: typography.xs, background: cssVar.bgSectionAlt, padding: "0.1rem 0.35rem", borderRadius: radius.sm }}>{user.login}</span>
+                                    } />
+                                    {saveMsg && saveMsg.type === "ok" && (
+                                        <p style={{ margin: `${spacing["2"]} 0 0`, fontSize: typography.xs, color: palette.green[500] }}>{saveMsg.text}</p>
+                                    )}
+                                    {role !== "Rtable" && (
+                                        <div style={{ paddingTop: spacing["3"] }}>
+                                            <button onClick={startEdit}
+                                                style={{ display: "inline-flex", alignItems: "center", gap: spacing["2"], padding: `${spacing["2"]} ${spacing["4"]}`, borderRadius: radius.lg, border: `1px solid ${cssVar.borderSubtle}`, background: cssVar.bgSectionAlt, color: cssVar.textPrimary, fontWeight: typography.semibold, fontSize: typography.sm, cursor: "pointer" }}>
+                                                Modifier mes informations
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
+                            )}
                         </Card>
 
                         <Card title="Rôle et accès" icon={iconShield}>
@@ -217,16 +298,18 @@ export default function ProfilPage() {
 
                     </div>
 
-                    {/* Note */}
-                    <div style={{ marginTop: spacing["4"], padding: `${spacing["3"]} ${spacing["4"]}`, borderRadius: radius.xl, background: cssVar.bgSectionAlt, border: `1px solid ${cssVar.borderSubtle}`, display: "flex", alignItems: "flex-start", gap: spacing["2"] }}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: 15, height: 15, color: cssVar.textMuted, flexShrink: 0, marginTop: 1 }}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
-                        </svg>
-                        <div>
-                            <strong style={{ fontSize: typography.sm, color: cssVar.textSecondary }}>Informations en lecture seule</strong>
-                            <p style={{ margin: 0, fontSize: typography.xs, color: cssVar.textMuted, lineHeight: 1.5 }}>Votre nom, email et téléphone ne peuvent être modifiés que par un administrateur. Pour toute demande, contactez votre responsable.</p>
+                    {/* Note — comptes table uniquement (non éditables) */}
+                    {role === "Rtable" && (
+                        <div style={{ marginTop: spacing["4"], padding: `${spacing["3"]} ${spacing["4"]}`, borderRadius: radius.xl, background: cssVar.bgSectionAlt, border: `1px solid ${cssVar.borderSubtle}`, display: "flex", alignItems: "flex-start", gap: spacing["2"] }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: 15, height: 15, color: cssVar.textMuted, flexShrink: 0, marginTop: 1 }}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                            </svg>
+                            <div>
+                                <strong style={{ fontSize: typography.sm, color: cssVar.textSecondary }}>Compte table</strong>
+                                <p style={{ margin: 0, fontSize: typography.xs, color: cssVar.textMuted, lineHeight: 1.5 }}>Ce compte est un compte système de table (connexion par QR Code) ; ses informations sont gérées par le restaurant.</p>
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                 </div>
             </div>

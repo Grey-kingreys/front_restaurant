@@ -35,11 +35,7 @@ export function PlatForm({ plat }: PlatFormProps) {
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [success, setSuccess] = useState(false);
 
-    const existingImageUrl = plat?.image
-        ? plat.image.startsWith("http")
-            ? plat.image
-            : `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ?? "http://localhost:8000"}${plat.image}`
-        : null;
+    const existingImageUrl = plat?.image_url ?? null;
 
     const validate = () => {
         const e: Record<string, string> = {};

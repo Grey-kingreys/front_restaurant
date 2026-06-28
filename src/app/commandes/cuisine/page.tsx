@@ -13,7 +13,7 @@ import { Clock, CheckCircle2, RefreshCw, ChefHat, Flame, Utensils } from "lucide
 const ROLES_AUTORISES: Role[] = ["Rchef_cuisinier", "Rcuisinier", "Rsuper_admin", "Radmin"];
 
 export default function CuisinePage() {
-    const { user, isAuthenticated, isLoading } = useAuth();
+    const { user, isAuthenticated, isLoading, hasPermission, hasAnyPermission } = useAuth();
     const router = useRouter();
 
     const [commandes, setCommandes] = useState<Commande[]>([]);
@@ -23,10 +23,10 @@ export default function CuisinePage() {
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) router.replace("/auth/login");
-        if (!isLoading && user && !ROLES_AUTORISES.includes(user.role as Role)) {
+        if (!isLoading && user && !hasAnyPermission("view_cuisine", "manage_cuisine")) {
             router.replace("/dashboard");
         }
-    }, [isLoading, isAuthenticated, user, router]);
+    }, [isLoading, isAuthenticated, user, router, hasAnyPermission]);
 
     const fetchCommandes = useCallback(async () => {
         setLoading(true);
@@ -52,7 +52,7 @@ export default function CuisinePage() {
 
     // Rafraîchissement automatique toutes les 15 secondes
     useEffect(() => {
-        if (isAuthenticated && ROLES_AUTORISES.includes(user?.role as Role)) {
+        if (isAuthenticated && hasAnyPermission("view_cuisine", "manage_cuisine")) {
             fetchCommandes();
             const interval = setInterval(fetchCommandes, 15000);
             return () => clearInterval(interval);
@@ -78,7 +78,8 @@ export default function CuisinePage() {
     };
 
     if (isLoading || !user) return <PageLoader />;
-    if (!ROLES_AUTORISES.includes(user.role as Role)) return null;
+    if (!hasAnyPermission("view_cuisine", "manage_cuisine")) return null;
+    const canMarkPrete = hasPermission("manage_cuisine");
 
     return (
         <div className="kds-root rp-page-pad">
@@ -185,11 +186,12 @@ export default function CuisinePage() {
                 ) : (
                     <div className="rp-kds-grid">
                         {commandes.map((cmd) => (
-                            <TicketCommande 
-                                key={cmd.id} 
-                                cmd={cmd} 
-                                onPrete={() => handleMarquerPrete(cmd.id)} 
+                            <TicketCommande
+                                key={cmd.id}
+                                cmd={cmd}
+                                onPrete={() => handleMarquerPrete(cmd.id)}
                                 isSubmitting={actionLoading === cmd.id}
+                                canMarkPrete={canMarkPrete}
                             />
                         ))}
                     </div>
@@ -200,7 +202,7 @@ export default function CuisinePage() {
     );
 }
 
-function TicketCommande({ cmd, onPrete, isSubmitting }: { cmd: Commande; onPrete: () => void; isSubmitting: boolean }) {
+function TicketCommande({ cmd, onPrete, isSubmitting, canMarkPrete }: { cmd: Commande; onPrete: () => void; isSubmitting: boolean; canMarkPrete: boolean }) {
     // Calculer le temps écoulé depuis la commande
     const [elapsed, setElapsed] = useState("");
     const [isUrgent, setIsUrgent] = useState(false);
@@ -251,9 +253,9 @@ function TicketCommande({ cmd, onPrete, isSubmitting }: { cmd: Commande; onPrete
             </div>
 
             <div className="ticket-footer">
-                <button 
-                    className="btn-prete" 
-                    onClick={onPrete} 
+                {canMarkPrete && <button
+                    className="btn-prete"
+                    onClick={onPrete}
                     disabled={isSubmitting}
                 >
                     {isSubmitting ? (
@@ -264,7 +266,7 @@ function TicketCommande({ cmd, onPrete, isSubmitting }: { cmd: Commande; onPrete
                             Marquer comme prête
                         </>
                     )}
-                </button>
+                </button>}
             </div>
         </div>
     );

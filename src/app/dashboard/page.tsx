@@ -1,311 +1,544 @@
 "use client";
 // src/app/dashboard/page.tsx
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
-import { ROLE_LABELS, ROLE_COLORS, NAV_CONFIG } from "@/lib/navigation";
-import type { Role } from "@/types";
-import { cssVar, typography, radius, spacing, roleBadge, avatarBase, btnOutline } from "@/theme/theme";
+import { getDashboardStats } from "@/lib/api/dashboard";
+import type {
+    DashboardData, AdminData, ServeurData, CuisineData,
+    ComptableData, TableData, SuperadminData,
+} from "@/lib/api/dashboard";
+import { ROLE_LABELS, ROLE_COLORS } from "@/lib/navigation";
+import { cssVar, typography, radius, roleBadge, avatarBase, btnOutline } from "@/theme/theme";
 import StatCard from "@/components/dashboard/StatCard";
-import { getDashboardStats, DashboardStats } from "@/lib/api/dashboard";
-import { 
-  TrendingUp, 
-  Users, 
-  ChefHat, 
-  Utensils, 
-  QrCode, 
-  CreditCard, 
-  Clock, 
-  AlertTriangle,
-  ArrowRight,
-  Plus
+import type { Role } from "@/types";
+import {
+    BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+    PieChart, Pie, Legend,
+} from "recharts";
+import {
+    TrendingUp, Users, Utensils, CreditCard, Clock, ChefHat,
+    AlertTriangle, ShoppingCart, Wallet, CheckCircle, MapPin,
 } from "lucide-react";
 
-const WELCOME: Record<Role, { subtitle: string }> = {
-  Rsuper_admin: { subtitle: "Gérez tous les restaurants et consultez les statistiques globales." },
-  Radmin: { subtitle: "Gérez votre équipe, votre menu et vos finances." },
-  Rmanager: { subtitle: "Supervisez les opérations et les performances." },
-  Rserveur: { subtitle: "Consultez vos tables et validez les paiements." },
-  Rchef_cuisinier: { subtitle: "Gérez le menu et la file des commandes." },
-  Rcuisinier: { subtitle: "Consultez la file et marquez les plats comme prêts." },
-  Rcomptable: { subtitle: "Gérez votre caisse et suivez les dépenses." },
-  Rtable: { subtitle: "Consultez le menu et suivez votre commande." },
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+const gnf = (v: number | string | null | undefined) => {
+    const n = typeof v === "string" ? parseFloat(v) : (v ?? 0);
+    return isNaN(n as number) ? "0 GNF" : (n as number).toLocaleString("fr-FR") + " GNF";
+};
+
+const CHART_COLORS = ["#f59e0b", "#3b82f6", "#a855f7", "#22c55e", "#f97316", "#ef4444"];
+
+const withFill = <T extends object>(arr: T[]) =>
+    arr.map((item, i) => ({ ...item, fill: CHART_COLORS[i % CHART_COLORS.length] }));
+
+// ── Composants utilitaires ─────────────────────────────────────────────────
+
+function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
+    return (
+        <div style={{ background: cssVar.bgCard, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: radius.xl, overflow: "hidden" }}>
+            <div style={{ padding: "0.875rem 1.25rem", borderBottom: `1px solid ${cssVar.borderSubtle}` }}>
+                <p style={{ margin: 0, fontSize: typography.xs, fontWeight: typography.bold, textTransform: "uppercase", letterSpacing: "0.06em", color: cssVar.textMuted }}>
+                    {title}
+                </p>
+            </div>
+            {children}
+        </div>
+    );
+}
+
+function Loader() {
+    return (
+        <div style={{ padding: "2rem", display: "flex", justifyContent: "center" }}>
+            <div style={{ width: 28, height: 28, borderRadius: "50%", border: `3px solid ${cssVar.borderSubtle}`, borderTopColor: cssVar.amberGlow, animation: "spin .7s linear infinite" }} />
+        </div>
+    );
+}
+
+// ── Dashboard Admin / Manager ──────────────────────────────────────────────
+
+function AdminDashboard({ d }: { d: AdminData }) {
+    const k = d.kpis;
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            {/* KPIs */}
+            <div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))" }}>
+                <StatCard title="Revenus du jour"    value={gnf(k.revenus_jour)}    icon={TrendingUp}  color={cssVar.amberGlow} />
+                <StatCard title="Commandes du jour"  value={k.commandes_jour}        icon={Utensils}    color="#3b82f6" />
+                <StatCard title="Tables occupées"    value={`${k.tables_occupees}/${k.tables_total}`} icon={CreditCard} color="#22c55e" />
+                <StatCard title="Solde générale"     value={gnf(k.solde_generale)}   icon={Wallet}      color="#a855f7" />
+            </div>
+
+            <div style={{ display: "grid", gap: "1.5rem", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))" }}>
+                {/* Revenus 7 jours */}
+                <SectionCard title="Revenus 7 derniers jours">
+                    <div style={{ padding: "1rem", height: 220 }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={d.revenus_7j}>
+                                <XAxis dataKey="date" tick={{ fontSize: 11, fill: cssVar.textMuted }} />
+                                <YAxis tick={{ fontSize: 10, fill: cssVar.textMuted }} width={55} tickFormatter={(v: unknown) => (Number(v ?? 0) / 1000).toFixed(0) + "k"} />
+                                <Tooltip formatter={(v: unknown) => [gnf(Number(v ?? 0)), "Revenus"]} contentStyle={{ background: cssVar.bgCard, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: 8, fontSize: 12 }} />
+                                <Bar dataKey="revenus" fill={cssVar.amberGlow} radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </SectionCard>
+
+                {/* Statuts live */}
+                <SectionCard title="Statuts commandes (live)">
+                    <div style={{ padding: "1rem", height: 220 }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie data={withFill(d.statuts_live)} dataKey="total" nameKey="label" cx="50%" cy="50%" innerRadius={45} outerRadius={70} />
+                                <Legend wrapperStyle={{ fontSize: 11 }} />
+                                <Tooltip formatter={(v: unknown) => [Number(v ?? 0), "commandes"]} contentStyle={{ background: cssVar.bgCard, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: 8, fontSize: 12 }} />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                </SectionCard>
+
+                {/* Par catégorie */}
+                <SectionCard title="Ventes par catégorie">
+                    <div style={{ padding: "1rem", height: 220 }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie data={withFill(d.par_categorie)} dataKey="total" nameKey="label" cx="50%" cy="50%" innerRadius={45} outerRadius={70} />
+                                <Legend wrapperStyle={{ fontSize: 11 }} />
+                                <Tooltip formatter={(v: unknown) => [Number(v ?? 0), "plats"]} contentStyle={{ background: cssVar.bgCard, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: 8, fontSize: 12 }} />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                </SectionCard>
+
+                {/* Par heure */}
+                <SectionCard title="Activité par heure">
+                    <div style={{ padding: "1rem", height: 220 }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={d.par_heure}>
+                                <XAxis dataKey="h" tick={{ fontSize: 10, fill: cssVar.textMuted }} />
+                                <YAxis tick={{ fontSize: 10, fill: cssVar.textMuted }} width={25} allowDecimals={false} />
+                                <Tooltip formatter={(v: unknown) => [Number(v ?? 0), "commandes"]} contentStyle={{ background: cssVar.bgCard, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: 8, fontSize: 12 }} />
+                                <Bar dataKey="n" fill="#3b82f6" radius={[3, 3, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </SectionCard>
+            </div>
+
+            {/* Dernières commandes */}
+            {d.dernieres_commandes?.length > 0 && (
+                <SectionCard title="Dernières commandes">
+                    {d.dernieres_commandes.slice(0, 5).map(c => (
+                        <div key={c.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.75rem 1.25rem", borderBottom: `1px solid ${cssVar.borderSubtle}`, fontSize: typography.sm }}>
+                            <span style={{ color: cssVar.textMuted }}>#{c.id} · {c.table}</span>
+                            <span style={{ color: cssVar.textPrimary, fontWeight: typography.semibold }}>{gnf(c.montant)}</span>
+                            <span style={{ color: cssVar.textMuted, fontSize: typography.xs }}>{c.heure}</span>
+                        </div>
+                    ))}
+                </SectionCard>
+            )}
+        </div>
+    );
+}
+
+// ── Dashboard Serveur ──────────────────────────────────────────────────────
+
+function ServeurDashboard({ d }: { d: ServeurData }) {
+    const STATUT_COLORS: Record<string, string> = {
+        en_attente: "#f59e0b", prete: "#3b82f6", servie: "#a855f7", payee: "#22c55e",
+    };
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            <div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}>
+                <StatCard title="Tables actives"    value={d.nb_tables_actives}   icon={Utensils}    color="#3b82f6" />
+                <StatCard title="Commandes prêtes"  value={d.nb_commandes_pretes} icon={CheckCircle} color="#22c55e" />
+                <StatCard title="Traitées (7j)"     value={d.commandes_traitees_7j} icon={TrendingUp} color={cssVar.amberGlow} />
+                <StatCard title="Remises du jour"   value={gnf(d.remises_jour)}   icon={CreditCard}  color="#a855f7" />
+            </div>
+
+            <div style={{ display: "grid", gap: "1.5rem", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))" }}>
+                <SectionCard title="Activité par heure">
+                    <div style={{ padding: "1rem", height: 200 }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={d.par_heure}>
+                                <XAxis dataKey="h" tick={{ fontSize: 10, fill: cssVar.textMuted }} />
+                                <YAxis tick={{ fontSize: 10, fill: cssVar.textMuted }} width={25} allowDecimals={false} />
+                                <Tooltip formatter={(v: unknown) => [Number(v ?? 0), "commandes"]} contentStyle={{ background: cssVar.bgCard, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: 8, fontSize: 12 }} />
+                                <Bar dataKey="n" fill="#3b82f6" radius={[3, 3, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </SectionCard>
+
+                <SectionCard title="Commandes prêtes à servir">
+                    {d.commandes_pretes.length === 0 ? (
+                        <p style={{ padding: "1.5rem", textAlign: "center", color: cssVar.textMuted, fontSize: typography.sm, margin: 0 }}>Aucune commande prête.</p>
+                    ) : d.commandes_pretes.map(c => (
+                        <div key={c.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.75rem 1.25rem", borderBottom: `1px solid ${cssVar.borderSubtle}` }}>
+                            <div>
+                                <p style={{ margin: 0, fontSize: typography.sm, fontWeight: typography.semibold, color: cssVar.textPrimary }}>#{c.id} · {c.table}</p>
+                                <p style={{ margin: 0, fontSize: typography.xs, color: cssVar.textMuted }}>{c.heure}</p>
+                            </div>
+                            <span style={{ fontSize: typography.sm, fontWeight: typography.bold, color: cssVar.amberGlow }}>{gnf(c.montant)}</span>
+                        </div>
+                    ))}
+                </SectionCard>
+            </div>
+
+            {/* Tables actives */}
+            {d.tables_actives.length > 0 && (
+                <SectionCard title="Tables actives">
+                    <div style={{ display: "grid", gap: "0.75rem", padding: "1rem", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))" }}>
+                        {d.tables_actives.map(t => {
+                            const c = STATUT_COLORS[t.statut] ?? cssVar.textMuted;
+                            return (
+                                <div key={t.id} style={{ padding: "0.75rem", borderRadius: radius.lg, border: `1px solid ${c}40`, background: `${c}08`, textAlign: "center" }}>
+                                    <p style={{ margin: 0, fontSize: typography.sm, fontWeight: typography.bold, color: cssVar.textPrimary }}>{t.table}</p>
+                                    <p style={{ margin: "0.2rem 0 0", fontSize: typography.xs, color: c, fontWeight: typography.semibold, textTransform: "capitalize" }}>{t.statut.replace("_", " ")}</p>
+                                    <p style={{ margin: "0.1rem 0 0", fontSize: typography.xs, color: cssVar.textMuted }}>{gnf(t.montant)}</p>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </SectionCard>
+            )}
+        </div>
+    );
+}
+
+// ── Dashboard Cuisine ──────────────────────────────────────────────────────
+
+function CuisineDashboard({ d }: { d: CuisineData }) {
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            <div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}>
+                <StatCard title="En attente"    value={d.nb_en_attente}    icon={Clock}         color="#ef4444" />
+                <StatCard title="Prêtes"        value={d.nb_pretes}        icon={CheckCircle}   color="#22c55e" />
+                <StatCard title="Attente max"   value={`${d.oldest_wait_mins} min`} icon={AlertTriangle} color="#f59e0b" />
+                <StatCard title="Total 7j"      value={d.total_plats_7j ?? 0} icon={ChefHat}   color="#3b82f6" />
+            </div>
+
+            <div style={{ display: "grid", gap: "1.5rem", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}>
+                <SectionCard title="Activité par heure">
+                    <div style={{ padding: "1rem", height: 200 }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={d.par_heure}>
+                                <XAxis dataKey="h" tick={{ fontSize: 10, fill: cssVar.textMuted }} />
+                                <YAxis tick={{ fontSize: 10, fill: cssVar.textMuted }} width={25} allowDecimals={false} />
+                                <Tooltip formatter={(v: unknown) => [Number(v ?? 0), "plats"]} contentStyle={{ background: cssVar.bgCard, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: 8, fontSize: 12 }} />
+                                <Bar dataKey="n" fill="#f97316" radius={[3, 3, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </SectionCard>
+
+                <SectionCard title="Par catégorie">
+                    <div style={{ padding: "1rem", height: 200 }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie data={withFill(d.par_categorie)} dataKey="total" nameKey="label" cx="50%" cy="50%" innerRadius={40} outerRadius={65} />
+                                <Legend wrapperStyle={{ fontSize: 11 }} />
+                                <Tooltip formatter={(v: unknown) => [Number(v ?? 0), "plats"]} contentStyle={{ background: cssVar.bgCard, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: 8, fontSize: 12 }} />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                </SectionCard>
+            </div>
+
+            {/* File des commandes */}
+            <SectionCard title="File des commandes">
+                {d.file_commandes.length === 0 ? (
+                    <p style={{ padding: "1.5rem", textAlign: "center", color: cssVar.textMuted, fontSize: typography.sm, margin: 0 }}>Aucune commande en cours.</p>
+                ) : d.file_commandes.map(c => (
+                    <div key={c.id} style={{ padding: "0.875rem 1.25rem", borderBottom: `1px solid ${cssVar.borderSubtle}` }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.3rem" }}>
+                            <span style={{ fontSize: typography.sm, fontWeight: typography.bold, color: cssVar.textPrimary }}>#{c.id} · {c.table}</span>
+                            <span style={{ fontSize: typography.xs, color: (c.attente_mins ?? 0) > 30 ? "#ef4444" : "#f59e0b", fontWeight: typography.semibold }}>{c.attente_mins ?? 0} min</span>
+                        </div>
+                        <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
+                            {c.items.map((it, i) => (
+                                <span key={i} style={{ fontSize: typography.xs, padding: "0.1rem 0.4rem", borderRadius: radius.full, background: cssVar.bgSectionAlt, color: cssVar.textSecondary }}>
+                                    {it.quantite}× {it.plat}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </SectionCard>
+        </div>
+    );
+}
+
+// ── Dashboard Comptable ────────────────────────────────────────────────────
+
+function ComptableDashboard({ d }: { d: ComptableData }) {
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            <div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}>
+                <StatCard title="Solde caisse"       value={d.caisse.is_open ? gnf(d.caisse.solde) : "Fermée"}   icon={Wallet}      color={d.caisse.is_open ? "#22c55e" : "#ef4444"} />
+                <StatCard title="Remises en attente" value={d.remises_en_attente}  icon={Clock}       color="#f59e0b" />
+                <StatCard title="Dépenses du jour"   value={gnf(d.depenses_jour)}  icon={CreditCard}  color="#ef4444" />
+                <StatCard title="Revenus du jour"    value={gnf(d.revenus_jour)}   icon={TrendingUp}  color="#22c55e" />
+                <StatCard title="Solde générale"     value={gnf(d.solde_generale)} icon={Wallet}      color="#a855f7" />
+            </div>
+
+            <div style={{ display: "grid", gap: "1.5rem", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))" }}>
+                <SectionCard title="Revenus vs Dépenses (7j)">
+                    <div style={{ padding: "1rem", height: 220 }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={d.balance_7j}>
+                                <XAxis dataKey="date" tick={{ fontSize: 11, fill: cssVar.textMuted }} />
+                                <YAxis tick={{ fontSize: 10, fill: cssVar.textMuted }} width={55} tickFormatter={(v: unknown) => (Number(v ?? 0) / 1000).toFixed(0) + "k"} />
+                                <Tooltip formatter={(v: unknown) => [gnf(Number(v ?? 0)), ""]} contentStyle={{ background: cssVar.bgCard, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: 8, fontSize: 12 }} />
+                                <Legend wrapperStyle={{ fontSize: 11 }} />
+                                <Bar dataKey="revenus"  name="Revenus"  fill="#22c55e" radius={[3, 3, 0, 0]} />
+                                <Bar dataKey="depenses" name="Dépenses" fill="#ef4444" radius={[3, 3, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </SectionCard>
+
+                <SectionCard title="Dernières remises">
+                    {d.dernieres_remises.length === 0 ? (
+                        <p style={{ padding: "1.5rem", textAlign: "center", color: cssVar.textMuted, fontSize: typography.sm, margin: 0 }}>Aucune remise.</p>
+                    ) : d.dernieres_remises.map(r => (
+                        <div key={r.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.75rem 1.25rem", borderBottom: `1px solid ${cssVar.borderSubtle}` }}>
+                            <div>
+                                <p style={{ margin: 0, fontSize: typography.sm, fontWeight: typography.semibold, color: cssVar.textPrimary }}>{r.serveur}</p>
+                                <p style={{ margin: 0, fontSize: typography.xs, color: cssVar.textMuted }}>{r.table} · {r.date}</p>
+                            </div>
+                            <div style={{ textAlign: "right" }}>
+                                <p style={{ margin: 0, fontSize: typography.sm, fontWeight: typography.bold, color: cssVar.amberGlow }}>{gnf(r.montant)}</p>
+                                <span style={{ fontSize: typography.xs, color: r.valide ? "#22c55e" : "#f59e0b" }}>{r.valide ? "Validée" : "En attente"}</span>
+                            </div>
+                        </div>
+                    ))}
+                </SectionCard>
+            </div>
+        </div>
+    );
+}
+
+// ── Dashboard Table ────────────────────────────────────────────────────────
+
+const STATUT_STEPS = ["en_attente", "prete", "servie", "payee"];
+const STATUT_LABELS: Record<string, string> = { en_attente: "En attente", prete: "Prête", servie: "Servie", payee: "Payée" };
+
+function TableDashboard({ d }: { d: TableData }) {
+    const c = d.commande_active;
+    const stepIdx = c ? STATUT_STEPS.indexOf(c.statut) : -1;
+
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            {/* Commande active */}
+            {c ? (
+                <SectionCard title="Ma commande en cours">
+                    <div style={{ padding: "1.25rem" }}>
+                        {/* Barre progression */}
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.75rem" }}>
+                            {STATUT_STEPS.map((s, i) => (
+                                <div key={s} style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1 }}>
+                                    <div style={{ width: 28, height: 28, borderRadius: "50%", background: i <= stepIdx ? cssVar.amberGlow : cssVar.bgSectionAlt, border: `2px solid ${i <= stepIdx ? cssVar.amberGlow : cssVar.borderSubtle}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: typography.xs, fontWeight: typography.bold, color: i <= stepIdx ? "#0c0a09" : cssVar.textMuted }}>
+                                        {i <= stepIdx ? "✓" : i + 1}
+                                    </div>
+                                    <span style={{ fontSize: "0.65rem", color: i <= stepIdx ? cssVar.amberGlow : cssVar.textMuted, marginTop: "0.3rem", textAlign: "center" }}>{STATUT_LABELS[s]}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div style={{ marginTop: "0.75rem", padding: "0.875rem", background: cssVar.bgSectionAlt, borderRadius: radius.lg }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+                                <span style={{ fontSize: typography.sm, color: cssVar.textMuted }}>Commande #{c.id}</span>
+                                <span style={{ fontSize: typography.sm, fontWeight: typography.bold, color: cssVar.amberGlow }}>{gnf(c.montant)}</span>
+                            </div>
+                            {c.items.map((it, i) => (
+                                <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: typography.xs, color: cssVar.textSecondary, padding: "0.15rem 0" }}>
+                                    <span>{it.quantite}× {it.plat}</span>
+                                    {it.prix && <span>{gnf(it.prix)}</span>}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </SectionCard>
+            ) : (
+                <div style={{ padding: "2rem", textAlign: "center", background: cssVar.bgCard, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: radius.xl }}>
+                    <ShoppingCart size={32} style={{ color: cssVar.textMuted, margin: "0 auto 0.75rem" }} />
+                    <p style={{ margin: 0, color: cssVar.textMuted, fontSize: typography.sm }}>Pas de commande en cours.</p>
+                    <Link href="/menu" style={{ display: "inline-block", marginTop: "0.75rem", padding: "0.5rem 1.25rem", background: cssVar.amberGlow, color: "#0c0a09", borderRadius: radius.lg, fontSize: typography.sm, fontWeight: typography.bold, textDecoration: "none" }}>
+                        Voir le menu
+                    </Link>
+                </div>
+            )}
+
+            {/* Suggestions */}
+            {d.suggestions.length > 0 && (
+                <SectionCard title="Suggestions">
+                    <div style={{ display: "grid", gap: "0.75rem", padding: "1rem", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))" }}>
+                        {d.suggestions.map((s, i) => (
+                            <div key={i} style={{ padding: "0.75rem", background: cssVar.bgSectionAlt, borderRadius: radius.lg, border: `1px solid ${cssVar.borderSubtle}` }}>
+                                <p style={{ margin: 0, fontSize: typography.sm, fontWeight: typography.semibold, color: cssVar.textPrimary }}>{s.nom}</p>
+                                <p style={{ margin: "0.2rem 0 0", fontSize: typography.xs, color: cssVar.amberGlow, fontWeight: typography.bold }}>{gnf(s.prix)}</p>
+                                <p style={{ margin: "0.1rem 0 0", fontSize: "0.65rem", color: cssVar.textMuted }}>{s.commandes} commande{s.commandes > 1 ? "s" : ""}</p>
+                            </div>
+                        ))}
+                    </div>
+                </SectionCard>
+            )}
+        </div>
+    );
+}
+
+// ── Dashboard Super Admin ──────────────────────────────────────────────────
+
+function SuperAdminDashboard({ d }: { d: SuperadminData }) {
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            <div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}>
+                <StatCard title="Restaurants"        value={d.total_restaurants}      icon={TrendingUp} color={cssVar.amberGlow} />
+                <StatCard title="Utilisateurs"       value={d.total_users}            icon={Users}      color="#3b82f6" />
+                <StatCard title="CA global du jour"  value={gnf(d.revenus_global_jour)} icon={CreditCard} color="#22c55e" />
+                <StatCard title="Commandes globales" value={d.commandes_global_jour}   icon={Utensils}   color="#a855f7" />
+            </div>
+
+            <div style={{ display: "grid", gap: "1.5rem", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))" }}>
+                <SectionCard title="CA global (7 derniers jours)">
+                    <div style={{ padding: "1rem", height: 220 }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={d.revenus_7j}>
+                                <XAxis dataKey="date" tick={{ fontSize: 11, fill: cssVar.textMuted }} />
+                                <YAxis tick={{ fontSize: 10, fill: cssVar.textMuted }} width={55} tickFormatter={(v: unknown) => (Number(v ?? 0) / 1000).toFixed(0) + "k"} />
+                                <Tooltip formatter={(v: unknown) => [gnf(Number(v ?? 0)), "CA"]} contentStyle={{ background: cssVar.bgCard, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: 8, fontSize: 12 }} />
+                                <Bar dataKey="revenus" fill={cssVar.amberGlow} radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </SectionCard>
+
+                <SectionCard title="Par restaurant">
+                    {d.stats_restaurants.map((r, i) => (
+                        <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.875rem 1.25rem", borderBottom: `1px solid ${cssVar.borderSubtle}` }}>
+                            <span style={{ fontSize: typography.sm, fontWeight: typography.semibold, color: cssVar.textPrimary }}>{r.nom}</span>
+                            <div style={{ textAlign: "right" }}>
+                                <p style={{ margin: 0, fontSize: typography.sm, color: cssVar.amberGlow, fontWeight: typography.bold }}>{gnf(r.revenus_jour)}</p>
+                                <p style={{ margin: 0, fontSize: typography.xs, color: cssVar.textMuted }}>{r.commandes_actives} commande{r.commandes_actives !== 1 ? "s" : ""} actives</p>
+                            </div>
+                        </div>
+                    ))}
+                </SectionCard>
+            </div>
+        </div>
+    );
+}
+
+// ── Page principale ────────────────────────────────────────────────────────
+
+const WELCOME: Record<Role, string> = {
+    Rsuper_admin:    "Vue globale de la plateforme RestoPro.",
+    Radmin:          "Gérez votre équipe, votre menu et vos finances.",
+    Rmanager:        "Supervisez les opérations et les performances.",
+    Rserveur:        "Consultez vos tables et validez les paiements.",
+    Rchef_cuisinier: "Gérez le menu et la file des commandes.",
+    Rcuisinier:      "Consultez la file et marquez les plats comme prêts.",
+    Rcomptable:      "Gérez votre caisse et suivez les dépenses.",
+    Rtable:          "Consultez le menu et suivez votre commande.",
+    Rclient:         "Parcourez les restaurants et passez vos commandes.",
 };
 
 export default function DashboardPage() {
-  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const router = useRouter();
-  const [currentDate, setCurrentDate] = useState<string>("");
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [statsLoading, setStatsLoading] = useState(true);
+    const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+    const router = useRouter();
+    const [data, setData] = useState<DashboardData | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [date, setDate] = useState("");
 
-  useEffect(() => {
-    setCurrentDate(new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }));
-  }, []);
+    useEffect(() => {
+        setDate(new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }));
+    }, []);
 
-  useEffect(() => {
-    if (!authLoading && !isAuthenticated) router.replace("/auth/login");
-    if (!authLoading && user?.must_change_password) router.replace("/auth/change-password");
-    
-    if (isAuthenticated && user) {
-      loadStats();
-    }
-  }, [authLoading, isAuthenticated, user, router]);
+    const load = useCallback(async () => {
+        try {
+            setLoading(true);
+            setData(await getDashboardStats());
+        } catch { /* silencieux */ } finally { setLoading(false); }
+    }, []);
 
-  async function loadStats() {
-    try {
-      setStatsLoading(true);
-      const data = await getDashboardStats();
-      setStats(data);
-    } catch (err) {
-      console.error("Erreur stats:", err);
-    } finally {
-      setStatsLoading(false);
-    }
-  }
+    useEffect(() => {
+        if (!authLoading && !isAuthenticated) router.replace("/auth/login");
+        if (!authLoading && user?.role === "Rclient") { router.replace("/client"); return; }
+        if (!authLoading && user?.must_change_password) router.replace("/auth/change-password");
+        if (!authLoading && isAuthenticated && user?.role !== "Rclient") load();
+    }, [authLoading, isAuthenticated, user, router, load]);
 
-  if (authLoading || !user) {
-    return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: cssVar.bgDark }}>
-        <div style={{ width: 36, height: 36, borderRadius: "50%", border: `3px solid ${cssVar.borderAmber}`, borderTopColor: cssVar.amberGlow, animation: "spin .75s linear infinite" }} />
-        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-      </div>
-    );
-  }
-
-  const role = user.role as Role;
-  const rc = ROLE_COLORS[role];
-  const sections = NAV_CONFIG[role];
-  const subtitle = WELCOME[role].subtitle;
-
-  const initials = user.nom_complet
-    ? user.nom_complet.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase()
-    : user.login.slice(0, 2).toUpperCase();
-  const firstName = user.nom_complet?.split(" ")[0] || user.login;
-
-  return (
-    <>
-      <style>{`
-        @keyframes spin{to{transform:rotate(360deg)}}
-        @keyframes pulse{0%{opacity:0.6}50%{opacity:0.3}100%{opacity:0.6}}
-        .dash-root  { min-height:100vh; background:var(--bg-dark); }
-        .dash-inner { max-width:1100px; margin:0 auto; position:relative; z-index:1; }
-        .main-grid  { display:grid; gap:1.5rem; grid-template-columns:1fr; }
-        @media(min-width:1024px) { .main-grid { grid-template-columns: 2fr 1fr; } }
-        .section-card { background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:1.25rem; overflow:hidden; }
-        .section-header { padding:1rem 1.25rem; border-bottom:1px solid var(--border-subtle); display:flex; align-items:center; justify-content:space-between; }
-        .section-title { font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); margin:0; }
-        .action-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.5rem; padding:1rem 0.75rem; border-radius:1rem; background:var(--bg-section-alt); border:1px solid var(--border-subtle); color:var(--text-secondary); text-decoration:none; transition:all 0.2s; text-align:center; min-height:80px; }
-        .action-btn:hover { border-color:var(--amber-glow); color:var(--amber-glow); transform:translateY(-2px); background:var(--icon-bg); }
-        .action-icon { width:2.25rem; height:2.25rem; display:flex; align-items:center; justify-content:center; border-radius:0.5rem; background:var(--icon-bg); color:var(--icon-primary); flex-shrink:0; }
-        .activity-item { display:flex; align-items:center; gap:0.75rem; padding:0.875rem 1.25rem; border-bottom:1px solid var(--border-subtle); transition:background 0.2s; }
-        .activity-item:last-child { border-bottom:none; }
-        .activity-item:hover { background:var(--bg-section-alt); }
-        .dash-footer { text-align:center; margin-top:2.5rem; font-size:0.75rem; color:var(--text-muted); }
-      `}</style>
-
-      {/* Glow fond */}
-      <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "50vh", pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(245,158,11,0.08) 0%, transparent 80%)" }} />
-
-      <div className="dash-root rp-page-pad">
-        <div className="dash-inner">
-
-          {/* Header Dashboard */}
-          <div className="rp-dash-hero">
-            <div style={avatarBase(48)}>{initials}</div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <h1 className="rp-h1" style={{ fontWeight: 800, color: cssVar.textPrimary, fontFamily: typography.fontSerif, margin: "0 0 0.2rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                Bonjour, {firstName} !
-              </h1>
-              <p className="rp-body" style={{ color: cssVar.textMuted, margin: 0, lineHeight: 1.5 }}>{subtitle}</p>
-              <div style={{ marginTop: "0.6rem", display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-                <span style={roleBadge(rc.bg, rc.text, rc.border)}>
-                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: rc.text, display: "inline-block" }} />
-                  {ROLE_LABELS[role]}
-                </span>
-                {user.restaurant_nom && (
-                  <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "0.25rem" }}>
-                    📍 {user.restaurant_nom}
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="rp-dash-hero-meta">
-               <Link href="/profil" style={btnOutline}>Mon profil</Link>
-            </div>
-          </div>
-
-          {/* Widgets de Statistiques selon le rôle */}
-          <div className="rp-stats-grid" style={{ marginBottom: "1.5rem" }}>
-            {statsLoading ? (
-              [1, 2, 3, 4].map(i => (
-                <div key={i} style={{ height: 110, background: "var(--bg-section-alt)", borderRadius: "1.25rem", animation: "pulse 1.5s infinite" }} />
-              ))
-            ) : stats ? (
-              <>
-                {role === "Radmin" && (
-                  <>
-                    <StatCard title="Revenus du jour" value={`${Number(stats.revenu_aujourdhui || 0).toLocaleString()} GNF`} icon={TrendingUp} trend={{ value: 12, isUp: true }} />
-                    <StatCard title="Commandes actives" value={stats.commandes_actives || 0} icon={Utensils} color="#3b82f6" />
-                    <StatCard title="Tables occupées" value={stats.tables_occupees || 0} icon={QrCode} color="#10b981" />
-                    <StatCard title="Staff présent" value={stats.total_staff || 0} icon={Users} color="#a855f7" />
-                  </>
-                )}
-                {role === "Rchef_cuisinier" && (
-                  <>
-                    <StatCard title="En attente" value={stats.en_attente || 0} icon={Clock} color="#ef4444" description="Commandes non préparées" />
-                    <StatCard title="En préparation" value={stats.en_preparation || 0} icon={ChefHat} color="#f59e0b" />
-                    <StatCard title="Plats prêts" value={stats.plats_prets_aujourdhui || 0} icon={TrendingUp} color="#10b981" description="Aujourd'hui" />
-                    <StatCard title="Indisponibles" value={stats.plats_indisponibles || 0} icon={AlertTriangle} color="#f97316" />
-                  </>
-                )}
-                {role === "Rtable" && (
-                  <>
-                    <StatCard title="Panier" value={`${stats.panier_count || 0} articles`} icon={Utensils} color="#3b82f6" />
-                    <StatCard title="Status Commande" value={stats.derniere_commande_statut || "Aucune"} icon={Clock} color="#f59e0b" description={stats.derniere_commande_id ? `Commande #${stats.derniere_commande_id}` : ""} />
-                    <StatCard title="Total" value="Calcul en cours..." icon={CreditCard} color="#22c55e" />
-                  </>
-                )}
-                {role === "Rsuper_admin" && (
-                  <>
-                    <StatCard title="Restaurants" value={stats.total_restaurants || 0} icon={TrendingUp} color="#f59e0b" />
-                    <StatCard title="Utilisateurs" value={stats.total_utilisateurs || 0} icon={Users} color="#3b82f6" />
-                    <StatCard title="Revenus Mensuels" value={`${Number(stats.total_revenu_global || 0).toLocaleString()} GNF`} icon={CreditCard} color="#10b981" />
-                  </>
-                )}
-                {role === "Rmanager" && (
-                  <>
-                    <StatCard title="Revenus du jour" value={`${Number(stats.revenu_aujourdhui || 0).toLocaleString()} GNF`} icon={TrendingUp} trend={{ value: 12, isUp: true }} />
-                    <StatCard title="Commandes actives" value={stats.commandes_actives || 0} icon={Utensils} color="#3b82f6" />
-                    <StatCard title="Tables occupées" value={stats.tables_occupees || 0} icon={QrCode} color="#10b981" />
-                    <StatCard title="Staff présent" value={stats.total_staff || 0} icon={Users} color="#a855f7" />
-                  </>
-                )}
-                {role === "Rserveur" && (
-                  <>
-                    <StatCard title="Tables actives" value={stats.tables_occupees || 0} icon={QrCode} color="#3b82f6" />
-                    <StatCard title="Commandes en cours" value={stats.commandes_actives || 0} icon={Utensils} color="#f59e0b" />
-                    <StatCard title="Commandes à servir" value={stats.plats_prets_aujourdhui || 0} icon={TrendingUp} color="#10b981" />
-                  </>
-                )}
-                {role === "Rcuisinier" && (
-                  <>
-                    <StatCard title="En attente" value={stats.en_attente || 0} icon={Clock} color="#ef4444" />
-                    <StatCard title="En préparation" value={stats.en_preparation || 0} icon={ChefHat} color="#f59e0b" />
-                    <StatCard title="Plats prêts" value={stats.plats_prets_aujourdhui || 0} icon={TrendingUp} color="#10b981" />
-                  </>
-                )}
-                {role === "Rcomptable" && (
-                  <>
-                    <StatCard title="Revenus du jour" value={`${Number(stats.revenu_aujourdhui || 0).toLocaleString()} GNF`} icon={TrendingUp} color="#10b981" />
-                    <StatCard title="Commandes actives" value={stats.commandes_actives || 0} icon={Utensils} color="#3b82f6" />
-                    <StatCard title="Transactions" value={stats.total_staff || 0} icon={CreditCard} color="#f59e0b" />
-                  </>
-                )}
-              </>
-            ) : (
-              <p style={{ color: "var(--text-muted)", fontSize: "0.875rem" }}>Impossible de charger les statistiques.</p>
-            )}
-          </div>
-
-          <div className="main-grid">
-            {/* Colonne Gauche : Actions Rapides / Flux principal */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-              <div className="section-card">
-                <div className="section-header">
-                  <h2 className="section-title">Accès Rapides</h2>
-                </div>
-                <div className="rp-actions-grid" style={{ padding: "1rem" }}>
-                  {sections.flatMap(s => s.items).slice(0, 8).map((item) => (
-                    <Link key={item.label} href={item.href} className="action-btn">
-                       {/* Icon mapping would be better here, but for now we use a generic arrow or specific for some */}
-                       <div className="action-icon">
-                          {item.label.includes("Menu") ? <Utensils size={18} /> : 
-                           item.label.includes("Commandes") ? <Clock size={18} /> :
-                           item.label.includes("Équipe") ? <Users size={18} /> :
-                           item.label.includes("Ajouter") ? <Plus size={18} /> :
-                           <ArrowRight size={18} />}
-                       </div>
-                       <span className="rp-label" style={{ fontWeight: 600, lineHeight: 1.3 }}>{item.label}</span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-              {role !== "Rtable" && (
-                <div className="section-card">
-                  <div className="section-header">
-                    <h2 className="section-title">Activité Récente</h2>
-                  </div>
-                  <div>
-                    {[1, 2, 3].map((i) => (
-                      <div key={i} className="activity-item">
-                        <div style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--amber-glow)" }} />
-                        <div style={{ flex: 1 }}>
-                           <p style={{ margin: 0, fontSize: "0.82rem", color: "var(--text-primary)" }}>
-                              {i === 1 ? "Nouvelle commande #128 reçue" : i === 2 ? "Table 4 a demandé l'addition" : "Risotto Royal marqué indisponible"}
-                           </p>
-                           <p style={{ margin: 0, fontSize: "0.7rem", color: "var(--text-muted)" }}>il y a {i * 5} minutes</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Colonne Droite : Infos secondaires / Aide */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-               {role === "Rtable" && (
-                  <div className="section-card" style={{ background: "var(--gradient-amber)", border: "none" }}>
-                    <div style={{ padding: "1.5rem", color: "#0c0a09" }}>
-                       <h3 style={{ margin: "0 0 0.5rem", fontSize: "1.125rem", fontWeight: 800 }}>Suggestion du Chef</h3>
-                       <p style={{ margin: "0 0 1rem", fontSize: "0.82rem", opacity: 0.9 }}>Essayez notre nouveau Risotto Royal aux truffes blanches.</p>
-                       <Link href="/menu" style={{ 
-                         display: "inline-block", 
-                         padding: "0.5rem 1rem", 
-                         background: "#0c0a09", 
-                         color: "#fff", 
-                         borderRadius: "0.5rem", 
-                         textDecoration: "none",
-                         fontSize: "0.75rem",
-                         fontWeight: 700
-                       }}>Voir le plat</Link>
-                    </div>
-                  </div>
-               )}
-
-               <div className="section-card">
-                  <div className="section-header">
-                    <h2 className="section-title">Support</h2>
-                  </div>
-                  <div style={{ padding: "1.25rem" }}>
-                    <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", margin: "0 0 1rem" }}>Besoin d'aide avec l'application ?</p>
-                    <button style={{ 
-                      width: "100%", 
-                      padding: "0.6rem", 
-                      borderRadius: "0.75rem", 
-                      background: "var(--bg-section-alt)", 
-                      border: "1px solid var(--border-subtle)",
-                      color: "var(--text-primary)",
-                      fontSize: "0.75rem",
-                      fontWeight: 600,
-                      cursor: "pointer"
-                    }}>
-                      Contacter l'assistance
-                    </button>
-                  </div>
-               </div>
-            </div>
-          </div>
-
-          <p className="dash-footer">
-            RestoPro · {currentDate} · v1.2.0
-          </p>
+    if (authLoading || !user || user.role === "Rclient") return (
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: cssVar.bgDark }}>
+            <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+            <div style={{ width: 36, height: 36, borderRadius: "50%", border: `3px solid ${cssVar.borderAmber}`, borderTopColor: cssVar.amberGlow, animation: "spin .75s linear infinite" }} />
         </div>
-      </div>
-    </>
-  );
+    );
+
+    const role = user.role as Role;
+    const rc = ROLE_COLORS[role];
+    const initials = (user.nom_complet ?? user.login).slice(0, 2).toUpperCase();
+    const firstName = user.nom_complet?.split(" ")[0] || user.login;
+
+    return (
+        <>
+            <style>{`
+            @keyframes spin{to{transform:rotate(360deg)}}
+            @keyframes pulse{0%,100%{opacity:.6}50%{opacity:.3}}
+            @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+        `}</style>
+            <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "40vh", pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(245,158,11,0.07) 0%, transparent 80%)" }} />
+
+            <div style={{ minHeight: "100vh", background: cssVar.bgDark }}>
+                <div style={{ maxWidth: 1100, margin: "0 auto", padding: "2rem 1.5rem", position: "relative", zIndex: 1 }}>
+
+                    {/* Header */}
+                    <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "2rem", flexWrap: "wrap" }}>
+                        <div style={avatarBase(52)}>{initials}</div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                            <h1 style={{ margin: 0, fontSize: typography["2xl"], fontWeight: typography.bold, color: cssVar.textPrimary }}>
+                                Bonjour, {firstName} !
+                            </h1>
+                            <p style={{ margin: "0.2rem 0 0.5rem", fontSize: typography.sm, color: cssVar.textMuted }}>{WELCOME[role]}</p>
+                            <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                                <span style={roleBadge(rc.bg, rc.text, rc.border)}>
+                                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: rc.text, display: "inline-block" }} />
+                                    {ROLE_LABELS[role]}
+                                </span>
+                                {user.restaurant_nom && (
+                                    <span style={{ fontSize: typography.xs, color: cssVar.textMuted, display: "inline-flex", alignItems: "center", gap: "0.2rem" }}>
+                                        <MapPin size={11} /> {user.restaurant_nom}
+                                    </span>
+                                )}
+                                <span style={{ fontSize: typography.xs, color: cssVar.textMuted }}>{date}</span>
+                            </div>
+                        </div>
+                        <Link href="/profil" style={btnOutline}>Mon profil</Link>
+                    </div>
+
+                    {/* Contenu par rôle */}
+                    {loading ? <Loader /> : !data ? (
+                        <p style={{ color: cssVar.textMuted, fontSize: typography.sm }}>Impossible de charger les données.</p>
+                    ) : (
+                        <>
+                            {data.type === "admin"      && <AdminDashboard      d={data} />}
+                            {data.type === "serveur"    && <ServeurDashboard    d={data} />}
+                            {data.type === "cuisine"    && <CuisineDashboard    d={data} />}
+                            {data.type === "comptable"  && <ComptableDashboard  d={data} />}
+                            {data.type === "table"      && <TableDashboard      d={data} />}
+                            {data.type === "superadmin" && <SuperAdminDashboard d={data} />}
+                        </>
+                    )}
+
+                    <p style={{ textAlign: "center", marginTop: "2rem", fontSize: typography.xs, color: cssVar.textMuted }}>
+                        RestoPro · {date}
+                    </p>
+                </div>
+            </div>
+        </>
+    );
 }
