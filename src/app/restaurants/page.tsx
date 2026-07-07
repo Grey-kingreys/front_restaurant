@@ -10,6 +10,7 @@ import {
     createRestaurant,
     updateRestaurant,
     toggleRestaurant,
+    deleteRestaurant,
     getPlatformStats,
     type Restaurant,
     type RestaurantCreatePayload,
@@ -26,6 +27,7 @@ import {
     Search,
     Pencil,
     Power,
+    Trash2,
     ChevronDown,
 } from "lucide-react";
 
@@ -126,7 +128,7 @@ function RestaurantForm({ initial, onSubmit, onClose, loading, error }: {
 
 // ── Page principale ────────────────────────────────────────────────────────────
 
-type ModalMode = "create" | "edit" | "toggle" | null;
+type ModalMode = "create" | "edit" | "toggle" | "delete" | null;
 
 export default function RestaurantsPage() {
     const { user, isAuthenticated, isLoading } = useAuth();
@@ -144,6 +146,9 @@ export default function RestaurantsPage() {
     const [selected, setSelected]       = useState<Restaurant | null>(null);
     const [formLoading, setFormLoading] = useState(false);
     const [formError, setFormError]     = useState<string | null>(null);
+    const [deletePassword, setDeletePassword] = useState("");
+    const [deleteLoading, setDeleteLoading] = useState(false);
+    const [deleteError, setDeleteError] = useState("");
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) router.replace("/auth/login");
@@ -172,7 +177,13 @@ export default function RestaurantsPage() {
         setTimeout(() => setToast(null), 3500);
     };
 
-    const closeModal = () => { setModal(null); setSelected(null); setFormError(null); };
+    const closeModal = () => {
+        setModal(null);
+        setSelected(null);
+        setFormError(null);
+        setDeletePassword("");
+        setDeleteError("");
+    };
 
     const handleCreate = async (data: RestaurantCreatePayload) => {
         setFormLoading(true);
@@ -232,6 +243,28 @@ export default function RestaurantsPage() {
             closeModal();
         } finally {
             setFormLoading(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!selected) return;
+        if (!deletePassword) { setDeleteError("Mot de passe requis."); return; }
+        setDeleteLoading(true);
+        setDeleteError("");
+        try {
+            const res = await deleteRestaurant(selected.id, selected.nom, deletePassword);
+            if (res.success) {
+                showToast(`Restaurant «${selected.nom}» supprimé définitivement.`, "success");
+                closeModal();
+                setDeletePassword("");
+                fetchAll();
+            } else {
+                setDeleteError(res.message || "Erreur lors de la suppression.");
+            }
+        } catch {
+            setDeleteError("Erreur lors de la suppression.");
+        } finally {
+            setDeleteLoading(false);
         }
     };
 
@@ -318,6 +351,28 @@ export default function RestaurantsPage() {
                                         <button onClick={handleToggle} disabled={formLoading} style={{ flex: 2, padding: "0.65rem", borderRadius: radius.lg, border: `1px solid ${selected.is_active ? "#ef4444" : "#22c55e"}`, background: selected.is_active ? "rgba(239,68,68,0.08)" : "rgba(34,197,94,0.08)", color: selected.is_active ? "#ef4444" : "#22c55e", fontWeight: 700, fontSize: typography.sm, cursor: formLoading ? "not-allowed" : "pointer", opacity: formLoading ? 0.7 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>
                                             {formLoading && <div style={{ width: 13, height: 13, borderRadius: "50%", border: `2px solid ${selected.is_active ? "#ef4444" : "#22c55e"}`, borderTopColor: "transparent", animation: "spin .6s linear infinite" }} />}
                                             {selected.is_active ? "Suspendre" : "Activer"}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                            {modal === "delete" && selected && (
+                                <div>
+                                    <p style={{ margin: "0 0 1rem", fontSize: typography.sm, color: "#ef4444" }}>
+                                        <strong>⚠️ Attention — Opération IRREVERSIBLE</strong>
+                                    </p>
+                                    <p style={{ margin: "0 0 1.25rem", fontSize: typography.sm, color: cssVar.textMuted }}>
+                                        La suppression de <strong style={{ color: cssVar.textPrimary }}>«{selected.nom}»</strong> supprimera définitivement le restaurant et <strong>TOUTES ses données</strong> (utilisateurs, plats, commandes, paiements, etc.).
+                                    </p>
+                                    {deleteError && <div style={{ padding: "0.625rem 0.875rem", borderRadius: radius.lg, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm, marginBottom: "0.75rem" }}>{deleteError}</div>}
+                                    <div>
+                                        <label style={{ display: "block", fontSize: typography.xs, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: cssVar.textMuted, marginBottom: "0.375rem" }}>Votre mot de passe Super Admin</label>
+                                        <input type="password" value={deletePassword} onChange={e => setDeletePassword(e.target.value)} placeholder="••••••" style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box", marginBottom: "1rem" }} />
+                                    </div>
+                                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                                        <button onClick={closeModal} style={{ flex: 1, padding: "0.65rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textSecondary, fontWeight: 700, fontSize: typography.sm, cursor: "pointer" }}>Annuler</button>
+                                        <button onClick={handleDelete} disabled={deleteLoading || !deletePassword} style={{ flex: 2, padding: "0.65rem", borderRadius: radius.lg, border: "1px solid #ef4444", background: "rgba(239,68,68,0.08)", color: "#ef4444", fontWeight: 700, fontSize: typography.sm, cursor: deleteLoading || !deletePassword ? "not-allowed" : "pointer", opacity: deleteLoading || !deletePassword ? 0.5 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>
+                                            {deleteLoading && <div style={{ width: 13, height: 13, borderRadius: "50%", border: "2px solid #ef4444", borderTopColor: "transparent", animation: "spin .6s linear infinite" }} />}
+                                            Supprimer définitivement
                                         </button>
                                     </div>
                                 </div>
@@ -447,6 +502,9 @@ export default function RestaurantsPage() {
                                                         <button title={r.is_active ? "Suspendre" : "Activer"} className="icon-btn" onClick={() => { setSelected(r); setModal("toggle"); }} style={{ color: r.is_active ? "#ef4444" : "#22c55e", borderColor: r.is_active ? "rgba(239,68,68,0.3)" : "rgba(34,197,94,0.3)" }}>
                                                             <Power size={13} />
                                                         </button>
+                                                        <button title="Supprimer" className="icon-btn" onClick={() => { setSelected(r); setDeletePassword(""); setDeleteError(""); setModal("delete"); }} style={{ color: "#ef4444", borderColor: "rgba(239,68,68,0.3)" }}>
+                                                            <Trash2 size={13} />
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -481,6 +539,9 @@ export default function RestaurantsPage() {
                                             </button>
                                             <button onClick={() => { setSelected(r); setModal("toggle"); }} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "0.5rem", border: `1px solid ${r.is_active ? "rgba(239,68,68,0.3)" : "rgba(34,197,94,0.3)"}`, background: "transparent", color: r.is_active ? "#ef4444" : "#22c55e", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
                                                 <Power size={12} /> {r.is_active ? "Suspendre" : "Activer"}
+                                            </button>
+                                            <button onClick={() => { setSelected(r); setDeletePassword(""); setDeleteError(""); setModal("delete"); }} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "0.5rem", border: "1px solid rgba(239,68,68,0.3)", background: "transparent", color: "#ef4444", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
+                                                <Trash2 size={12} /> Supprimer
                                             </button>
                                         </div>
                                     </div>

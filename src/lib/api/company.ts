@@ -116,6 +116,24 @@ export async function toggleRestaurant(id: number, isActive: boolean): Promise<A
 }
 
 /**
+ * Supprimer définitivement un restaurant (Super Admin)
+ * Requiert confirmation : nom exact + mot de passe
+ */
+export async function deleteRestaurant(
+    id: number,
+    nomConfirmation: string,
+    password: string
+): Promise<ApiResponse<void>> {
+    return apiRequest(`/company/restaurants/${id}/`, {
+        method: "DELETE",
+        body: JSON.stringify({
+            nom_confirmation: nomConfirmation,
+            password: password,
+        }),
+    });
+}
+
+/**
  * Statistiques globales de la plateforme (Super Admin)
  */
 export async function getPlatformStats(): Promise<ApiResponse<PlatformStats>> {
