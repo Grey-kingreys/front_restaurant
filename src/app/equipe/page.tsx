@@ -112,6 +112,21 @@ function UserForm({ initial, isAdmin, onSubmit, onClose, loading, error }: UserF
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validation des champs obligatoires
+        if (!nom?.trim()) {
+            setError("Le nom complet est obligatoire.");
+            return;
+        }
+        if (!email?.trim()) {
+            setError("L'email est obligatoire.");
+            return;
+        }
+        if (!isEdit && !password?.trim()) {
+            setError("Le mot de passe est obligatoire.");
+            return;
+        }
+
         if (isEdit) {
             await onSubmit({ nom_complet: nom || undefined, email: email || undefined, telephone: telephone || undefined, role } as UserUpdatePayload);
         } else {
