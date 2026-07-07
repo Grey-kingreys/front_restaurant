@@ -11,6 +11,7 @@ import {
     updateUser,
     toggleUser,
     adminResetUserPassword,
+    deleteUser,
 } from "@/lib/api/auth";
 import type { User, Role, UserCreatePayload, UserUpdatePayload } from "@/types";
 import { cssVar, typography, radius } from "@/theme/theme";
@@ -28,6 +29,7 @@ import {
     KeyRound,
     Pencil,
     Play,
+    Trash2,
 } from "lucide-react";
 
 const ROLES_AUTORISES: Role[] = ["Radmin", "Rmanager", "Rsuper_admin"];
@@ -301,7 +303,7 @@ function ResetPasswordForm({ user, onSubmit, onClose, loading, error }: {
 
 // ── Page principale ───────────────────────────────────────────────────────────
 
-type ModalMode = "create" | "edit" | "reset" | null;
+type ModalMode = "create" | "edit" | "reset" | "delete" | null;
 
 export default function EquipePage() {
     const { user, isAuthenticated, isLoading, impersonate, hasPermission } = useAuth();
@@ -421,6 +423,26 @@ export default function EquipePage() {
                 closeModal();
             } else {
                 setFormError("Impossible de réinitialiser le mot de passe.");
+            }
+        } catch {
+            setFormError("Erreur de connexion.");
+        } finally {
+            setFormLoading(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!selectedUser) return;
+        setFormLoading(true);
+        setFormError(null);
+        try {
+            const res = await deleteUser(selectedUser.id);
+            if (res.success) {
+                showToast(`${selectedUser.nom_complet ?? selectedUser.login} désactivé définitivement.`);
+                closeModal();
+                fetchUsers();
+            } else {
+                setFormError(res.message || "Impossible de désactiver l'utilisateur.");
             }
         } catch {
             setFormError("Erreur de connexion.");
