@@ -45,6 +45,7 @@ export default function MapPicker({ lat, lng, onChange, radiusMetres, height = 3
         const map = mapRef.current, marker = markerRef.current;
         if (!map || !marker || !radiusRef.current) return;
         const pos = marker.getLngLat();
+        if (!pos) return; // Marker n'a pas de position encore
         const data = circlePolygon([pos.lng, pos.lat], radiusRef.current);
         const src = map.getSource(CIRCLE_SRC) as GeoJSONSource | undefined;
         if (src) { src.setData(data); return; }
