@@ -109,21 +109,23 @@ function UserForm({ initial, isAdmin, onSubmit, onClose, loading, error }: UserF
     const [email, setEmail]         = useState(initial?.email ?? "");
     const [telephone, setTelephone] = useState(initial?.telephone ?? "");
     const [password, setPassword]   = useState("");
+    const [validationError, setValidationError] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setValidationError(null);
 
         // Validation des champs obligatoires
         if (!nom?.trim()) {
-            setError("Le nom complet est obligatoire.");
+            setValidationError("Le nom complet est obligatoire.");
             return;
         }
         if (!email?.trim()) {
-            setError("L'email est obligatoire.");
+            setValidationError("L'email est obligatoire.");
             return;
         }
         if (!isEdit && !password?.trim()) {
-            setError("Le mot de passe est obligatoire.");
+            setValidationError("Le mot de passe est obligatoire.");
             return;
         }
 
@@ -136,9 +138,9 @@ function UserForm({ initial, isAdmin, onSubmit, onClose, loading, error }: UserF
 
     return (
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}>
-            {error && (
+            {(error || validationError) && (
                 <div style={{ padding: "0.625rem 0.875rem", borderRadius: radius.lg, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm }}>
-                    {error}
+                    {validationError || error}
                 </div>
             )}
 
