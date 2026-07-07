@@ -5,7 +5,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { getCaisseGlobaleActive, listCaissesGlobales, fermerCaisseGlobale } from "@/lib/api/paiements";
+import { getCaisseGlobaleActive, listCaissesGlobales, fermerCaisseGlobale, ouvrirCaisseGlobale } from "@/lib/api/paiements";
 import type { CaisseGlobale } from "@/lib/api/paiements";
 import {
     cssVar, typography, radius, spacing,
@@ -167,17 +167,25 @@ export default function CaisseGlobalePage() {
     const [historique, setHistorique] = useState<CaisseGlobale[]>([]);
     const [pageLoading, setPageLoading] = useState(true);
     const [pageErr, setPageErr] = useState("");
+    const [activeErr, setActiveErr] = useState(""); // Erreur spécifique si pas de caisse active
     const [showFermerModal, setShowFermerModal] = useState(false);
+    const [showOuvrirModal, setShowOuvrirModal] = useState(false);
+    const [ouvrirLoading, setOuvrirLoading] = useState(false);
 
     const fetchAll = useCallback(async () => {
         setPageErr("");
+        setActiveErr("");
         try {
             const [activeRes, histoRes] = await Promise.all([
                 getCaisseGlobaleActive(),
                 listCaissesGlobales(),
             ]);
-            if (activeRes.success && activeRes.data) setActive(activeRes.data);
-            else setActive(null);
+            if (activeRes.success && activeRes.data) {
+                setActive(activeRes.data);
+            } else {
+                setActive(null);
+                setActiveErr(activeRes.message || "Impossible de charger la caisse active.");
+            }
             if (histoRes.success && histoRes.data) setHistorique(histoRes.data.caisses);
         } catch {
             setPageErr("Erreur lors du chargement de la caisse globale.");
@@ -197,6 +205,23 @@ export default function CaisseGlobalePage() {
     }, [authLoading, user, router, fetchAll]);
 
     const canClose = hasPermission("manage_caisse_globale");
+
+    const handleOuvrirCaisse = async () => {
+        setOuvrirLoading(true);
+        try {
+            const res = await ouvrirCaisseGlobale();
+            if (res.success) {
+                setShowOuvrirModal(false);
+                fetchAll();
+            } else {
+                alert(res.message || "Erreur lors de l'ouverture.");
+            }
+        } catch {
+            alert("Erreur lors de l'ouverture.");
+        } finally {
+            setOuvrirLoading(false);
+        }
+    };
 
     if (authLoading || pageLoading) {
         return (
@@ -249,8 +274,23 @@ export default function CaisseGlobalePage() {
                     </div>
                 </div>
             ) : (
-                <div style={{ ...alertAmber, marginBottom: spacing["5"] }}>
-                    Aucune caisse globale ouverte pour aujourd&apos;hui. Elle s&apos;ouvre automatiquement à 05h00 via la tâche planifiée.
+                <div style={{ ...cardBase, padding: "1.5rem", marginBottom: spacing["5"], border: `1px solid rgba(245,158,11,0.2)`, background: "rgba(245,158,11,0.05)" }}>
+                    <p style={{ margin: "0 0 1rem", fontSize: typography.sm, color: "#f59e0b", fontWeight: typography.semibold }}>
+                        ⏰ {activeErr || "Aucune caisse globale ouverte pour aujourd'hui."}
+                    </p>
+                    {activeErr.includes("ouverte") && canClose && (
+                        <button
+                            onClick={() => setShowOuvrirModal(true)}
+                            style={{ padding: "0.5rem 1rem", borderRadius: radius.lg, background: "#f59e0b", color: "white", border: "none", fontWeight: 600, fontSize: typography.sm, cursor: "pointer" }}
+                        >
+                            → Ouvrir manuellement
+                        </button>
+                    )}
+                    {!activeErr.includes("ouverte") && (
+                        <p style={{ margin: 0, fontSize: typography.xs, color: cssVar.textMuted }}>
+                            Elle s&apos;ouvrira automatiquement à 05h00 via la tâche planifiée.
+                        </p>
+                    )}
                 </div>
             )}
 
@@ -282,6 +322,24 @@ export default function CaisseGlobalePage() {
                     onClose={() => setShowFermerModal(false)}
                     onDone={() => { setShowFermerModal(false); fetchAll(); }}
                 />
+            )}
+
+            {showOuvrirModal && (
+                <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
+                    <div style={{ ...cardBase, padding: "1.5rem", width: "100%", maxWidth: 460 }}>
+                        <h3 style={{ margin: "0 0 0.25rem", fontSize: typography.lg, fontWeight: typography.bold, color: cssVar.textPrimary }}>Ouvrir la caisse globale</h3>
+                        <p style={{ margin: "0 0 1rem", fontSize: typography.sm, color: cssVar.textSecondary }}>
+                            Voulez-vous ouvrir manuellement la caisse globale pour aujourd&apos;hui ?
+                        </p>
+                        <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
+                            <button onClick={() => setShowOuvrirModal(false)} style={{ padding: "0.65rem 1rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textSecondary, fontWeight: 700, fontSize: typography.sm, cursor: "pointer" }}>Annuler</button>
+                            <button onClick={handleOuvrirCaisse} disabled={ouvrirLoading} style={{ padding: "0.65rem 1.25rem", borderRadius: radius.lg, border: "1px solid #f59e0b", background: "rgba(245,158,11,0.15)", color: "#f59e0b", fontWeight: 700, fontSize: typography.sm, cursor: ouvrirLoading ? "not-allowed" : "pointer", opacity: ouvrirLoading ? 0.7 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>
+                                {ouvrirLoading && <div style={{ width: 13, height: 13, borderRadius: "50%", border: "2px solid #f59e0b", borderTopColor: "transparent", animation: "spin .6s linear infinite" }} />}
+                                Ouvrir
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

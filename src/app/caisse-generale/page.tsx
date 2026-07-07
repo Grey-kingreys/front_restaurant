@@ -79,7 +79,24 @@ export default function CaisseGeneralePage() {
                 </p>
             </div>
 
-            {err && <div style={{ ...alertError, marginBottom: spacing["4"] }}>{err}</div>}
+            {err && (
+                <div style={{ ...cardBase, padding: "1.5rem", marginBottom: spacing["4"], border: `1px solid rgba(239,68,68,0.2)`, background: "rgba(239,68,68,0.05)" }}>
+                    <p style={{ margin: "0 0 1rem", fontSize: typography.sm, color: "#ef4444", fontWeight: typography.semibold }}>
+                        ⚠️ {err}
+                    </p>
+                    {err.includes("n'a pas encore ete initialisee") && (
+                        <button
+                            onClick={() => {
+                                setLoading(true);
+                                window.location.href = "#init";
+                            }}
+                            style={{ padding: "0.5rem 1rem", borderRadius: radius.lg, background: "#f59e0b", color: "white", border: "none", fontWeight: 600, fontSize: typography.sm, cursor: "pointer" }}
+                        >
+                            → Initialiser la Caisse
+                        </button>
+                    )}
+                </div>
+            )}
 
             {!caisse && !err && (
                 <div style={{ ...cardBase, padding: "2rem", textAlign: "center" }}>

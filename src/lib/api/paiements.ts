@@ -156,6 +156,10 @@ export async function listCaissesGlobales(): Promise<ApiResponse<{ count: number
     return apiRequest("/paiements/caisse-globale/");
 }
 
+export async function ouvrirCaisseGlobale(): Promise<ApiResponse<CaisseGlobale>> {
+    return apiRequest("/paiements/caisse-globale/ouvrir/", { method: "POST" });
+}
+
 export async function fermerCaisseGlobale(payload: {
     montant_physique: number;
     motif_ecart?: string;

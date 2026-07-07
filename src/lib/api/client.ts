@@ -174,9 +174,7 @@ export async function apiRequest<T = unknown>(
 
     const data = await response.json();
 
-    if (!response.ok) {
-        throw data;
-    }
-
+    // Retourner la réponse même si status est 4xx/5xx
+    // (laisse le caller décider comment gérer success: false)
     return data as T;
 }
