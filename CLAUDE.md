@@ -233,13 +233,10 @@ Toutes les fonctions API retournent `ApiResponse<T>` : `{ success, data?, messag
 | Caisse Globale | Rcomptable, Radmin, Rmanager | `/caisse/globale` |
 | Caisse Générale | Radmin, Rmanager | `/caisse-generale` |
 
-### ⏳ Reste à faire (backend prêt)
+### ✅ Toutes les pages sont implémentées
 
-| Page | Rôle(s) | URL | Endpoints |
-| --- | --- | --- | --- |
-| Mon restaurant | Radmin | `/restaurant/parametres` | `GET/PATCH /api/company/restaurants/<pk>/` |
-| Statistiques | Rsuper_admin | `/statistiques` | `GET /api/company/stats/` |
+Toutes les pages listées ci-dessus (dashboard, équipe, tables, menu, commandes, etc.) sont **entièrement fonctionnelles** avec leur backend correspondant.
 
 ### ❌ Sans backend (à construire si voulu)
 
-Analytics, Rapports, Exports, Paramètres plateforme.
+Analytics avancées, Rapports détaillés, Exports PDF/Excel, Paramètres plateforme globaux.
