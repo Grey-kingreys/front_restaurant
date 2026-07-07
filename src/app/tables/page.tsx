@@ -10,6 +10,7 @@ import {
     createTable,
     updateTable,
     deleteTable,
+    getQRCode,
     regenerateQRCode,
     type Table,
     type TableCreatePayload,
@@ -285,7 +286,50 @@ export default function TablesPage() {
         }
     };
 
-    const handleRegenerateQR = async (table: Table) => {
+    // Affiche le QR existant sans toucher au token
+    const handleShowQR = async (table: Table) => {
+        setSelectedTable(table);
+        setFormLoading(true);
+        setModal("qr");
+        setQrUrl(null);
+        try {
+            const res = await getQRCode(table.id);
+            if (res.success && res.data?.qr_code_url) {
+                setQrUrl(res.data.qr_code_url);
+            } else {
+                showToast("QR code introuvable.", "error");
+                closeModal();
+            }
+        } catch {
+            showToast("Erreur.", "error");
+            closeModal();
+        } finally {
+            setFormLoading(false);
+        }
+    };
+
+    // Crée un premier QR (table sans QR) OU regénère en invalidant l'ancien
+    const handleRegenerateQR = async () => {
+        if (!selectedTable) return;
+        setFormLoading(true);
+        try {
+            const res = await regenerateQRCode(selectedTable.id);
+            if (res.success && res.data) {
+                setQrUrl(res.data.qr_code_url);
+                fetchTables();
+                showToast("Nouveau QR code généré.");
+            } else {
+                showToast("Impossible de générer le QR code.", "error");
+            }
+        } catch {
+            showToast("Erreur.", "error");
+        } finally {
+            setFormLoading(false);
+        }
+    };
+
+    // Créer le premier QR pour une table qui n'en a pas encore
+    const handleCreateQR = async (table: Table) => {
         setSelectedTable(table);
         setFormLoading(true);
         setModal("qr");
@@ -296,7 +340,7 @@ export default function TablesPage() {
                 setQrUrl(res.data.qr_code_url);
                 fetchTables();
             } else {
-                showToast("Impossible de générer le QR code.", "error");
+                showToast("Impossible de créer le QR code.", "error");
                 closeModal();
             }
         } catch {
@@ -396,7 +440,7 @@ export default function TablesPage() {
                                     {formLoading ? (
                                         <div style={{ padding: "2rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "0.75rem", color: cssVar.textMuted }}>
                                             <div style={{ width: 28, height: 28, borderRadius: "50%", border: "3px solid var(--border-amber)", borderTopColor: "var(--amber-glow)", animation: "spin .75s linear infinite" }} />
-                                            Génération du QR code…
+                                            Chargement du QR code…
                                         </div>
                                     ) : qrUrl ? (
                                         <>
@@ -406,9 +450,21 @@ export default function TablesPage() {
                                             {/* eslint-disable-next-line @next/next/no-img-element */}
                                             <img src={qrUrl} alt="QR Code" style={{ maxWidth: 220, width: "100%", borderRadius: "0.75rem", border: "1px solid var(--border-subtle)", background: "#fff", padding: "0.5rem" }} />
                                             <div style={{ display: "flex", gap: "0.5rem", marginTop: "1rem" }}>
-                                                <button onClick={closeModal} style={{ flex: 1, padding: "0.65rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textSecondary, fontWeight: 700, fontSize: typography.sm, cursor: "pointer" }}>Fermer</button>
                                                 <button onClick={handleDownloadQR} style={{ flex: 2, padding: "0.65rem", borderRadius: radius.lg, border: "none", background: "var(--gradient-btn)", color: "#0c0a09", fontWeight: 700, fontSize: typography.sm, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>
                                                     <Download size={15} /> Télécharger
+                                                </button>
+                                                <button onClick={closeModal} style={{ flex: 1, padding: "0.65rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textSecondary, fontWeight: 700, fontSize: typography.sm, cursor: "pointer" }}>Fermer</button>
+                                            </div>
+                                            <div style={{ marginTop: "0.75rem", paddingTop: "0.75rem", borderTop: "1px solid var(--border-subtle)" }}>
+                                                <p style={{ margin: "0 0 0.5rem", fontSize: "0.7rem", color: cssVar.textMuted }}>
+                                                    ⚠ Regénérer invalide l&apos;ancien QR — les QR déjà imprimés ne fonctionneront plus.
+                                                </p>
+                                                <button
+                                                    onClick={handleRegenerateQR}
+                                                    disabled={formLoading}
+                                                    style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.4rem 0.875rem", borderRadius: radius.lg, border: "1px solid rgba(239,68,68,0.35)", background: "rgba(239,68,68,0.06)", color: "#ef4444", fontSize: "0.75rem", fontWeight: 700, cursor: formLoading ? "not-allowed" : "pointer" }}
+                                                >
+                                                    <RefreshCw size={12} /> Regénérer
                                                 </button>
                                             </div>
                                         </>
@@ -507,10 +563,10 @@ export default function TablesPage() {
 
                                         <div style={{ display: "flex", gap: "0.4rem", borderTop: "1px solid var(--border-subtle)", paddingTop: "0.625rem" }}>
                                             <button
-                                                onClick={() => handleRegenerateQR(t)}
+                                                onClick={() => ext.a_qr_code ? handleShowQR(t) : handleCreateQR(t)}
                                                 style={{ flex: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.5rem", borderRadius: "0.5rem", border: "1px solid var(--border-amber)", background: "rgba(245,158,11,0.06)", color: "var(--amber-glow)", fontSize: "0.75rem", fontWeight: 700, cursor: "pointer" }}
                                             >
-                                                <QrCode size={13} /> {ext.a_qr_code ? "Regénérer QR" : "Créer QR"}
+                                                <QrCode size={13} /> {ext.a_qr_code ? "Voir QR" : "Créer QR"}
                                             </button>
                                             {isAdmin && (
                                                 <>

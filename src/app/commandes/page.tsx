@@ -10,6 +10,7 @@ import {
     listCommandes,
     getCommande,
     marquerPrete,
+    marquerEnLivraison,
     marquerServie,
     validerPaiement,
     downloadRecu,
@@ -32,15 +33,17 @@ import {
     ChefHat,
     CreditCard,
     ArrowRight,
+    Truck,
 } from "lucide-react";
 
 const ROLES_AUTORISES: Role[] = ["Rserveur", "Rchef_cuisinier", "Radmin", "Rmanager", "Rsuper_admin"];
 
 const STATUT_CONFIG: Record<StatutCommande, { label: string; color: string; bg: string; border: string }> = {
-    en_attente: { label: "En attente",  color: "#f59e0b", bg: "rgba(245,158,11,0.1)",  border: "rgba(245,158,11,0.25)" },
-    prete:      { label: "Prête",       color: "#3b82f6", bg: "rgba(59,130,246,0.1)",  border: "rgba(59,130,246,0.25)" },
-    servie:     { label: "Servie",      color: "#a855f7", bg: "rgba(168,85,247,0.1)",  border: "rgba(168,85,247,0.25)" },
-    payee:      { label: "Terminée",    color: "#22c55e", bg: "rgba(34,197,94,0.1)",   border: "rgba(34,197,94,0.25)" },
+    en_attente:   { label: "En attente",    color: "#f59e0b", bg: "rgba(245,158,11,0.1)",  border: "rgba(245,158,11,0.25)" },
+    prete:        { label: "Prête",         color: "#3b82f6", bg: "rgba(59,130,246,0.1)",  border: "rgba(59,130,246,0.25)" },
+    en_livraison: { label: "En livraison",  color: "#8b5cf6", bg: "rgba(139,92,246,0.1)",  border: "rgba(139,92,246,0.25)" },
+    servie:       { label: "Servie",        color: "#a855f7", bg: "rgba(168,85,247,0.1)",  border: "rgba(168,85,247,0.25)" },
+    payee:        { label: "Terminée",      color: "#22c55e", bg: "rgba(34,197,94,0.1)",   border: "rgba(34,197,94,0.25)" },
 };
 
 // Type de commande — différencie une commande sur place (table) d'une commande client en ligne
@@ -64,6 +67,7 @@ const FILTER_TABS: { value: StatutCommande | ""; label: string }[] = [
     { value: "", label: "Toutes" },
     { value: "en_attente", label: "En attente" },
     { value: "prete", label: "Prêtes" },
+    { value: "en_livraison", label: "En livraison" },
     { value: "servie", label: "Servies" },
     { value: "payee", label: "Payées" },
 ];
@@ -107,11 +111,12 @@ export default function CommandesPage() {
         setTimeout(() => setToast(null), 3000);
     };
 
-    const handleAction = async (id: number, action: "prete" | "servie" | "payee") => {
+    const handleAction = async (id: number, action: "prete" | "en_livraison" | "servie" | "payee") => {
         setActionLoading(id);
         try {
             let res;
             if (action === "prete") res = await marquerPrete(id);
+            else if (action === "en_livraison") res = await marquerEnLivraison(id);
             else if (action === "servie") res = await marquerServie(id);
             else res = await validerPaiement(id);
 
@@ -158,11 +163,12 @@ export default function CommandesPage() {
 
     const closeDrawer = () => { setDrawerCmd(null); setDrawerLoading(false); };
 
-    const handleActionFromDrawer = async (id: number, action: "prete" | "servie" | "payee") => {
+    const handleActionFromDrawer = async (id: number, action: "prete" | "en_livraison" | "servie" | "payee") => {
         setActionLoading(id);
         try {
             let res;
             if (action === "prete") res = await marquerPrete(id);
+            else if (action === "en_livraison") res = await marquerEnLivraison(id);
             else if (action === "servie") res = await marquerServie(id);
             else res = await validerPaiement(id);
             if (res.success && res.data) {
@@ -331,7 +337,7 @@ export default function CommandesPage() {
                                                     <td>
                                                         <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
                                                             {/* Cuisinier — marquer PRÊTE */}
-                                                            {(isCuisinier) && cmd.statut === "en_attente" && (
+                                                            {isCuisinier && cmd.statut === "en_attente" && (
                                                                 <ActionButton
                                                                     onClick={() => handleAction(cmd.id, "prete")}
                                                                     loading={isLoading}
@@ -340,14 +346,28 @@ export default function CommandesPage() {
                                                                     label="Prête"
                                                                 />
                                                             )}
-                                                            {/* Serveur — marquer SERVIE */}
-                                                            {isServeur && (cmd.statut === "prete" || (cmd.statut === "en_attente" && cmd.necessite_passage_cuisine === false)) && (
+                                                            {/* Serveur — marquer EN LIVRAISON (livraison uniquement, après cuisine) */}
+                                                            {isServeur && cmd.statut === "prete" && cmd.type_commande === "livraison" && (
+                                                                <ActionButton
+                                                                    onClick={() => handleAction(cmd.id, "en_livraison")}
+                                                                    loading={isLoading}
+                                                                    color="#8b5cf6"
+                                                                    icon={<Truck size={12} />}
+                                                                    label="En livraison"
+                                                                />
+                                                            )}
+                                                            {/* Serveur — marquer SERVIE / LIVRÉE */}
+                                                            {isServeur && (
+                                                                (cmd.statut === "en_livraison" && cmd.type_commande === "livraison") ||
+                                                                (cmd.statut === "prete" && cmd.type_commande !== "livraison") ||
+                                                                (cmd.statut === "en_attente" && cmd.necessite_passage_cuisine === false)
+                                                            ) && (
                                                                 <ActionButton
                                                                     onClick={() => handleAction(cmd.id, "servie")}
                                                                     loading={isLoading}
                                                                     color="#a855f7"
                                                                     icon={<Check size={12} />}
-                                                                    label="Servie"
+                                                                    label={cmd.type_commande === "livraison" ? "Livrée" : "Servie"}
                                                                 />
                                                             )}
                                                             {/* Serveur — valider PAIEMENT */}
@@ -422,6 +442,7 @@ function StatutIcon({ statut }: { statut: StatutCommande }) {
     const size = 8;
     if (statut === "en_attente") return <Clock size={size} />;
     if (statut === "prete") return <Flame size={size} />;
+    if (statut === "en_livraison") return <Truck size={size} />;
     if (statut === "servie") return <Check size={size} />;
     return <CheckCircle2 size={size} />;
 }
@@ -447,7 +468,7 @@ function ActionButton({ onClick, loading, color, icon, label }: {
 function CommandeCard({ cmd, isServeur, isCuisinier, actionLoading, onAction, onDownload, onOpen }: {
     cmd: Commande; isServeur: boolean; isCuisinier: boolean;
     actionLoading: number | null;
-    onAction: (id: number, action: "prete" | "servie" | "payee") => void;
+    onAction: (id: number, action: "prete" | "en_livraison" | "servie" | "payee") => void;
     onDownload: (id: number) => void;
     onOpen: (id: number) => void;
 }) {
@@ -477,8 +498,15 @@ function CommandeCard({ cmd, isServeur, isCuisinier, actionLoading, onAction, on
                     {isCuisinier && cmd.statut === "en_attente" && (
                         <ActionButton onClick={() => onAction(cmd.id, "prete")} loading={isLoading} color="#3b82f6" icon={<Flame size={12} />} label="Prête" />
                     )}
-                    {isServeur && (cmd.statut === "prete" || (cmd.statut === "en_attente" && cmd.necessite_passage_cuisine === false)) && (
-                        <ActionButton onClick={() => onAction(cmd.id, "servie")} loading={isLoading} color="#a855f7" icon={<Check size={12} />} label="Servie" />
+                    {isServeur && cmd.statut === "prete" && cmd.type_commande === "livraison" && (
+                        <ActionButton onClick={() => onAction(cmd.id, "en_livraison")} loading={isLoading} color="#8b5cf6" icon={<Truck size={12} />} label="En livraison" />
+                    )}
+                    {isServeur && (
+                        (cmd.statut === "en_livraison" && cmd.type_commande === "livraison") ||
+                        (cmd.statut === "prete" && cmd.type_commande !== "livraison") ||
+                        (cmd.statut === "en_attente" && cmd.necessite_passage_cuisine === false)
+                    ) && (
+                        <ActionButton onClick={() => onAction(cmd.id, "servie")} loading={isLoading} color="#a855f7" icon={<Check size={12} />} label={cmd.type_commande === "livraison" ? "Livrée" : "Servie"} />
                     )}
                     {isServeur && cmd.statut === "servie" && (
                         <ActionButton onClick={() => onAction(cmd.id, "payee")} loading={isLoading} color="#22c55e" icon={<CheckCircle2 size={12} />} label="Payer" />
@@ -548,7 +576,7 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
     isServeur: boolean;
     isCuisinier: boolean;
     actionLoading: number | null;
-    onAction: (id: number, action: "prete" | "servie" | "payee") => void;
+    onAction: (id: number, action: "prete" | "en_livraison" | "servie" | "payee") => void;
     onDownload: (id: number) => void;
 }) {
     const sc = cmd ? STATUT_CONFIG[cmd.statut] : null;
@@ -558,12 +586,14 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
         iso ? new Date(iso).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }) : null;
 
     const avecCuisine = cmd ? cmd.necessite_passage_cuisine !== false : true;
+    const estLivraison = cmd?.type_commande === "livraison";
 
     const TIMELINE_ALL: { key: StatutCommande; label: string; icon: React.ReactNode; date: string | null; actor: string | null }[] = cmd ? [
-        { key: "en_attente", label: "Commande passée",   icon: <Clock size={13} />,        date: cmd.date_commande,  actor: cmd.table_login ?? null },
-        { key: "prete",      label: "Préparée / Prête",  icon: <ChefHat size={13} />,      date: cmd.statut !== "en_attente" ? cmd.date_modification : null, actor: cmd.cuisinier_login ?? null },
-        { key: "servie",     label: "Servie",            icon: <User2 size={13} />,         date: cmd.statut === "servie" || cmd.statut === "payee" ? cmd.date_modification : null, actor: cmd.serveur_login ?? null },
-        { key: "payee",      label: "Paiement encaissé", icon: <CreditCard size={13} />,   date: cmd.date_paiement,  actor: cmd.serveur_login ?? null },
+        { key: "en_attente",   label: "Commande passée",        icon: <Clock size={13} />,      date: cmd.date_commande,  actor: cmd.client_display ?? cmd.table_login ?? null },
+        { key: "prete",        label: "Préparée / Prête",       icon: <ChefHat size={13} />,    date: cmd.statut !== "en_attente" ? cmd.date_modification : null, actor: cmd.cuisinier_login ?? null },
+        ...(estLivraison ? [{ key: "en_livraison" as StatutCommande, label: "En cours de livraison", icon: <Truck size={13} />, date: cmd.statut === "en_livraison" || cmd.statut === "servie" || cmd.statut === "payee" ? cmd.date_modification : null, actor: null }] : []),
+        { key: "servie",       label: estLivraison ? "Livrée" : "Servie", icon: <User2 size={13} />, date: cmd.statut === "servie" || cmd.statut === "payee" ? cmd.date_modification : null, actor: cmd.serveur_login ?? null },
+        { key: "payee",        label: "Paiement encaissé",      icon: <CreditCard size={13} />, date: cmd.date_paiement,  actor: cmd.serveur_login ?? null },
     ] : [];
 
     const TIMELINE = avecCuisine ? TIMELINE_ALL : TIMELINE_ALL.filter(s => s.key !== "prete");
@@ -698,10 +728,20 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
                                     Marquer PRÊTE
                                 </button>
                             )}
-                            {isServeur && (cmd.statut === "prete" || (cmd.statut === "en_attente" && cmd.necessite_passage_cuisine === false)) && (
+                            {isServeur && cmd.statut === "prete" && cmd.type_commande === "livraison" && (
+                                <button onClick={() => onAction(cmd.id, "en_livraison")} disabled={isActLoading} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", padding: "0.7rem", borderRadius: radius.lg, border: "1px solid #8b5cf6", background: "rgba(139,92,246,0.08)", color: "#8b5cf6", fontWeight: 700, fontSize: typography.sm, cursor: isActLoading ? "not-allowed" : "pointer", opacity: isActLoading ? 0.6 : 1, transition: "all 0.15s" }}>
+                                    {isActLoading ? <div style={{ width: 14, height: 14, borderRadius: "50%", border: "2px solid #8b5cf6", borderTopColor: "transparent", animation: "spin .6s linear infinite" }} /> : <Truck size={15} />}
+                                    Mettre en livraison
+                                </button>
+                            )}
+                            {isServeur && (
+                                (cmd.statut === "en_livraison" && cmd.type_commande === "livraison") ||
+                                (cmd.statut === "prete" && cmd.type_commande !== "livraison") ||
+                                (cmd.statut === "en_attente" && cmd.necessite_passage_cuisine === false)
+                            ) && (
                                 <button onClick={() => onAction(cmd.id, "servie")} disabled={isActLoading} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", padding: "0.7rem", borderRadius: radius.lg, border: "1px solid #a855f7", background: "rgba(168,85,247,0.08)", color: "#a855f7", fontWeight: 700, fontSize: typography.sm, cursor: isActLoading ? "not-allowed" : "pointer", opacity: isActLoading ? 0.6 : 1, transition: "all 0.15s" }}>
                                     {isActLoading ? <div style={{ width: 14, height: 14, borderRadius: "50%", border: "2px solid #a855f7", borderTopColor: "transparent", animation: "spin .6s linear infinite" }} /> : <User2 size={15} />}
-                                    Marquer SERVIE
+                                    {cmd.type_commande === "livraison" ? "Marquer LIVRÉE" : "Marquer SERVIE"}
                                 </button>
                             )}
                             {isServeur && cmd.statut === "servie" && (

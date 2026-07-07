@@ -7,6 +7,7 @@ import type { ApiResponse } from "@/types";
 export type StatutCommande =
     | "en_attente"
     | "prete"
+    | "en_livraison"
     | "servie"
     | "payee";
 
@@ -143,6 +144,13 @@ export async function listCommandesCuisine(statut: "en_attente" | "prete" = "en_
  */
 export async function marquerPrete(id: number): Promise<ApiResponse<Commande>> {
     return apiRequest(`/commandes/${id}/prete/`, { method: "POST" });
+}
+
+/**
+ * Marquer une commande livraison comme EN LIVRAISON (Serveur/Admin/Manager)
+ */
+export async function marquerEnLivraison(id: number): Promise<ApiResponse<Commande>> {
+    return apiRequest(`/commandes/${id}/en-livraison/`, { method: "POST" });
 }
 
 /**

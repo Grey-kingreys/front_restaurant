@@ -22,10 +22,11 @@ import {
 // ── Config statuts ──────────────────────────────────────────────────────────
 
 const STATUT_CONFIG: Record<StatutCommande, { label: string; color: string; bg: string; border: string }> = {
-    en_attente: { label: "En attente", color: "#f59e0b", bg: "rgba(245,158,11,0.1)", border: "rgba(245,158,11,0.25)" },
-    prete:      { label: "Prête",      color: "#3b82f6", bg: "rgba(59,130,246,0.1)",  border: "rgba(59,130,246,0.25)" },
-    servie:     { label: "Servie",     color: "#a855f7", bg: "rgba(168,85,247,0.1)",  border: "rgba(168,85,247,0.25)" },
-    payee:      { label: "Terminée",   color: "#22c55e", bg: "rgba(34,197,94,0.1)",   border: "rgba(34,197,94,0.25)" },
+    en_attente:   { label: "En attente",   color: "#f59e0b", bg: "rgba(245,158,11,0.1)", border: "rgba(245,158,11,0.25)" },
+    prete:        { label: "Prête",        color: "#3b82f6", bg: "rgba(59,130,246,0.1)",  border: "rgba(59,130,246,0.25)" },
+    en_livraison: { label: "En livraison", color: "#8b5cf6", bg: "rgba(139,92,246,0.1)",  border: "rgba(139,92,246,0.25)" },
+    servie:       { label: "Servie",       color: "#a855f7", bg: "rgba(168,85,247,0.1)",  border: "rgba(168,85,247,0.25)" },
+    payee:        { label: "Terminée",     color: "#22c55e", bg: "rgba(34,197,94,0.1)",   border: "rgba(34,197,94,0.25)" },
 };
 
 const WORKFLOW_ALL: { statut: StatutCommande; label: string; desc: string; icon: React.ReactNode }[] = [

@@ -354,6 +354,7 @@ export default function EquipePage() {
     const openCreate = () => { setSelectedUser(null); setFormError(null); setModal("create"); };
     const openEdit   = (u: User) => { setSelectedUser(u); setFormError(null); setModal("edit"); };
     const openReset  = (u: User) => { setSelectedUser(u); setFormError(null); setModal("reset"); };
+    const openDelete = (u: User) => { setSelectedUser(u); setFormError(null); setModal("delete"); };
     const closeModal = () => { setModal(null); setSelectedUser(null); setFormError(null); };
 
     const handleCreate = async (data: UserCreatePayload | UserUpdatePayload) => {
@@ -527,7 +528,24 @@ export default function EquipePage() {
                                 </button>
                             </div>
 
-                            {modal === "reset" && selectedUser ? (
+                            {modal === "delete" && selectedUser ? (
+                                <div>
+                                    <p style={{ margin: "0 0 1rem", fontSize: typography.sm, color: cssVar.textMuted }}>
+                                        Êtes-vous sûr de vouloir désactiver <strong style={{ color: cssVar.textPrimary }}>{selectedUser.nom_complet ?? selectedUser.login}</strong> ?
+                                    </p>
+                                    <p style={{ margin: "0 0 1.25rem", fontSize: typography.xs, color: "#f59e0b" }}>
+                                        ⚠️ L'utilisateur sera désactivé mais ses données historiques (commandes, paiements) seront conservées.
+                                    </p>
+                                    {formError && <div style={{ padding: "0.625rem 0.875rem", borderRadius: radius.lg, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm, marginBottom: "0.75rem" }}>{formError}</div>}
+                                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                                        <button onClick={closeModal} style={{ flex: 1, padding: "0.65rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textSecondary, fontWeight: 700, fontSize: typography.sm, cursor: "pointer" }}>Annuler</button>
+                                        <button onClick={handleDelete} disabled={formLoading} style={{ flex: 2, padding: "0.65rem", borderRadius: radius.lg, border: "1px solid #ef4444", background: "rgba(239,68,68,0.08)", color: "#ef4444", fontWeight: 700, fontSize: typography.sm, cursor: formLoading ? "not-allowed" : "pointer", opacity: formLoading ? 0.7 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>
+                                            {formLoading && <div style={{ width: 13, height: 13, borderRadius: "50%", border: "2px solid #ef4444", borderTopColor: "transparent", animation: "spin .6s linear infinite" }} />}
+                                            Désactiver
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : modal === "reset" && selectedUser ? (
                                 <ResetPasswordForm
                                     user={selectedUser}
                                     onSubmit={handleResetPassword}
@@ -690,6 +708,16 @@ export default function EquipePage() {
                                                                 <Play size={13} />
                                                             </button>
                                                         )}
+                                                        {u.actif && u.id !== user.id && (
+                                                            <button
+                                                                title="Désactiver définitivement"
+                                                                className="icon-btn"
+                                                                onClick={() => openDelete(u)}
+                                                                style={{ color: "#ef4444", borderColor: "rgba(239,68,68,0.3)" }}
+                                                            >
+                                                                <Trash2 size={13} />
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -734,6 +762,11 @@ export default function EquipePage() {
                                             {isAdmin && ROLES_SIMULABLES.includes(u.role as Role) && u.actif && u.id !== user.id && (
                                                 <button onClick={() => handleSimuler(u)} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem 0.6rem", borderRadius: "0.5rem", border: "1px solid rgba(124,58,237,0.3)", background: "transparent", color: "#7c3aed", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
                                                     <Play size={12} /> Simuler
+                                                </button>
+                                            )}
+                                            {u.actif && u.id !== user.id && (
+                                                <button onClick={() => openDelete(u)} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem 0.6rem", borderRadius: "0.5rem", border: "1px solid rgba(239,68,68,0.3)", background: "transparent", color: "#ef4444", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
+                                                    <Trash2 size={12} />
                                                 </button>
                                             )}
                                         </div>

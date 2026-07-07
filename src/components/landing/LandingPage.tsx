@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import HeroSection from "./HeroSection";
-import StatsSection from "./StatsSection";
 import FeaturesSection from "./FeaturesSection";
 import WorkflowSection from "./WorkflowSection";
-import RolesSection from "./RolesSection";
 import CTASection from "./CTASection";
 import Footer from "./Footer";
 
@@ -19,7 +17,6 @@ export default function LandingPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Intersection Observer for scroll animations
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -46,10 +43,8 @@ export default function LandingPage() {
     <div className="min-h-screen" style={{ background: "var(--bg-dark)" }}>
       <Navbar scrolled={scrolled} />
       <HeroSection />
-      <StatsSection />
       <FeaturesSection />
       <WorkflowSection />
-      <RolesSection />
       <CTASection />
       <Footer />
     </div>

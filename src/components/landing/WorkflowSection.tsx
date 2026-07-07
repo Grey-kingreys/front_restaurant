@@ -28,7 +28,7 @@ const steps = [
 export default function WorkflowSection() {
   return (
     <section className="py-20 px-6 relative overflow-hidden" id="workflow">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="flex flex-col lg:flex-row gap-12 items-center">
           {/* Left: Content */}
           <div className="lg:w-1/2 scroll-reveal">
