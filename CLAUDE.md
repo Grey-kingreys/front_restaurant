@@ -191,6 +191,7 @@ Pages concernées : `equipe`, `commandes`, `restaurants`.
 | `listCaissesGlobales()` | `GET /paiements/caisse-globale/` |
 | `fermerCaisseGlobale(payload)` | `POST /paiements/caisse-globale/active/fermer/` |
 | `getCaisseGenerale()` | `GET /paiements/caisse-generale/` |
+| `initCaisseGenerale(payload)` | `POST /paiements/caisse-generale/init/` (Admin — 1ʳᵉ config) |
 | `listRemises(params?)` | `GET /paiements/remises/` |
 | `validerRemise(pk, payload)` | `POST /paiements/remises/<pk>/valider/` |
 

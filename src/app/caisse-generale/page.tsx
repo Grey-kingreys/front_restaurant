@@ -5,11 +5,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { getCaisseGenerale } from "@/lib/api/paiements";
+import { getCaisseGenerale, initCaisseGenerale } from "@/lib/api/paiements";
 import type { CaisseGenerale } from "@/lib/api/paiements";
 import {
     cssVar, typography, radius, spacing,
-    cardBase, cardSection, alertError,
+    cardBase, cardSection,
     sectionHead, sectionHeadTitle,
 } from "@/theme/theme";
 
@@ -36,6 +36,11 @@ export default function CaisseGeneralePage() {
     const [loading, setLoading] = useState(true);
     const [err, setErr] = useState("");
 
+    // Initialisation de la caisse (Admin uniquement)
+    const [soldeInitial, setSoldeInitial] = useState("");
+    const [submitting, setSubmitting] = useState(false);
+    const [initErr, setInitErr] = useState("");
+
     const fetchCaisse = useCallback(async () => {
         setErr("");
         try {
@@ -48,6 +53,29 @@ export default function CaisseGeneralePage() {
             setLoading(false);
         }
     }, []);
+
+    const handleInit = async () => {
+        const val = parseFloat(soldeInitial);
+        if (isNaN(val) || val < 0) {
+            setInitErr("Saisis un solde initial valide (0 ou plus).");
+            return;
+        }
+        setSubmitting(true);
+        setInitErr("");
+        try {
+            const res = await initCaisseGenerale({ solde_initial: val });
+            if (res.success && res.data) {
+                setCaisse(res.data);
+                setErr("");
+            } else {
+                setInitErr(res.message || "Échec de l'initialisation de la caisse.");
+            }
+        } catch {
+            setInitErr("Erreur lors de l'initialisation.");
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     useEffect(() => {
         if (!authLoading) {
@@ -67,6 +95,9 @@ export default function CaisseGeneralePage() {
         );
     }
 
+    const needsInit = err.includes("n'a pas encore ete initialisee");
+    const isAdmin = user?.role === "Radmin";
+
     return (
         <div style={{ padding: `${spacing["6"]} ${spacing["6"]}`, maxWidth: 700, margin: "0 auto" }}>
             {/* En-tête */}
@@ -79,29 +110,76 @@ export default function CaisseGeneralePage() {
                 </p>
             </div>
 
-            {err && (
-                <div style={{ ...cardBase, padding: "1.5rem", marginBottom: spacing["4"], border: `1px solid rgba(239,68,68,0.2)`, background: "rgba(239,68,68,0.05)" }}>
-                    <p style={{ margin: "0 0 1rem", fontSize: typography.sm, color: "#ef4444", fontWeight: typography.semibold }}>
-                        ⚠️ {err}
+            {/* Caisse non initialisée — Admin : formulaire d'initialisation */}
+            {needsInit && isAdmin && (
+                <div style={{ ...cardBase, padding: "1.5rem 2rem", marginBottom: spacing["4"] }}>
+                    <p style={{ margin: 0, fontSize: "1.05rem", fontWeight: typography.bold, color: cssVar.textPrimary }}>
+                        Initialiser la Caisse Générale
                     </p>
-                    {err.includes("n'a pas encore ete initialisee") && (
-                        <button
-                            onClick={() => {
-                                setLoading(true);
-                                window.location.href = "#init";
-                            }}
-                            style={{ padding: "0.5rem 1rem", borderRadius: radius.lg, background: "#f59e0b", color: "white", border: "none", fontWeight: 600, fontSize: typography.sm, cursor: "pointer" }}
-                        >
-                            → Initialiser la Caisse
-                        </button>
+                    <p style={{ margin: "0.35rem 0 1.25rem", fontSize: typography.sm, color: cssVar.textMuted, lineHeight: 1.6 }}>
+                        Saisis le montant présent dans le coffre au moment de la mise en service.
+                        Ce solde de départ servira de base ; il sera ensuite alimenté automatiquement
+                        par les fermetures de caisses.
+                    </p>
+
+                    <label style={{ display: "block", fontSize: typography.xs, fontWeight: typography.semibold, color: cssVar.textMuted, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "0.4rem" }}>
+                        Solde initial (GNF)
+                    </label>
+                    <input
+                        type="number"
+                        min="0"
+                        step="1"
+                        inputMode="numeric"
+                        value={soldeInitial}
+                        onChange={(e) => setSoldeInitial(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter" && !submitting) handleInit(); }}
+                        placeholder="Ex. 500000"
+                        disabled={submitting}
+                        style={{
+                            width: "100%", boxSizing: "border-box", padding: "0.65rem 0.85rem",
+                            borderRadius: radius.lg, border: `1px solid ${cssVar.borderSubtle}`,
+                            background: "rgba(255,255,255,0.04)", color: cssVar.textPrimary,
+                            fontSize: "0.95rem", outline: "none",
+                        }}
+                    />
+
+                    {initErr && (
+                        <p style={{ margin: "0.6rem 0 0", fontSize: typography.sm, color: "#ef4444" }}>
+                            ⚠️ {initErr}
+                        </p>
                     )}
+
+                    <button
+                        onClick={handleInit}
+                        disabled={submitting || soldeInitial.trim() === ""}
+                        style={{
+                            marginTop: "1.1rem", padding: "0.6rem 1.2rem", borderRadius: radius.lg,
+                            background: "#f59e0b", color: "#1a1207", border: "none", fontWeight: 700,
+                            fontSize: typography.sm,
+                            cursor: submitting || soldeInitial.trim() === "" ? "not-allowed" : "pointer",
+                            opacity: submitting || soldeInitial.trim() === "" ? 0.6 : 1,
+                        }}
+                    >
+                        {submitting ? "Initialisation…" : "Initialiser la Caisse"}
+                    </button>
                 </div>
             )}
 
-            {!caisse && !err && (
+            {/* Caisse non initialisée — Manager : pas le droit d'initialiser */}
+            {needsInit && !isAdmin && (
                 <div style={{ ...cardBase, padding: "2rem", textAlign: "center" }}>
-                    <p style={{ margin: 0, color: cssVar.textMuted, fontSize: typography.sm }}>
-                        La Caisse Générale n&apos;a pas encore été initialisée.
+                    <p style={{ margin: 0, color: cssVar.textMuted, fontSize: typography.sm, lineHeight: 1.6 }}>
+                        La Caisse Générale n&apos;a pas encore été initialisée.<br />
+                        Demande à l&apos;administrateur du restaurant de la configurer.
+                    </p>
+                </div>
+            )}
+
+            {/* Vraie erreur (autre que « non initialisée ») */}
+            {err && !needsInit && (
+                <div style={{ ...cardBase, padding: "1.5rem", marginBottom: spacing["4"], border: `1px solid rgba(239,68,68,0.2)`, background: "rgba(239,68,68,0.05)" }}>
+                    <p style={{ margin: 0, fontSize: typography.sm, color: "#ef4444", fontWeight: typography.semibold }}>
+                        ⚠️ {err}
                     </p>
                 </div>
             )}

@@ -100,6 +100,15 @@ export async function getCaisseGenerale(): Promise<ApiResponse<CaisseGenerale>> 
     return apiRequest("/paiements/caisse-generale/");
 }
 
+export async function initCaisseGenerale(
+    payload: { solde_initial: number }
+): Promise<ApiResponse<CaisseGenerale>> {
+    return apiRequest("/paiements/caisse-generale/init/", {
+        method: "POST",
+        body: JSON.stringify(payload),
+    });
+}
+
 // ── Caisse Comptable ───────────────────────────────────────────────────────
 
 export async function getMaCaisseActive(): Promise<ApiResponse<CaisseComptable>> {
