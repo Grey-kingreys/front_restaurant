@@ -30,6 +30,8 @@ import {
     Pencil,
     Play,
     Trash2,
+    Eye,
+    EyeOff,
 } from "lucide-react";
 
 const ROLES_AUTORISES: Role[] = ["Radmin", "Rmanager", "Rsuper_admin"];
@@ -111,6 +113,7 @@ function UserForm({ initial, isAdmin, onSubmit, onClose, loading, error }: UserF
     const [email, setEmail]         = useState(initial?.email ?? "");
     const [telephone, setTelephone] = useState(initial?.telephone ?? "");
     const [password, setPassword]   = useState("");
+    const [showPwd, setShowPwd]     = useState(false);
     const [validationError, setValidationError] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -223,13 +226,24 @@ function UserForm({ initial, isAdmin, onSubmit, onClose, loading, error }: UserF
                     <label style={{ display: "block", fontSize: typography.xs, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: cssVar.textMuted, marginBottom: "0.375rem" }}>
                         Mot de passe initial *
                     </label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        placeholder="Min. 8 caractères"
-                        style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }}
-                    />
+                    <div style={{ position: "relative" }}>
+                        <input
+                            type={showPwd ? "text" : "password"}
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                            placeholder="Min. 8 caractères"
+                            style={{ width: "100%", display: "block", padding: "0.6rem 2.5rem 0.6rem 0.75rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPwd(v => !v)}
+                            aria-label={showPwd ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                            title={showPwd ? "Masquer" : "Afficher"}
+                            style={{ position: "absolute", right: "0.6rem", top: 0, bottom: 0, display: "flex", alignItems: "center", background: "none", border: "none", color: cssVar.textMuted, cursor: "pointer", padding: 0 }}
+                        >
+                            {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                    </div>
                     <p style={{ margin: "0.3rem 0 0", fontSize: "0.7rem", color: cssVar.textMuted }}>
                         L&apos;utilisateur devra changer son mot de passe à la première connexion.
                     </p>
@@ -268,6 +282,7 @@ function ResetPasswordForm({ user, onSubmit, onClose, loading, error }: {
 }) {
     const [password, setPassword]   = useState("");
     const [confirm, setConfirm]     = useState("");
+    const [showPwd, setShowPwd]     = useState(false);
     const [localErr, setLocalErr]   = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -290,11 +305,16 @@ function ResetPasswordForm({ user, onSubmit, onClose, loading, error }: {
             )}
             <div>
                 <label style={{ display: "block", fontSize: typography.xs, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: cssVar.textMuted, marginBottom: "0.375rem" }}>Nouveau mot de passe *</label>
-                <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Min. 8 caractères" style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }} />
+                <div style={{ position: "relative" }}>
+                    <input type={showPwd ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Min. 8 caractères" style={{ width: "100%", display: "block", padding: "0.6rem 2.5rem 0.6rem 0.75rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }} />
+                    <button type="button" onClick={() => setShowPwd(v => !v)} aria-label={showPwd ? "Masquer le mot de passe" : "Afficher le mot de passe"} title={showPwd ? "Masquer" : "Afficher"} style={{ position: "absolute", right: "0.6rem", top: 0, bottom: 0, display: "flex", alignItems: "center", background: "none", border: "none", color: cssVar.textMuted, cursor: "pointer", padding: 0 }}>
+                        {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                </div>
             </div>
             <div>
                 <label style={{ display: "block", fontSize: typography.xs, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: cssVar.textMuted, marginBottom: "0.375rem" }}>Confirmer *</label>
-                <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="Répétez le mot de passe" style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }} />
+                <input type={showPwd ? "text" : "password"} value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="Répétez le mot de passe" style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }} />
             </div>
             <div style={{ display: "flex", gap: "0.5rem" }}>
                 <button type="button" onClick={onClose} style={{ flex: 1, padding: "0.65rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textSecondary, fontWeight: 700, fontSize: typography.sm, cursor: "pointer" }}>Annuler</button>

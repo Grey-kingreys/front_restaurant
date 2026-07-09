@@ -29,6 +29,8 @@ import {
     Power,
     Trash2,
     ChevronDown,
+    Eye,
+    EyeOff,
 } from "lucide-react";
 
 const ROLES_AUTORISES: Role[] = ["Rsuper_admin"];
@@ -147,6 +149,7 @@ export default function RestaurantsPage() {
     const [formLoading, setFormLoading] = useState(false);
     const [formError, setFormError]     = useState<string | null>(null);
     const [deletePassword, setDeletePassword] = useState("");
+    const [showDeletePwd, setShowDeletePwd] = useState(false);
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [deleteError, setDeleteError] = useState("");
 
@@ -366,7 +369,12 @@ export default function RestaurantsPage() {
                                     {deleteError && <div style={{ padding: "0.625rem 0.875rem", borderRadius: radius.lg, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm, marginBottom: "0.75rem" }}>{deleteError}</div>}
                                     <div>
                                         <label style={{ display: "block", fontSize: typography.xs, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: cssVar.textMuted, marginBottom: "0.375rem" }}>Votre mot de passe Super Admin</label>
-                                        <input type="password" value={deletePassword} onChange={e => setDeletePassword(e.target.value)} placeholder="••••••" style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box", marginBottom: "1rem" }} />
+                                        <div style={{ position: "relative", marginBottom: "1rem" }}>
+                                            <input type={showDeletePwd ? "text" : "password"} value={deletePassword} onChange={e => setDeletePassword(e.target.value)} placeholder="••••••" style={{ width: "100%", display: "block", padding: "0.6rem 2.5rem 0.6rem 0.75rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }} />
+                                            <button type="button" onClick={() => setShowDeletePwd(v => !v)} aria-label={showDeletePwd ? "Masquer le mot de passe" : "Afficher le mot de passe"} title={showDeletePwd ? "Masquer" : "Afficher"} style={{ position: "absolute", right: "0.6rem", top: 0, bottom: 0, display: "flex", alignItems: "center", background: "none", border: "none", color: cssVar.textMuted, cursor: "pointer", padding: 0 }}>
+                                                {showDeletePwd ? <EyeOff size={16} /> : <Eye size={16} />}
+                                            </button>
+                                        </div>
                                     </div>
                                     <div style={{ display: "flex", gap: "0.5rem" }}>
                                         <button onClick={closeModal} style={{ flex: 1, padding: "0.65rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textSecondary, fontWeight: 700, fontSize: typography.sm, cursor: "pointer" }}>Annuler</button>
