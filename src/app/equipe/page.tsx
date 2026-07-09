@@ -126,9 +126,15 @@ function UserForm({ initial, isAdmin, onSubmit, onClose, loading, error }: UserF
             setValidationError("L'email est obligatoire.");
             return;
         }
-        if (!isEdit && !password?.trim()) {
-            setValidationError("Le mot de passe est obligatoire.");
-            return;
+        if (!isEdit) {
+            if (!password?.trim()) {
+                setValidationError("Le mot de passe est obligatoire.");
+                return;
+            }
+            if (password.trim().length < 8) {
+                setValidationError("Le mot de passe doit contenir au moins 8 caractères.");
+                return;
+            }
         }
 
         if (isEdit) {
@@ -215,13 +221,13 @@ function UserForm({ initial, isAdmin, onSubmit, onClose, loading, error }: UserF
             {!isEdit && (
                 <div>
                     <label style={{ display: "block", fontSize: typography.xs, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: cssVar.textMuted, marginBottom: "0.375rem" }}>
-                        Mot de passe initial
+                        Mot de passe initial *
                     </label>
                     <input
                         type="password"
                         value={password}
                         onChange={e => setPassword(e.target.value)}
-                        placeholder="Laissez vide pour auto-générer"
+                        placeholder="Min. 8 caractères"
                         style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }}
                     />
                     <p style={{ margin: "0.3rem 0 0", fontSize: "0.7rem", color: cssVar.textMuted }}>
