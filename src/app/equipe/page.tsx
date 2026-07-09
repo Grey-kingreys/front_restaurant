@@ -34,8 +34,6 @@ import {
     EyeOff,
 } from "lucide-react";
 
-const ROLES_AUTORISES: Role[] = ["Radmin", "Rmanager", "Rsuper_admin"];
-
 const ROLES_CREABLES: { value: Role; label: string }[] = [
     { value: "Rmanager",        label: "Manager" },
     { value: "Rserveur",        label: "Serveur" },
@@ -492,6 +490,7 @@ export default function EquipePage() {
     if (!hasPermission("manage_equipe")) return null;
 
     const isAdmin = hasPermission("impersonate");
+    const canDeactivate = hasPermission("deactivate_equipe");
 
     const filtered = users.filter(u => {
         if (!search) return true;
@@ -716,14 +715,16 @@ export default function EquipePage() {
                                                     <div style={{ display: "flex", gap: "0.3rem" }}>
                                                         <button title="Modifier" className="icon-btn" onClick={() => openEdit(u)}><Pencil size={13} /></button>
                                                         <button title="Réinitialiser MDP" className="icon-btn" onClick={() => openReset(u)}><KeyRound size={13} /></button>
-                                                        <button
-                                                            title={u.actif ? "Désactiver" : "Activer"}
-                                                            className="icon-btn"
-                                                            onClick={() => handleToggle(u)}
-                                                            style={{ color: u.actif ? "#ef4444" : "#22c55e", borderColor: u.actif ? "rgba(239,68,68,0.3)" : "rgba(34,197,94,0.3)" }}
-                                                        >
-                                                            {u.actif ? <UserX size={13} /> : <UserCheck size={13} />}
-                                                        </button>
+                                                        {canDeactivate && u.id !== user.id && (
+                                                            <button
+                                                                title={u.actif ? "Désactiver" : "Activer"}
+                                                                className="icon-btn"
+                                                                onClick={() => handleToggle(u)}
+                                                                style={{ color: u.actif ? "#ef4444" : "#22c55e", borderColor: u.actif ? "rgba(239,68,68,0.3)" : "rgba(34,197,94,0.3)" }}
+                                                            >
+                                                                {u.actif ? <UserX size={13} /> : <UserCheck size={13} />}
+                                                            </button>
+                                                        )}
                                                         {isAdmin && ROLES_SIMULABLES.includes(u.role as Role) && u.actif && u.id !== user.id && (
                                                             <button
                                                                 title="Simuler cet utilisateur"
@@ -734,7 +735,7 @@ export default function EquipePage() {
                                                                 <Play size={13} />
                                                             </button>
                                                         )}
-                                                        {u.actif && u.id !== user.id && (
+                                                        {canDeactivate && u.actif && u.id !== user.id && (
                                                             <button
                                                                 title="Désactiver définitivement"
                                                                 className="icon-btn"
@@ -782,15 +783,17 @@ export default function EquipePage() {
                                             <button onClick={() => openReset(u)} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "0.5rem", border: "1px solid rgba(245,158,11,0.3)", background: "transparent", color: "#f59e0b", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
                                                 <KeyRound size={12} /> MDP
                                             </button>
-                                            <button onClick={() => handleToggle(u)} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "0.5rem", border: `1px solid ${u.actif ? "rgba(239,68,68,0.3)" : "rgba(34,197,94,0.3)"}`, background: "transparent", color: u.actif ? "#ef4444" : "#22c55e", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
-                                                {u.actif ? <><UserX size={12} /> Désactiver</> : <><UserCheck size={12} /> Activer</>}
-                                            </button>
+                                            {canDeactivate && u.id !== user.id && (
+                                                <button onClick={() => handleToggle(u)} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "0.5rem", border: `1px solid ${u.actif ? "rgba(239,68,68,0.3)" : "rgba(34,197,94,0.3)"}`, background: "transparent", color: u.actif ? "#ef4444" : "#22c55e", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
+                                                    {u.actif ? <><UserX size={12} /> Désactiver</> : <><UserCheck size={12} /> Activer</>}
+                                                </button>
+                                            )}
                                             {isAdmin && ROLES_SIMULABLES.includes(u.role as Role) && u.actif && u.id !== user.id && (
                                                 <button onClick={() => handleSimuler(u)} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem 0.6rem", borderRadius: "0.5rem", border: "1px solid rgba(124,58,237,0.3)", background: "transparent", color: "#7c3aed", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
                                                     <Play size={12} /> Simuler
                                                 </button>
                                             )}
-                                            {u.actif && u.id !== user.id && (
+                                            {canDeactivate && u.actif && u.id !== user.id && (
                                                 <button onClick={() => openDelete(u)} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem 0.6rem", borderRadius: "0.5rem", border: "1px solid rgba(239,68,68,0.3)", background: "transparent", color: "#ef4444", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
                                                     <Trash2 size={12} />
                                                 </button>
