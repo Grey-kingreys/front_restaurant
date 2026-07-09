@@ -14,7 +14,7 @@ import { parseCoord } from "@/lib/mapbox";
 import {
     Building2, ShieldCheck, GitBranch,
     Check, X, RefreshCw, Plus, Pencil, Trash2,
-    ChevronDown, ChevronRight, Truck, ShoppingBag, MapPin, AlertTriangle,
+    ChevronDown, ChevronRight, Truck, ShoppingBag, Repeat, MapPin, AlertTriangle,
     CalendarCheck, Zap, Hand,
 } from "lucide-react";
 
@@ -222,7 +222,7 @@ function TabRestaurant() {
                             )}
 
                             {/* Toggle Emporter */}
-                            <label style={{ display: "flex", alignItems: "center", gap: spacing["2"], padding: "0.6rem 0.75rem", borderRadius: radius.md, border: `1px solid ${acceptEmporter ? "rgba(245,158,11,0.4)" : cssVar.borderSubtle}`, background: acceptEmporter ? "rgba(245,158,11,0.06)" : cssVar.bgSectionAlt, cursor: "pointer", marginBottom: spacing["3"] }}>
+                            <label style={{ display: "flex", alignItems: "center", gap: spacing["2"], padding: "0.6rem 0.75rem", borderRadius: radius.md, border: `1px solid ${acceptEmporter ? "rgba(245,158,11,0.4)" : cssVar.borderSubtle}`, background: acceptEmporter ? "rgba(245,158,11,0.06)" : cssVar.bgSectionAlt, cursor: "pointer", marginBottom: spacing["2"] }}>
                                 <ShoppingBag size={16} style={{ color: acceptEmporter ? cssVar.amberGlow : cssVar.textMuted, flexShrink: 0 }} />
                                 <div style={{ flex: 1 }}>
                                     <p style={{ margin: 0, fontSize: typography.sm, fontWeight: 600, color: cssVar.textPrimary }}>À emporter</p>
@@ -230,6 +230,17 @@ function TabRestaurant() {
                                 </div>
                                 <input type="checkbox" checked={acceptEmporter} onChange={e => setAcceptEmporter(e.target.checked)} style={{ width: 18, height: 18, cursor: "pointer", flexShrink: 0 }} />
                             </label>
+
+                            {/* Toggle Aller Retour — service de livraison partenaire externe (projet d'un collègue) ; API à brancher plus tard */}
+                            <div aria-disabled="true" title="Bientôt disponible"
+                                style={{ display: "flex", alignItems: "center", gap: spacing["2"], padding: "0.6rem 0.75rem", borderRadius: radius.md, border: `1px dashed ${cssVar.borderSubtle}`, background: cssVar.bgSectionAlt, opacity: 0.6, cursor: "not-allowed" }}>
+                                <Repeat size={16} style={{ color: cssVar.textMuted, flexShrink: 0 }} />
+                                <div style={{ flex: 1 }}>
+                                    <p style={{ margin: 0, fontSize: typography.sm, fontWeight: 600, color: cssVar.textPrimary }}>Aller Retour</p>
+                                    <p style={{ margin: 0, fontSize: "0.7rem", color: cssVar.textMuted }}>Livraison assurée par le service partenaire Aller Retour.</p>
+                                </div>
+                                <span style={{ flexShrink: 0, fontSize: "0.65rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: cssVar.amberGlow, background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.25)", borderRadius: "99px", padding: "2px 8px" }}>Bientôt</span>
+                            </div>
                         </div>
 
                         {/* ── Section réservations ── */}
