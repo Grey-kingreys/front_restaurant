@@ -75,6 +75,7 @@ function TableForm({ initial, onSubmitCreate, onSubmitUpdate, onClose, loading, 
     const [places,      setPlaces]      = useState(String(initial?.nombre_places ?? 4));
     const [login,       setLogin]       = useState("");
     const [loginTouched, setLoginTouched] = useState(false);
+    const [password,    setPassword]    = useState("");
     const [nomComplet,  setNomComplet]  = useState(
         initial ? (initial as Table & { utilisateur_nom?: string }).utilisateur_nom ?? "" : ""
     );
@@ -99,6 +100,7 @@ function TableForm({ initial, onSubmitCreate, onSubmitUpdate, onClose, loading, 
                 nombre_places: parseInt(places, 10) || 4,
                 login: login.trim(),
                 nom_complet: nomComplet.trim() || undefined,
+                password: password.trim() || undefined,
             });
         }
     };
@@ -161,6 +163,19 @@ function TableForm({ initial, onSubmitCreate, onSubmitUpdate, onClose, loading, 
                         style={{ ...inputStyle, fontFamily: "monospace" }} />
                     <p style={{ margin: "3px 0 0", fontSize: "0.68rem", color: cssVar.textMuted }}>
                         Identifiant unique (lettres minuscules, chiffres, _). Utilisé pour la connexion QR.
+                    </p>
+                </div>
+            )}
+
+            {/* Mot de passe — création uniquement, optionnel */}
+            {!isEdit && (
+                <div>
+                    <label style={labelStyle}>Mot de passe (optionnel)</label>
+                    <input type="text" value={password} onChange={e => setPassword(e.target.value)}
+                        minLength={8} placeholder="Min. 8 caractères — vide = QR uniquement"
+                        style={inputStyle} />
+                    <p style={{ margin: "3px 0 0", fontSize: "0.68rem", color: cssVar.textMuted }}>
+                        Permet la connexion manuelle (login + mot de passe). Laissé vide, la table se connecte uniquement via QR code.
                     </p>
                 </div>
             )}

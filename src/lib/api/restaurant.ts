@@ -21,6 +21,8 @@ export interface TableCreatePayload {
     nombre_places: number;
     login: string;
     nom_complet?: string;
+    /** Optionnel : si fourni, la table peut se connecter en login+password (sinon QR only) */
+    password?: string;
 }
 
 export interface TableUpdatePayload {
