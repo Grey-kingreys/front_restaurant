@@ -1,7 +1,7 @@
 // src/lib/api/auth.ts
 // Toutes les fonctions liées à l'authentification
 
-import { apiRequest, setTokens, clearTokens, saveUser } from "./client";
+import { apiRequest, setTokens, clearTokens, saveUser, setQrTableSession, clearQrTableSession } from "./client";
 import type {
     ApiResponse,
     LoginResponse,
@@ -29,6 +29,7 @@ export async function loginWithEmail(
     if (data.success && data.data) {
         setTokens(data.data.access, data.data.refresh);
         saveUser(data.data.user);
+        clearQrTableSession(); // connexion classique → pas de session QR (ni GPS, ni expiration)
     }
 
     return data;
@@ -50,6 +51,7 @@ export async function loginWithLogin(
     if (data.success && data.data) {
         setTokens(data.data.access, data.data.refresh);
         saveUser(data.data.user);
+        clearQrTableSession(); // connexion classique → pas de session QR (ni GPS, ni expiration)
     }
 
     return data;
@@ -82,7 +84,7 @@ export async function loginViaQR(
         setTokens(data.data.access, data.data.refresh);
         saveUser(data.data.user);
         if (data.data.expires_at) {
-            localStorage.setItem("session_expires_at", data.data.expires_at);
+            setQrTableSession(data.data.expires_at);
         }
     }
 

@@ -24,6 +24,25 @@ export function clearTokens(): void {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     localStorage.removeItem("user");
+    localStorage.removeItem(QR_SESSION_KEY);
+}
+
+// ── Session QR table ───────────────────────────────────────────────────────
+// Présence de cette clé = la table est connectée via QR Code (session temporaire
+// soumise au GPS, à l'expiration et à la déconnexion post-paiement).
+// Absence = connexion login+password « classique », sans ces restrictions.
+const QR_SESSION_KEY = "session_expires_at";
+
+export function setQrTableSession(expiresAt: string): void {
+    localStorage.setItem(QR_SESSION_KEY, expiresAt);
+}
+
+export function clearQrTableSession(): void {
+    if (typeof window !== "undefined") localStorage.removeItem(QR_SESSION_KEY);
+}
+
+export function hasQrTableSession(): boolean {
+    return typeof window !== "undefined" && !!localStorage.getItem(QR_SESSION_KEY);
 }
 
 // ── Session admin (impersonation) ──────────────────────────────────────────

@@ -9,6 +9,8 @@ import ImpersonationBanner, { BANNER_H } from "./ImpersonationBanner";
 import ThemeSwitcher from "../ui/ThemeSwitcher";
 import { Menu } from "lucide-react";
 import { useTableGeoCheck } from "@/hooks/useTableGeoCheck";
+import { useTableDistanceCheck } from "@/hooks/useTableDistanceCheck";
+import { hasQrTableSession } from "@/lib/api/client";
 import { SessionCountdown } from "@/components/table/SessionCountdown";
 
 // Routes qui affichent la sidebar (préfixes)
@@ -55,12 +57,24 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     const [countdownReason, setCountdownReason] = useState<CountdownReason>(null);
 
     const isRtable = isAuthenticated && user?.role === "Rtable";
+    // GPS, expiration et déconnexion post-paiement ne concernent QUE les sessions QR.
+    // Une table connectée en login+password est une session « classique » sans ces contraintes.
+    const isQrTableSession = isRtable && hasQrTableSession();
 
-    useTableGeoCheck(isRtable, {
+    useTableGeoCheck(isQrTableSession, {
         onOutOfRange: (_strikes, message) => setOutOfRangeWarning(message),
         onDisconnect: () => logout(),
         onAllPaid: () => setCountdownReason("all_paid"),
         onExpiredWarn: () => setOutOfRangeWarning("Votre session a expiré, mais vos commandes sont en cours. Vous serez déconnecté après le paiement."),
+    });
+
+    // Table login+password : on applique UNIQUEMENT la restriction de distance
+    // (pas d'expiration de session ni de déconnexion post-paiement — celles-ci
+    // restent réservées aux sessions QR).
+    const isManualTable = isRtable && !hasQrTableSession();
+    useTableDistanceCheck(isManualTable, {
+        onOutOfRange: (_strikes, message) => setOutOfRangeWarning(message),
+        onDisconnect: () => logout(),
     });
 
     // Loader global — uniquement pendant la vérification initiale du token

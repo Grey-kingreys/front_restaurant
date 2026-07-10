@@ -143,6 +143,31 @@ export async function checkPosition(
         body: JSON.stringify(body),
     });
 }
+
+export interface CheckDistanceResult {
+    in_range: boolean;
+    distance?: number;
+    message?: string;
+}
+
+/**
+ * Vérification de distance uniquement — pour une table connectée en login+password
+ * (sans session QR). N'applique QUE la restriction de distance (pas d'expiration).
+ */
+export async function checkTableDistance(
+    lat?: number,
+    lng?: number
+): Promise<ApiResponse<CheckDistanceResult>> {
+    const body: Record<string, number> = {};
+    if (lat !== undefined && lng !== undefined) {
+        body.lat = lat;
+        body.lng = lng;
+    }
+    return apiRequest("/restaurant/tables/check-distance/", {
+        method: "POST",
+        body: JSON.stringify(body),
+    });
+}
 // ── Réservations (gestion staff) ─────────────────────────────────────────────
 
 export type StatutReservationStaff =
