@@ -2,6 +2,7 @@
 // Toutes les fonctions liées à l'authentification
 
 import { apiRequest, setTokens, clearTokens, saveUser, setQrTableSession, clearQrTableSession } from "./client";
+import { checkTableDistance } from "./restaurant";
 import type {
     ApiResponse,
     LoginResponse,
@@ -40,7 +41,8 @@ export async function loginWithEmail(
  */
 export async function loginWithLogin(
     login: string,
-    password: string
+    password: string,
+    coords?: { lat: number; lng: number }
 ): Promise<LoginResponse> {
     const data = await apiRequest<LoginResponse>("/accounts/auth/login/", {
         method: "POST",
@@ -51,7 +53,20 @@ export async function loginWithLogin(
     if (data.success && data.data) {
         setTokens(data.data.access, data.data.refresh);
         saveUser(data.data.user);
-        clearQrTableSession(); // connexion classique → pas de session QR (ni GPS, ni expiration)
+        clearQrTableSession(); // connexion classique → pas de session QR (ni expiration, ni post-paiement)
+
+        // Restriction de distance : refuser l'accès si la table est hors zone.
+        // Tolérant : si le GPS est indisponible (pas de coords), on laisse passer.
+        if (coords) {
+            const dist = await checkTableDistance(coords.lat, coords.lng);
+            if (dist.success && dist.data && !dist.data.in_range) {
+                clearTokens();
+                return {
+                    success: false,
+                    message: dist.data.message ?? "Vous êtes trop loin du restaurant pour vous connecter.",
+                };
+            }
+        }
     }
 
     return data;

@@ -24,6 +24,22 @@ import {
 
 type LoginMode = "email" | "login";
 
+// Position du navigateur pour le contrôle de distance des tables.
+// Résout à undefined si le GPS est refusé/indisponible → connexion tolérée.
+function getBrowserPosition(): Promise<{ lat: number; lng: number } | undefined> {
+    return new Promise((resolve) => {
+        if (typeof navigator === "undefined" || !navigator.geolocation) {
+            resolve(undefined);
+            return;
+        }
+        navigator.geolocation.getCurrentPosition(
+            (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+            () => resolve(undefined),
+            { enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 },
+        );
+    });
+}
+
 export default function LoginPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -43,8 +59,13 @@ export default function LoginPage() {
         setLoading(true);
         try {
             let res;
-            if (mode === "email") res = await loginWithEmail(email, password);
-            else res = await loginWithLogin(loginVal, password);
+            if (mode === "email") {
+                res = await loginWithEmail(email, password);
+            } else {
+                // Table : on transmet la position pour le contrôle de distance (refusé si hors zone)
+                const coords = await getBrowserPosition();
+                res = await loginWithLogin(loginVal, password, coords);
+            }
 
             if (res.success && res.data) {
                 setUser(res.data.user);

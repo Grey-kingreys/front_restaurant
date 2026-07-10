@@ -77,7 +77,7 @@ export interface AuthTokens {
 
 export interface LoginResponse {
     success: boolean;
-    data: {
+    data?: {
         access: string;
         refresh: string;
         user: User;
