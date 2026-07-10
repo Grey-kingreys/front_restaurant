@@ -157,8 +157,6 @@ function ModalFermerGlobale({
 
 // ── Page principale ────────────────────────────────────────────────────────
 
-const ALLOWED_ROLES = ["Rcomptable", "Radmin", "Rmanager"];
-
 export default function CaisseGlobalePage() {
     const { user, isLoading: authLoading, hasPermission } = useAuth();
     const router = useRouter();

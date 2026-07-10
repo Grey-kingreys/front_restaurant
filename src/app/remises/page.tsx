@@ -6,7 +6,6 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { listRemises, type RemiseServeur } from "@/lib/api/paiements";
-import type { Role } from "@/types";
 import { cssVar, typography, radius } from "@/theme/theme";
 import {
     ClipboardList,
@@ -16,8 +15,6 @@ import {
     ChevronDown,
     Banknote,
 } from "lucide-react";
-
-const ROLES_AUTORISES: Role[] = ["Rserveur", "Radmin", "Rmanager"];
 
 function PageLoader() {
     return (

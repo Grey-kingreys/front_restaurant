@@ -16,7 +16,6 @@ import {
     type TableCreatePayload,
     type TableUpdatePayload,
 } from "@/lib/api/restaurant";
-import type { Role } from "@/types";
 import { cssVar, typography, radius } from "@/theme/theme";
 import {
     QrCode,
@@ -29,8 +28,6 @@ import {
     Download,
     ChevronDown,
 } from "lucide-react";
-
-const ROLES_AUTORISES: Role[] = ["Radmin", "Rmanager", "Rsuper_admin"];
 
 const STATUT_TABLE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
     libre:       { label: "Libre",      color: "#22c55e", bg: "rgba(34,197,94,0.1)",   border: "rgba(34,197,94,0.25)" },

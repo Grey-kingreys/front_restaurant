@@ -7,25 +7,22 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { PlatForm } from "@/components/menu/PlatForm";
-import type { Role } from "@/types";
 import { cssVar, typography, radius, spacing } from "@/theme/theme";
 import { PlusIcon } from "@/components/icons";
 
-const CAN_CREATE: Role[] = ["Radmin", "Rmanager", "Rchef_cuisinier"];
-
 export default function NouveauPlatPage() {
-    const { user, isAuthenticated, isLoading } = useAuth();
+    const { user, isAuthenticated, isLoading, hasPermission } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) router.replace("/auth/login");
-        if (!isLoading && user && !CAN_CREATE.includes(user.role as Role)) {
+        if (!isLoading && user && !hasPermission("manage_menu")) {
             router.replace("/menu");
         }
-    }, [isLoading, isAuthenticated, user, router]);
+    }, [isLoading, isAuthenticated, user, router, hasPermission]);
 
     if (isLoading || !user) return <PageLoader />;
-    if (!CAN_CREATE.includes(user.role as Role)) return null;
+    if (!hasPermission("manage_menu")) return null;
 
     return (
         <>

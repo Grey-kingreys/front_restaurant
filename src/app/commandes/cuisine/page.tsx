@@ -6,11 +6,8 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { listCommandesCuisine, marquerPrete, type Commande } from "@/lib/api/commandes";
-import type { Role } from "@/types";
 import { cssVar, typography, radius, spacing, cardBase } from "@/theme/theme";
 import { Clock, CheckCircle2, RefreshCw, ChefHat, Flame, Utensils } from "lucide-react";
-
-const ROLES_AUTORISES: Role[] = ["Rchef_cuisinier", "Rcuisinier", "Rsuper_admin", "Radmin"];
 
 export default function CuisinePage() {
     const { user, isAuthenticated, isLoading, hasPermission, hasAnyPermission } = useAuth();

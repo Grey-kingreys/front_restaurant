@@ -26,10 +26,8 @@ const fmtDateTime = (iso: string) =>
 
 // ── Page ───────────────────────────────────────────────────────────────────
 
-const ALLOWED_ROLES = ["Radmin", "Rmanager"];
-
 export default function CaisseGeneralePage() {
-    const { user, isLoading: authLoading } = useAuth();
+    const { user, isLoading: authLoading, hasPermission } = useAuth();
     const router = useRouter();
 
     const [caisse, setCaisse] = useState<CaisseGenerale | null>(null);
@@ -79,13 +77,13 @@ export default function CaisseGeneralePage() {
 
     useEffect(() => {
         if (!authLoading) {
-            if (!user || !ALLOWED_ROLES.includes(user.role)) {
+            if (!user || !hasPermission("view_caisse_generale")) {
                 router.replace("/dashboard");
                 return;
             }
             fetchCaisse();
         }
-    }, [authLoading, user, router, fetchCaisse]);
+    }, [authLoading, user, router, fetchCaisse, hasPermission]);
 
     if (authLoading || loading) {
         return (
@@ -96,7 +94,8 @@ export default function CaisseGeneralePage() {
     }
 
     const needsInit = err.includes("n'a pas encore ete initialisee");
-    const isAdmin = user?.role === "Radmin";
+    // L'init exige la permission manage_caisse_globale (backend)
+    const canInit = hasPermission("manage_caisse_globale");
 
     return (
         <div style={{ padding: `${spacing["6"]} ${spacing["6"]}`, maxWidth: 700, margin: "0 auto" }}>
@@ -111,7 +110,7 @@ export default function CaisseGeneralePage() {
             </div>
 
             {/* Caisse non initialisée — Admin : formulaire d'initialisation */}
-            {needsInit && isAdmin && (
+            {needsInit && canInit && (
                 <div style={{ ...cardBase, padding: "1.5rem 2rem", marginBottom: spacing["4"] }}>
                     <p style={{ margin: 0, fontSize: "1.05rem", fontWeight: typography.bold, color: cssVar.textPrimary }}>
                         Initialiser la Caisse Générale
@@ -166,7 +165,7 @@ export default function CaisseGeneralePage() {
             )}
 
             {/* Caisse non initialisée — Manager : pas le droit d'initialiser */}
-            {needsInit && !isAdmin && (
+            {needsInit && !canInit && (
                 <div style={{ ...cardBase, padding: "2rem", textAlign: "center" }}>
                     <p style={{ margin: 0, color: cssVar.textMuted, fontSize: typography.sm, lineHeight: 1.6 }}>
                         La Caisse Générale n&apos;a pas encore été initialisée.<br />

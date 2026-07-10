@@ -17,7 +17,6 @@ import {
     type Commande,
     type StatutCommande,
 } from "@/lib/api/commandes";
-import type { Role } from "@/types";
 import { cssVar, typography, radius, spacing } from "@/theme/theme";
 import {
     Clock,
@@ -35,8 +34,6 @@ import {
     ArrowRight,
     Truck,
 } from "lucide-react";
-
-const ROLES_AUTORISES: Role[] = ["Rserveur", "Rchef_cuisinier", "Radmin", "Rmanager", "Rsuper_admin"];
 
 const STATUT_CONFIG: Record<StatutCommande, { label: string; color: string; bg: string; border: string }> = {
     en_attente:   { label: "En attente",    color: "#f59e0b", bg: "rgba(245,158,11,0.1)",  border: "rgba(245,158,11,0.25)" },

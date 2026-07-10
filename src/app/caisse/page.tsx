@@ -17,7 +17,6 @@ import {
     type MouvementCaisse,
     type RemiseServeur,
 } from "@/lib/api/paiements";
-import type { Role } from "@/types";
 import { cssVar, typography, radius } from "@/theme/theme";
 import {
     CreditCard,
@@ -32,8 +31,6 @@ import {
     Lock,
     Unlock,
 } from "lucide-react";
-
-const ROLES_AUTORISES: Role[] = ["Rcomptable", "Radmin", "Rmanager"];
 
 function PageLoader() {
     return (

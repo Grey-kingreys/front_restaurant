@@ -9,14 +9,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getPlat } from "@/lib/api/menu";
 import { PlatForm } from "@/components/menu/PlatForm";
 import type { Plat } from "@/lib/api/menu";
-import type { Role } from "@/types";
 import { cssVar, typography, radius, spacing } from "@/theme/theme";
 import { PencilSquareIcon, ArrowPathIcon } from "@/components/icons";
 
-const CAN_EDIT: Role[] = ["Radmin", "Rmanager", "Rchef_cuisinier"];
-
 export default function ModifierPlatPage() {
-    const { user, isAuthenticated, isLoading } = useAuth();
+    const { user, isAuthenticated, isLoading, hasPermission } = useAuth();
     const router = useRouter();
     const params = useParams();
     const platId = Number(params.id);
@@ -27,8 +24,8 @@ export default function ModifierPlatPage() {
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) router.replace("/auth/login");
-        if (!isLoading && user && !CAN_EDIT.includes(user.role as Role)) router.replace("/menu");
-    }, [isLoading, isAuthenticated, user, router]);
+        if (!isLoading && user && !hasPermission("manage_menu")) router.replace("/menu");
+    }, [isLoading, isAuthenticated, user, router, hasPermission]);
 
     useEffect(() => {
         if (!isAuthenticated || !platId) return;
@@ -43,7 +40,7 @@ export default function ModifierPlatPage() {
     }, [isAuthenticated, platId]);
 
     if (isLoading || fetching) return <PageLoader />;
-    if (!user || !CAN_EDIT.includes(user.role as Role)) return null;
+    if (!user || !hasPermission("manage_menu")) return null;
 
     return (
         <>
