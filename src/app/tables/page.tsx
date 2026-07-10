@@ -212,7 +212,7 @@ export default function TablesPage() {
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) router.replace("/auth/login");
-        if (!isLoading && user && !hasPermission("view_tables") && !hasPermission("manage_tables")) router.replace("/dashboard");
+        if (!isLoading && user && !hasPermission("manage_tables")) router.replace("/dashboard");
     }, [isLoading, isAuthenticated, user, router]);
 
     const fetchTables = useCallback(async () => {
@@ -373,7 +373,7 @@ export default function TablesPage() {
     };
 
     if (isLoading || !user) return <PageLoader />;
-    if (!hasPermission("view_tables") && !hasPermission("manage_tables")) return null;
+    if (!hasPermission("manage_tables")) return null;
 
     const isAdmin = hasPermission("manage_tables");
     const libres = tables.filter(t => (t as unknown as { statut_courant: string }).statut_courant === "libre").length;
@@ -574,12 +574,14 @@ export default function TablesPage() {
                                         </div>
 
                                         <div style={{ display: "flex", gap: "0.4rem", borderTop: "1px solid var(--border-subtle)", paddingTop: "0.625rem" }}>
-                                            <button
-                                                onClick={() => ext.a_qr_code ? handleShowQR(t) : handleCreateQR(t)}
-                                                style={{ flex: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.5rem", borderRadius: "0.5rem", border: "1px solid var(--border-amber)", background: "rgba(245,158,11,0.06)", color: "var(--amber-glow)", fontSize: "0.75rem", fontWeight: 700, cursor: "pointer" }}
-                                            >
-                                                <QrCode size={13} /> {ext.a_qr_code ? "Voir QR" : "Créer QR"}
-                                            </button>
+                                            {isAdmin && (
+                                                <button
+                                                    onClick={() => ext.a_qr_code ? handleShowQR(t) : handleCreateQR(t)}
+                                                    style={{ flex: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.5rem", borderRadius: "0.5rem", border: "1px solid var(--border-amber)", background: "rgba(245,158,11,0.06)", color: "var(--amber-glow)", fontSize: "0.75rem", fontWeight: 700, cursor: "pointer" }}
+                                                >
+                                                    <QrCode size={13} /> {ext.a_qr_code ? "Voir QR" : "Créer QR"}
+                                                </button>
+                                            )}
                                             {isAdmin && (
                                                 <>
                                                     <button title="Modifier" className="icon-btn" onClick={() => { setSelectedTable(t); setFormError(null); setModal("edit"); }}>

@@ -101,7 +101,7 @@ const PERMISSION_NAV_BLOCKS: PermissionNavBlock[] = [
     // Tables
     {
         title: "Tables",
-        requiredAny: ["view_tables", "manage_tables"],
+        requiredAny: ["manage_tables"],
         items: [
             { label: "Tables & QR", href: "/tables", icon: "qr" },
         ],
