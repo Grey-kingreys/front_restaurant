@@ -2,13 +2,32 @@
 // src/app/auth/client/register/page.tsx
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, EyeOff, ChefHat } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { registerClient } from "@/lib/api/public";
-import { setTokens, saveUser } from "@/lib/api/client";
+import { setTokens } from "@/lib/api/client";
+import { useAuth } from "@/contexts/AuthContext";
+import type { User } from "@/types";
+import {
+    inputStyle,
+    cardBase,
+    alertError,
+    glowOverlay,
+    authPageRoot,
+    cssVar,
+    typography,
+    radius,
+    spacing,
+    palette,
+    btnPrimary,
+    btnPrimaryDisabled,
+    spinnerBase,
+} from "@/theme/theme";
 
 export default function ClientRegisterPage() {
     const router = useRouter();
+    const { setUser } = useAuth();
     const searchParams = useSearchParams();
     const nextUrl = searchParams?.get("next") ?? "/client";
 
@@ -28,7 +47,7 @@ export default function ClientRegisterPage() {
             const res = await registerClient(form);
             if (res.success && res.data) {
                 setTokens(res.data.access, res.data.refresh);
-                saveUser(res.data.user);
+                setUser(res.data.user as User);
                 router.push(nextUrl);
             } else {
                 const errs: Record<string, string> = {};
@@ -46,65 +65,123 @@ export default function ClientRegisterPage() {
         setLoading(false);
     };
 
-    const inp = (name: string, placeholder: string, type = "text") => (
+    const labelStyle: React.CSSProperties = {
+        display: "block", fontSize: typography.sm, fontWeight: typography.semibold,
+        color: cssVar.textSecondary, marginBottom: spacing["1"],
+    };
+    const errText: React.CSSProperties = { margin: `${spacing["1"]} 0 0`, fontSize: typography.xs, color: "#ef4444" };
+    const errBorder = (name: string) => (errors[name] ? { borderColor: "rgba(239,68,68,0.5)" } : {});
+
+    const field = (name: string, label: string, type = "text", placeholder = "", optional = false) => (
         <div>
-            <input name={name} type={type} value={(form as never)[name]} onChange={set(name)} placeholder={placeholder} required
-                style={{ width: "100%", padding: "0.75rem 1rem", borderRadius: "0.75rem", border: `1px solid ${errors[name] ? "rgba(239,68,68,0.5)" : "rgba(255,255,255,0.1)"}`, background: "rgba(255,255,255,0.04)", color: "#fff", fontSize: "0.9rem", boxSizing: "border-box", outline: "none" }} />
-            {errors[name] && <p style={{ margin: "0.25rem 0 0", fontSize: "0.75rem", color: "#ef4444" }}>{errors[name]}</p>}
+            <label style={labelStyle}>{label}</label>
+            <input
+                name={name} type={type} value={(form as never)[name]} onChange={set(name)}
+                placeholder={placeholder} required={!optional}
+                style={{ ...inputStyle, ...errBorder(name) }}
+            />
+            {errors[name] && <p style={errText}>{errors[name]}</p>}
         </div>
     );
 
+    const eyeButton = (
+        <button type="button" onClick={() => setShowPwd((v) => !v)}
+            aria-label={showPwd ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+            style={{
+                position: "absolute", right: "0.75rem", top: 0, bottom: 0,
+                display: "flex", alignItems: "center",
+                background: "none", border: "none", cursor: "pointer", color: cssVar.textMuted, padding: 0,
+            }}>
+            {showPwd ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
+    );
+
     return (
-        <>
-            <style>{`input::placeholder{color:rgba(255,255,255,0.25)} input:focus{border-color:rgba(245,158,11,0.4)!important}`}</style>
-            <div style={{ minHeight: "100vh", background: "#0c0a09", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-                <div style={{ width: "100%", maxWidth: 420 }}>
-                    {/* Logo */}
-                    <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-                        <div style={{ width: 48, height: 48, borderRadius: "0.75rem", background: "rgba(245,158,11,0.15)", border: "1px solid rgba(245,158,11,0.3)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 0.75rem", color: "#f59e0b" }}>
-                            <ChefHat size={24} />
-                        </div>
-                        <h1 style={{ margin: "0 0 0.25rem", fontSize: "1.375rem", fontWeight: 900, color: "#fff" }}>Créer un compte</h1>
-                        <p style={{ margin: 0, fontSize: "0.83rem", color: "rgba(255,255,255,0.4)" }}>Commandez en quelques clics</p>
-                    </div>
+        <div style={{ ...authPageRoot, padding: "1.5rem" }}>
+            <div style={glowOverlay} />
+            <div style={{
+                position: "absolute", top: "30%", left: "10%",
+                width: 300, height: 300, borderRadius: "50%",
+                background: "rgba(245,158,11,0.04)", filter: "blur(80px)", pointerEvents: "none",
+            }} />
 
-                    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}>
-                        {errors.global && (
-                            <div style={{ padding: "0.75rem 1rem", borderRadius: "0.75rem", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: "0.82rem" }}>{errors.global}</div>
-                        )}
+            <div style={{ width: "100%", maxWidth: 440, position: "relative", zIndex: 1 }}>
 
-                        {inp("nom_complet", "Nom complet")}
-                        {inp("email", "Email", "email")}
-                        {inp("telephone", "Téléphone (optionnel)", "tel")}
-
-                        <div style={{ position: "relative" }}>
-                            <input type={showPwd ? "text" : "password"} value={form.password} onChange={set("password")} placeholder="Mot de passe (min. 8 car.)" required
-                                style={{ width: "100%", padding: "0.75rem 2.5rem 0.75rem 1rem", borderRadius: "0.75rem", border: `1px solid ${errors.password ? "rgba(239,68,68,0.5)" : "rgba(255,255,255,0.1)"}`, background: "rgba(255,255,255,0.04)", color: "#fff", fontSize: "0.9rem", boxSizing: "border-box", outline: "none" }} />
-                            <button type="button" onClick={() => setShowPwd(!showPwd)} style={{ position: "absolute", right: "0.75rem", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "rgba(255,255,255,0.3)", cursor: "pointer", padding: 0, display: "flex" }}>
-                                {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
-                            </button>
-                            {errors.password && <p style={{ margin: "0.25rem 0 0", fontSize: "0.75rem", color: "#ef4444" }}>{errors.password}</p>}
-                        </div>
-
-                        <div>
-                            <input type={showPwd ? "text" : "password"} value={form.password_confirm} onChange={set("password_confirm")} placeholder="Confirmer le mot de passe" required
-                                style={{ width: "100%", padding: "0.75rem 1rem", borderRadius: "0.75rem", border: `1px solid ${errors.password_confirm ? "rgba(239,68,68,0.5)" : "rgba(255,255,255,0.1)"}`, background: "rgba(255,255,255,0.04)", color: "#fff", fontSize: "0.9rem", boxSizing: "border-box", outline: "none" }} />
-                            {errors.password_confirm && <p style={{ margin: "0.25rem 0 0", fontSize: "0.75rem", color: "#ef4444" }}>{errors.password_confirm}</p>}
-                        </div>
-
-                        <button type="submit" disabled={loading} style={{ padding: "0.875rem", borderRadius: "0.875rem", border: "none", background: loading ? "rgba(245,158,11,0.5)" : "linear-gradient(135deg,#f59e0b,#d97706)", color: "#0c0a09", fontWeight: 800, fontSize: "0.95rem", cursor: loading ? "not-allowed" : "pointer", marginTop: "0.25rem" }}>
-                            {loading ? "Création…" : "Créer mon compte"}
-                        </button>
-
-                        <p style={{ textAlign: "center", margin: 0, fontSize: "0.8rem", color: "rgba(255,255,255,0.4)" }}>
-                            Déjà un compte ?{" "}
-                            <button type="button" onClick={() => router.push(`/auth/client/login?next=${encodeURIComponent(nextUrl)}`)} style={{ background: "none", border: "none", color: "#f59e0b", cursor: "pointer", fontWeight: 600, fontSize: "0.8rem", padding: 0 }}>
-                                Se connecter
-                            </button>
-                        </p>
-                    </form>
+                {/* Logo */}
+                <div style={{ textAlign: "center", marginBottom: spacing["8"] }}>
+                    <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: spacing["3"], textDecoration: "none" }}>
+                        <div style={{
+                            width: 44, height: 44, borderRadius: radius.xl,
+                            background: "linear-gradient(135deg, #f59e0b, #d97706)",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            fontWeight: typography.extrabold, fontSize: typography.xl, color: palette.btnText,
+                            fontFamily: typography.fontSerif,
+                        }}>R</div>
+                        <span style={{ fontSize: typography["3xl"], fontWeight: typography.bold, fontFamily: typography.fontSerif, color: cssVar.textPrimary }}>
+                            Resto<span style={{ background: cssVar.gradientText, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Pro</span>
+                        </span>
+                    </Link>
+                    <p style={{ marginTop: spacing["2"], fontSize: typography.md, color: cssVar.textMuted }}>
+                        Créez votre compte — commandez en quelques clics
+                    </p>
                 </div>
+
+                {/* Card */}
+                <div style={{ ...cardBase, padding: "clamp(1.25rem, 5vw, 2rem)" }}>
+                    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: spacing["4"] }}>
+                        {errors.global && <div style={alertError}>{errors.global}</div>}
+
+                        {field("nom_complet", "Nom complet", "text", "Prénom Nom")}
+                        {field("email", "Adresse email", "email", "votre@email.com")}
+                        {field("telephone", "Téléphone (optionnel)", "tel", "+224 6xx xxx xxx", true)}
+
+                        {/* Mot de passe */}
+                        <div>
+                            <label style={labelStyle}>Mot de passe</label>
+                            <div style={{ position: "relative" }}>
+                                <input type={showPwd ? "text" : "password"} value={form.password} onChange={set("password")}
+                                    required placeholder="Min. 8 caractères" minLength={8}
+                                    style={{ ...inputStyle, display: "block", paddingRight: "2.75rem", ...errBorder("password") }} />
+                                {eyeButton}
+                            </div>
+                            {errors.password && <p style={errText}>{errors.password}</p>}
+                        </div>
+
+                        {/* Confirmer */}
+                        <div>
+                            <label style={labelStyle}>Confirmer le mot de passe</label>
+                            <div style={{ position: "relative" }}>
+                                <input type={showPwd ? "text" : "password"} value={form.password_confirm} onChange={set("password_confirm")}
+                                    required placeholder="Répétez le mot de passe" minLength={8}
+                                    style={{ ...inputStyle, display: "block", paddingRight: "2.75rem", ...errBorder("password_confirm") }} />
+                                {eyeButton}
+                            </div>
+                            {errors.password_confirm && <p style={errText}>{errors.password_confirm}</p>}
+                        </div>
+
+                        <button type="submit" disabled={loading}
+                            style={{ ...(loading ? btnPrimaryDisabled : btnPrimary), width: "100%", minHeight: "48px", fontSize: "1rem", marginTop: spacing["1"] }}>
+                            {loading ? (<><div style={spinnerBase} />Création…</>) : "Créer mon compte"}
+                        </button>
+                    </form>
+
+                    <p style={{ textAlign: "center", marginTop: spacing["5"], fontSize: typography.sm, color: cssVar.textMuted }}>
+                        Déjà un compte ?{" "}
+                        <Link href={`/auth/client/login?next=${encodeURIComponent(nextUrl)}`}
+                            style={{ color: cssVar.amberGlow, textDecoration: "none", fontWeight: typography.semibold }}>
+                            Se connecter
+                        </Link>
+                    </p>
+                </div>
+
+                <p style={{ textAlign: "center", marginTop: spacing["6"], fontSize: typography.xs, color: cssVar.textMuted }}>
+                    <Link href="/" style={{ color: cssVar.amberGlow, textDecoration: "none" }}>
+                        ← Retour à l'accueil
+                    </Link>
+                </p>
             </div>
-        </>
+
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
     );
 }
