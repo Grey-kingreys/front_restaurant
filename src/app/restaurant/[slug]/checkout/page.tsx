@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, Trash2, Plus, Minus, MapPin, Phone, CheckCircle2, Truck, ShoppingBag, Banknote, Smartphone, CreditCard, Globe, type LucideIcon } from "lucide-react";
+import { ArrowLeft, Trash2, Plus, Minus, MapPin, Phone, Truck, ShoppingBag, Banknote, Smartphone, CreditCard, Globe, ChevronDown, type LucideIcon } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { commander, MODES_PAIEMENT, type TypeCommande, type ModePaiement } from "@/lib/api/public";
@@ -226,27 +226,36 @@ export default function CheckoutPage() {
                 {/* Mode de paiement */}
                 <section style={{ marginBottom: "1.5rem" }}>
                     <h2 style={{ margin: "0 0 0.75rem", fontSize: "0.85rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Mode de paiement</h2>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                        {MODES_PAIEMENT.filter((mp) => mp.disponible).map((mp) => (
-                            <button key={mp.value} onClick={() => setModePaiement(mp.value)}
-                                style={{
-                                    display: "flex", alignItems: "center", gap: "0.875rem", padding: "0.875rem 1rem", borderRadius: "0.875rem",
-                                    border: `2px solid ${modePaiement === mp.value ? "#f59e0b" : "var(--border-subtle)"}`,
-                                    background: modePaiement === mp.value ? "rgba(245,158,11,0.08)" : "var(--bg-card)",
-                                    color: modePaiement === mp.value ? "#f59e0b" : "var(--text-secondary)",
-                                    cursor: "pointer", textAlign: "left",
-                                }}>
-                                {(() => { const Icon = PAYMENT_ICONS[mp.icon]; return <Icon size={20} style={{ flexShrink: 0 }} />; })()}
-                                <div style={{ flex: 1, minWidth: 0, fontWeight: 600, fontSize: "0.88rem" }}>{mp.label}</div>
-                                {modePaiement === mp.value && <CheckCircle2 size={18} style={{ color: "#f59e0b", flexShrink: 0 }} />}
-                            </button>
-                        ))}
-                    </div>
-                    {MODES_PAIEMENT.some((mp) => !mp.disponible) && (
-                        <p style={{ margin: "0.5rem 0 0", fontSize: "0.72rem", color: "var(--text-muted)" }}>
-                            Mobile Money (Orange, MTN), carte bancaire et PayDunya bientôt disponibles.
-                        </p>
-                    )}
+                    {(() => {
+                        const selected = MODES_PAIEMENT.find((mp) => mp.value === modePaiement) ?? MODES_PAIEMENT[0];
+                        const Icon = PAYMENT_ICONS[selected.icon];
+                        return (
+                            <div style={{
+                                display: "flex", alignItems: "center", gap: "0.875rem", padding: "0 1rem", borderRadius: "0.875rem",
+                                border: "2px solid #f59e0b", background: "rgba(245,158,11,0.08)",
+                            }}>
+                                <Icon size={20} style={{ flexShrink: 0, color: "#f59e0b" }} />
+                                <select value={modePaiement} onChange={(e) => setModePaiement(e.target.value as ModePaiement)}
+                                    aria-label="Mode de paiement"
+                                    style={{
+                                        flex: 1, minWidth: 0, padding: "0.875rem 0", border: "none", outline: "none",
+                                        background: "transparent", color: "#f59e0b", fontWeight: 600, fontSize: "0.88rem",
+                                        cursor: "pointer", appearance: "none", WebkitAppearance: "none", MozAppearance: "none",
+                                    }}>
+                                    {MODES_PAIEMENT.map((mp) => (
+                                        <option key={mp.value} value={mp.value} disabled={!mp.disponible}
+                                            style={{ color: "var(--text-primary)", background: "var(--bg-card)" }}>
+                                            {mp.label}{mp.disponible ? "" : " — bientôt"}
+                                        </option>
+                                    ))}
+                                </select>
+                                <ChevronDown size={18} style={{ flexShrink: 0, color: "#f59e0b" }} />
+                            </div>
+                        );
+                    })()}
+                    <p style={{ margin: "0.5rem 0 0", fontSize: "0.72rem", color: "var(--text-muted)" }}>
+                        Les autres moyens (Mobile Money, carte bancaire, PayDunya) arrivent bientôt.
+                    </p>
                 </section>
 
                 {/* Récapitulatif montants */}
