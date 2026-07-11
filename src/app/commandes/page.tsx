@@ -33,6 +33,7 @@ import {
     CreditCard,
     ArrowRight,
     Truck,
+    MapPin,
 } from "lucide-react";
 
 const STATUT_CONFIG: Record<StatutCommande, { label: string; color: string; bg: string; border: string }> = {
@@ -654,6 +655,17 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
                                 ))}
                             </div>
                         </div>
+
+                        {/* Position de livraison (client géolocalisé) */}
+                        {cmd.type_commande === "livraison" && cmd.client_latitude && cmd.client_longitude && (
+                            <a
+                                href={`https://www.google.com/maps?q=${cmd.client_latitude},${cmd.client_longitude}`}
+                                target="_blank" rel="noopener noreferrer"
+                                style={{ display: "inline-flex", alignItems: "center", gap: "0.45rem", margin: "0 0 1rem", padding: "0.6rem 1rem", borderRadius: radius.lg, border: `1px solid ${cssVar.borderAmber}`, background: "rgba(245,158,11,0.06)", color: cssVar.amberGlow, textDecoration: "none", fontSize: typography.sm, fontWeight: 600 }}
+                            >
+                                <MapPin size={15} /> Voir la position sur la carte
+                            </a>
+                        )}
 
                         {/* Articles */}
                         {(cmd.items?.length ?? 0) > 0 && (

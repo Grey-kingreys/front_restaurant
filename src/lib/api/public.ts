@@ -57,6 +57,9 @@ export interface CommandePayload {
     type_commande: TypeCommande;
     mode_paiement: ModePaiement;
     adresse_livraison?: string;
+    /** Position choisie sur la carte (livraison) */
+    latitude?: number;
+    longitude?: number;
     telephone: string;
     items: OrderItem[];
 }

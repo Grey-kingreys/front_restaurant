@@ -36,6 +36,8 @@ export interface Commande {
     client_nom?: string | null;
     client_telephone?: string | null;
     client_adresse_livraison?: string | null;
+    client_latitude?: string | null;
+    client_longitude?: string | null;
     mode_paiement?: string;
     mode_paiement_display?: string;
     montant_total: string;

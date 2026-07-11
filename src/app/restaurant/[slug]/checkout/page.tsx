@@ -9,6 +9,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { commander, MODES_PAIEMENT, type TypeCommande, type ModePaiement } from "@/lib/api/public";
 import { getRestaurantPublic, type RestaurantPublic } from "@/lib/api/public";
+import MapPicker from "@/components/map/MapPicker";
 
 const PAYMENT_ICONS: Record<string, LucideIcon> = {
     "banknote":    Banknote,
@@ -32,6 +33,7 @@ export default function CheckoutPage() {
     );
     const [modePaiement, setModePaiement] = useState<ModePaiement>("livraison");
     const [adresse, setAdresse] = useState("");
+    const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
     const [telephone, setTelephone] = useState(user?.telephone ?? "");
     const [submitting, setSubmitting] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -82,6 +84,8 @@ export default function CheckoutPage() {
                 type_commande: typeCommande,
                 mode_paiement: modePaiement,
                 adresse_livraison: typeCommande === "livraison" ? adresse : undefined,
+                latitude: typeCommande === "livraison" ? coords?.lat : undefined,
+                longitude: typeCommande === "livraison" ? coords?.lng : undefined,
                 telephone,
                 items: items.map((i) => ({ plat_id: i.platId, quantite: i.quantite })),
             });
@@ -192,6 +196,7 @@ export default function CheckoutPage() {
                             {errors.telephone && <p style={{ margin: "0.25rem 0 0", fontSize: "0.75rem", color: "#ef4444" }}>{errors.telephone}</p>}
                         </div>
                         {typeCommande === "livraison" && (
+                            <>
                             <div>
                                 <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.4rem" }}>
                                     <MapPin size={13} style={{ color: "var(--text-muted)" }} />
@@ -201,6 +206,19 @@ export default function CheckoutPage() {
                                     style={{ ...inputStyle(!!errors.adresse), resize: "none", fontFamily: "inherit" }} />
                                 {errors.adresse && <p style={{ margin: "0.25rem 0 0", fontSize: "0.75rem", color: "#ef4444" }}>{errors.adresse}</p>}
                             </div>
+                            <div>
+                                <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.4rem" }}>
+                                    <MapPin size={13} style={{ color: "var(--text-muted)" }} />
+                                    <label style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Votre position sur la carte (facultatif)</label>
+                                </div>
+                                <MapPicker lat={coords?.lat ?? null} lng={coords?.lng ?? null} onChange={(la, ln) => setCoords({ lat: la, lng: ln })} height={220} />
+                                <p style={{ margin: "0.4rem 0 0", fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                                    {coords
+                                        ? `Position choisie : ${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}`
+                                        : "Touchez la carte pour placer votre position — ça aide le livreur à vous trouver."}
+                                </p>
+                            </div>
+                            </>
                         )}
                     </div>
                 </section>
