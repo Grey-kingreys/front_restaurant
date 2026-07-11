@@ -449,7 +449,7 @@ function ActionButton({ onClick, loading, color, icon, label }: {
 }) {
     return (
         <button
-            onClick={onClick}
+            onClick={(e) => { e.stopPropagation(); onClick(e); }}
             disabled={loading}
             className="action-btn"
             style={{ color, borderColor: color, background: "transparent", opacity: loading ? 0.6 : 1 }}
