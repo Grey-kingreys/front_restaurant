@@ -86,6 +86,8 @@ export interface SuiviCommande {
     montant_total: string;
     frais_livraison: string | null;
     adresse_livraison: string | null;
+    /** Au moins un plat passe par la cuisine → l'étape « Préparation » s'affiche */
+    necessite_passage_cuisine: boolean;
     date_commande: string;
     items: { nom: string; quantite: number; prix_unitaire: string; sous_total: string }[];
 }

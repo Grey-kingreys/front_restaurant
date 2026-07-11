@@ -58,7 +58,11 @@ export default function ConfirmationPage() {
         </div>
     );
 
-    const steps = commande.type_commande === "livraison" ? STEPS_LIVRAISON : STEPS_EMPORTER;
+    const baseSteps = commande.type_commande === "livraison" ? STEPS_LIVRAISON : STEPS_EMPORTER;
+    // Pas de plat en cuisine → on masque l'étape « Préparation terminée »
+    const steps = commande.necessite_passage_cuisine === false
+        ? baseSteps.filter((s) => s.key !== "prete")
+        : baseSteps;
     const currentIndex = steps.findIndex((s) => s.key === commande.statut);
     const isDone = commande.statut === "payee";
 

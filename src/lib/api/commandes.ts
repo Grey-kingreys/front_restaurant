@@ -50,6 +50,7 @@ export interface Commande {
     cuisinier_ayant_prepare: number | null;
     cuisinier_login?: string | null;
     peut_etre_marquee_prete?: boolean;
+    peut_passer_en_livraison?: boolean;
     peut_etre_servie?: boolean;
     peut_etre_payee?: boolean;
     necessite_passage_cuisine?: boolean;

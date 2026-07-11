@@ -44,6 +44,20 @@ const STATUT_CONFIG: Record<StatutCommande, { label: string; color: string; bg: 
     payee:        { label: "Terminée",      color: "#22c55e", bg: "rgba(34,197,94,0.1)",   border: "rgba(34,197,94,0.25)" },
 };
 
+// Règles de transition (miroir du backend) — évitent de sauter une étape.
+// Une livraison part en course depuis son état « prêt à expédier » :
+// 'prete' si un plat passe par la cuisine, sinon 'en_attente' directement.
+const peutPartirEnLivraison = (c: Commande) =>
+    c.type_commande === "livraison" &&
+    (c.necessite_passage_cuisine === false ? c.statut === "en_attente" : c.statut === "prete");
+
+// Servie / Livrée : une livraison ne peut l'être qu'après 'en_livraison' ;
+// sur place / à emporter → depuis 'prete', ou directement 'en_attente' sans cuisine.
+const peutEtreServie = (c: Commande) =>
+    c.type_commande === "livraison"
+        ? c.statut === "en_livraison"
+        : c.statut === "prete" || (c.statut === "en_attente" && c.necessite_passage_cuisine === false);
+
 // Type de commande — différencie une commande sur place (table) d'une commande client en ligne
 const TYPE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
     sur_table: { label: "Sur table", color: "#22c55e", bg: "rgba(34,197,94,0.1)",  border: "rgba(34,197,94,0.25)" },
@@ -345,7 +359,7 @@ export default function CommandesPage() {
                                                                 />
                                                             )}
                                                             {/* Serveur — marquer EN LIVRAISON (livraison uniquement, après cuisine) */}
-                                                            {isServeur && cmd.statut === "prete" && cmd.type_commande === "livraison" && (
+                                                            {isServeur && peutPartirEnLivraison(cmd) && (
                                                                 <ActionButton
                                                                     onClick={() => handleAction(cmd.id, "en_livraison")}
                                                                     loading={isLoading}
@@ -355,11 +369,7 @@ export default function CommandesPage() {
                                                                 />
                                                             )}
                                                             {/* Serveur — marquer SERVIE / LIVRÉE */}
-                                                            {isServeur && (
-                                                                (cmd.statut === "en_livraison" && cmd.type_commande === "livraison") ||
-                                                                (cmd.statut === "prete" && cmd.type_commande !== "livraison") ||
-                                                                (cmd.statut === "en_attente" && cmd.necessite_passage_cuisine === false)
-                                                            ) && (
+                                                            {isServeur && peutEtreServie(cmd) && (
                                                                 <ActionButton
                                                                     onClick={() => handleAction(cmd.id, "servie")}
                                                                     loading={isLoading}
@@ -496,14 +506,10 @@ function CommandeCard({ cmd, isServeur, isCuisinier, actionLoading, onAction, on
                     {isCuisinier && cmd.statut === "en_attente" && (
                         <ActionButton onClick={() => onAction(cmd.id, "prete")} loading={isLoading} color="#3b82f6" icon={<Flame size={12} />} label="Prête" />
                     )}
-                    {isServeur && cmd.statut === "prete" && cmd.type_commande === "livraison" && (
+                    {isServeur && peutPartirEnLivraison(cmd) && (
                         <ActionButton onClick={() => onAction(cmd.id, "en_livraison")} loading={isLoading} color="#8b5cf6" icon={<Truck size={12} />} label="En livraison" />
                     )}
-                    {isServeur && (
-                        (cmd.statut === "en_livraison" && cmd.type_commande === "livraison") ||
-                        (cmd.statut === "prete" && cmd.type_commande !== "livraison") ||
-                        (cmd.statut === "en_attente" && cmd.necessite_passage_cuisine === false)
-                    ) && (
+                    {isServeur && peutEtreServie(cmd) && (
                         <ActionButton onClick={() => onAction(cmd.id, "servie")} loading={isLoading} color="#a855f7" icon={<Check size={12} />} label={cmd.type_commande === "livraison" ? "Livrée" : "Servie"} />
                     )}
                     {isServeur && cmd.statut === "servie" && (
@@ -737,17 +743,13 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
                                     Marquer PRÊTE
                                 </button>
                             )}
-                            {isServeur && cmd.statut === "prete" && cmd.type_commande === "livraison" && (
+                            {isServeur && peutPartirEnLivraison(cmd) && (
                                 <button onClick={() => onAction(cmd.id, "en_livraison")} disabled={isActLoading} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", padding: "0.7rem", borderRadius: radius.lg, border: "1px solid #8b5cf6", background: "rgba(139,92,246,0.08)", color: "#8b5cf6", fontWeight: 700, fontSize: typography.sm, cursor: isActLoading ? "not-allowed" : "pointer", opacity: isActLoading ? 0.6 : 1, transition: "all 0.15s" }}>
                                     {isActLoading ? <div style={{ width: 14, height: 14, borderRadius: "50%", border: "2px solid #8b5cf6", borderTopColor: "transparent", animation: "spin .6s linear infinite" }} /> : <Truck size={15} />}
                                     Mettre en livraison
                                 </button>
                             )}
-                            {isServeur && (
-                                (cmd.statut === "en_livraison" && cmd.type_commande === "livraison") ||
-                                (cmd.statut === "prete" && cmd.type_commande !== "livraison") ||
-                                (cmd.statut === "en_attente" && cmd.necessite_passage_cuisine === false)
-                            ) && (
+                            {isServeur && peutEtreServie(cmd) && (
                                 <button onClick={() => onAction(cmd.id, "servie")} disabled={isActLoading} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", padding: "0.7rem", borderRadius: radius.lg, border: "1px solid #a855f7", background: "rgba(168,85,247,0.08)", color: "#a855f7", fontWeight: 700, fontSize: typography.sm, cursor: isActLoading ? "not-allowed" : "pointer", opacity: isActLoading ? 0.6 : 1, transition: "all 0.15s" }}>
                                     {isActLoading ? <div style={{ width: 14, height: 14, borderRadius: "50%", border: "2px solid #a855f7", borderTopColor: "transparent", animation: "spin .6s linear infinite" }} /> : <User2 size={15} />}
                                     {cmd.type_commande === "livraison" ? "Marquer LIVRÉE" : "Marquer SERVIE"}
