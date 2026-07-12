@@ -168,8 +168,10 @@ const PERMISSION_NAV_BLOCKS: PermissionNavBlock[] = [
     // Caisse globale
     {
         title: "Finance",
-        requiredAny: ["view_caisse_globale", "manage_caisse_globale", "view_caisse_generale"],
+        requiredAny: ["view_caisse_globale", "manage_caisse_globale", "view_caisse_generale", "validate_approvisionnement"],
         items: [
+            { label: "Approvisionnements", href: "/caisse/approvisionnements", icon: "cash", requiredAny: ["validate_approvisionnement"] },
+            { label: "Historique caisses", href: "/caisse/historique", icon: "orders", requiredAny: ["manage_caisse_comptable", "view_caisse_globale"] },
             { label: "Caisse Globale", href: "/caisse/globale", icon: "building", requiredAny: ["view_caisse_globale", "manage_caisse_globale"] },
             { label: "Caisse Générale", href: "/caisse-generale", icon: "cash", requiredAny: ["view_caisse_generale"] },
         ],

@@ -13,9 +13,11 @@ import {
     creerDepense,
     listRemises,
     validerRemise,
+    listDemandesAppro,
     type CaisseComptable,
     type MouvementCaisse,
     type RemiseServeur,
+    type DemandeApprovisionnement,
 } from "@/lib/api/paiements";
 import { cssVar, typography, radius } from "@/theme/theme";
 import {
@@ -27,10 +29,17 @@ import {
     ArrowDownCircle,
     Wallet,
     ClipboardList,
-    ChevronDown,
     Lock,
     Unlock,
+    Clock,
 } from "lucide-react";
+
+// Style d'un statut de demande d'approvisionnement
+const DEM_STATUT: Record<string, { color: string; label: string }> = {
+    en_attente: { color: "#f59e0b", label: "En attente" },
+    approuvee:  { color: "#22c55e", label: "Approuvée" },
+    refusee:    { color: "#ef4444", label: "Refusée" },
+};
 
 function PageLoader() {
     return (
@@ -55,7 +64,7 @@ function StatCard({ title, value, icon, color }: { title: string; value: React.R
     );
 }
 
-type TabKey = "mouvements" | "remises";
+type TabKey = "mouvements" | "remises" | "demandes";
 type ModalMode = "ouvrir" | "fermer" | "appro" | "depense" | "remise" | null;
 
 export default function CaissePage() {
@@ -65,6 +74,7 @@ export default function CaissePage() {
     const [caisse, setCaisse]           = useState<CaisseComptable | null>(null);
     const [mouvements, setMouvements]   = useState<MouvementCaisse[]>([]);
     const [remises, setRemises]         = useState<RemiseServeur[]>([]);
+    const [demandes, setDemandes]       = useState<DemandeApprovisionnement[]>([]);
     const [loadingMain, setLoadingMain] = useState(true);
     const [activeTab, setActiveTab]     = useState<TabKey>("mouvements");
     const [toast, setToast]             = useState<{ msg: string; type: "success" | "error" } | null>(null);
@@ -95,6 +105,8 @@ export default function CaissePage() {
             }
             const rRes = await listRemises();
             if (rRes.success && rRes.data) setRemises(rRes.data.remises ?? []);
+            const dRes = await listDemandesAppro();
+            if (dRes.success && dRes.data) setDemandes(dRes.data.demandes ?? []);
         } finally {
             setLoadingMain(false);
         }
@@ -140,8 +152,8 @@ export default function CaissePage() {
         setFormError(null);
         try {
             const res = await approvisionnerCaisse(caisse.id, { montant: parseFloat(fMontant), motif: fMotif });
-            if (res.success) { showToast("Approvisionnement enregistré."); closeModal(); fetchAll(); }
-            else setFormError("Impossible d'approvisionner.");
+            if (res.success) { showToast("Demande envoyée — en attente de validation."); closeModal(); setActiveTab("demandes"); fetchAll(); }
+            else setFormError(res.message || "Impossible d'envoyer la demande.");
         } catch { setFormError("Erreur."); }
         finally { setFormLoading(false); }
     };
@@ -181,6 +193,17 @@ export default function CaissePage() {
 
     const remisesEnAttente = remises.filter(r => !r.valide);
 
+    // Écart temps réel (fermeture caisse / validation remise) :
+    // montant physique saisi − solde virtuel attendu.
+    const soldeAttendu = modal === "fermer"
+        ? (caisse ? Number(caisse.solde) : 0)
+        : modal === "remise"
+            ? (selectedRemise ? Number(selectedRemise.montant_virtuel) : 0)
+            : 0;
+    const physiqueSaisi = fMontantPhysique.trim() === "" ? null : Number(fMontantPhysique);
+    const ecart = physiqueSaisi === null || Number.isNaN(physiqueSaisi) ? null : physiqueSaisi - soldeAttendu;
+    const motifRequis = ecart !== null && ecart !== 0;
+
     return (
         <>
             <style>{`
@@ -215,7 +238,7 @@ export default function CaissePage() {
                         <div style={{ width: "100%", maxWidth: 420, background: "var(--bg-card)", border: "1px solid var(--border-amber)", borderRadius: "1.25rem", padding: "1.5rem", animation: "modalIn 0.25s ease" }}>
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
                                 <h2 style={{ margin: 0, fontSize: typography.lg, fontWeight: 800, color: cssVar.textPrimary }}>
-                                    {modal === "ouvrir" ? "Ouvrir la caisse" : modal === "fermer" ? "Fermer la caisse" : modal === "appro" ? "Approvisionnement" : modal === "depense" ? "Enregistrer une dépense" : "Valider la remise"}
+                                    {modal === "ouvrir" ? "Ouvrir la caisse" : modal === "fermer" ? "Fermer la caisse" : modal === "appro" ? "Demande d'approvisionnement" : modal === "depense" ? "Enregistrer une dépense" : "Valider la remise"}
                                 </h2>
                                 <button onClick={closeModal} style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "0.5rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", cursor: "pointer", color: cssVar.textMuted }}>
                                     <X size={15} />
@@ -252,9 +275,31 @@ export default function CaissePage() {
                                         <label style={{ display: "block", fontSize: typography.xs, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: cssVar.textMuted, marginBottom: "0.375rem" }}>Montant physique (GNF) *</label>
                                         <input type="number" value={fMontantPhysique} onChange={e => setFMontantPhysique(e.target.value)} required min="0" placeholder="0" style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }} />
                                     </div>
+
+                                    {/* Écart temps réel : montant physique − solde virtuel attendu */}
+                                    {(() => {
+                                        const nul = ecart === 0;
+                                        const color = ecart === null ? cssVar.textMuted : nul ? "#22c55e" : ecart > 0 ? "#f59e0b" : "#ef4444";
+                                        const label = ecart === null ? "" : nul ? "Aucun écart" : ecart > 0 ? "Excédent" : "Manquant";
+                                        return (
+                                            <div style={{ padding: "0.7rem 0.875rem", borderRadius: radius.lg, background: ecart === null ? "var(--bg-section-alt)" : `${color}14`, border: `1px solid ${ecart === null ? "var(--border-subtle)" : `${color}55`}` }}>
+                                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: typography.xs, color: cssVar.textMuted }}>
+                                                    <span>Solde virtuel attendu</span>
+                                                    <span style={{ color: cssVar.textSecondary, fontWeight: 600 }}>{fmtMontant(String(soldeAttendu))}</span>
+                                                </div>
+                                                {ecart !== null && (
+                                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.4rem", paddingTop: "0.4rem", borderTop: `1px solid ${color}33`, fontSize: typography.sm, fontWeight: 800, color }}>
+                                                        <span>{label}</span>
+                                                        <span>{ecart > 0 ? "+" : ""}{ecart.toLocaleString("fr-FR")} GNF</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })()}
+
                                     <div>
-                                        <label style={{ display: "block", fontSize: typography.xs, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: cssVar.textMuted, marginBottom: "0.375rem" }}>Motif d&apos;écart (si différence)</label>
-                                        <input type="text" value={fMotif} onChange={e => setFMotif(e.target.value)} placeholder="Optionnel" style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }} />
+                                        <label style={{ display: "block", fontSize: typography.xs, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: motifRequis ? "#ef4444" : cssVar.textMuted, marginBottom: "0.375rem" }}>Motif d&apos;écart {motifRequis ? "(obligatoire)" : "(si différence)"}</label>
+                                        <input type="text" value={fMotif} onChange={e => setFMotif(e.target.value)} required={motifRequis} placeholder={motifRequis ? "Expliquez l'écart constaté" : "Optionnel"} style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: radius.lg, border: `1px solid ${motifRequis ? "rgba(239,68,68,0.4)" : "var(--border-subtle)"}`, background: "var(--bg-section-alt)", color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }} />
                                     </div>
                                     <div style={{ display: "flex", gap: "0.5rem" }}>
                                         <button type="button" onClick={closeModal} style={{ flex: 1, padding: "0.65rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textSecondary, fontWeight: 700, fontSize: typography.sm, cursor: "pointer" }}>Annuler</button>
@@ -280,7 +325,7 @@ export default function CaissePage() {
                                         <button type="button" onClick={closeModal} style={{ flex: 1, padding: "0.65rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textSecondary, fontWeight: 700, fontSize: typography.sm, cursor: "pointer" }}>Annuler</button>
                                         <button type="submit" disabled={formLoading} style={{ flex: 2, padding: "0.65rem", borderRadius: radius.lg, border: "1px solid", borderColor: modal === "appro" ? "#22c55e" : "#ef4444", background: modal === "appro" ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)", color: modal === "appro" ? "#22c55e" : "#ef4444", fontWeight: 700, fontSize: typography.sm, cursor: formLoading ? "not-allowed" : "pointer", opacity: formLoading ? 0.7 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>
                                             {formLoading && <div style={{ width: 13, height: 13, borderRadius: "50%", border: `2px solid ${modal === "appro" ? "#22c55e" : "#ef4444"}`, borderTopColor: "transparent", animation: "spin .6s linear infinite" }} />}
-                                            {modal === "appro" ? "Approvisionner" : "Enregistrer"}
+                                            {modal === "appro" ? "Envoyer la demande" : "Enregistrer"}
                                         </button>
                                     </div>
                                 </form>
@@ -358,6 +403,12 @@ export default function CaissePage() {
                                 <button className={`tab-btn${activeTab === "remises" ? " active" : ""}`} onClick={() => setActiveTab("remises")}>
                                     Remises serveurs {remisesEnAttente.length > 0 && `(${remisesEnAttente.length} en attente)`}
                                 </button>
+                                <button className={`tab-btn${activeTab === "demandes" ? " active" : ""}`} onClick={() => setActiveTab("demandes")}>
+                                    Mes demandes {demandes.filter(d => d.statut === "en_attente").length > 0 && `(${demandes.filter(d => d.statut === "en_attente").length})`}
+                                </button>
+                                <button className="tab-btn" onClick={() => router.push("/caisse/historique")}>
+                                    Historique →
+                                </button>
                             </div>
 
                             {/* Mouvements */}
@@ -418,14 +469,43 @@ export default function CaissePage() {
                                     )}
                                 </div>
                             )}
+
+                            {/* Mes demandes d'approvisionnement */}
+                            {activeTab === "demandes" && (
+                                <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: radius.xl, padding: "0.875rem 1.25rem" }}>
+                                    {demandes.length === 0 ? (
+                                        <p style={{ textAlign: "center", color: cssVar.textMuted, fontSize: typography.sm, padding: "2rem" }}>Aucune demande d&apos;approvisionnement.</p>
+                                    ) : (
+                                        demandes.map(d => {
+                                            const s = DEM_STATUT[d.statut] ?? { color: "#9ca3af", label: d.statut };
+                                            return (
+                                                <div key={d.id} className="mvt-row">
+                                                    <div style={{ width: 36, height: 36, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, background: `${s.color}1a`, color: s.color }}>
+                                                        {d.statut === "en_attente" ? <Clock size={16} /> : d.statut === "approuvee" ? <Check size={16} /> : <X size={16} />}
+                                                    </div>
+                                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                                        <p style={{ margin: 0, fontSize: typography.sm, fontWeight: 600, color: cssVar.textPrimary, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{d.motif}</p>
+                                                        <p style={{ margin: "1px 0 0", fontSize: typography.xs, color: cssVar.textMuted }}>
+                                                            {fmt(d.created_at)}
+                                                            {d.statut === "refusee" && d.motif_refus && ` · Refus : ${d.motif_refus}`}
+                                                            {d.statut === "approuvee" && d.validee_par_login && ` · par ${d.validee_par_login}`}
+                                                        </p>
+                                                    </div>
+                                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.2rem" }}>
+                                                        <span style={{ fontWeight: 800, fontSize: typography.sm, color: cssVar.textPrimary, whiteSpace: "nowrap" }}>{fmtMontant(d.montant)}</span>
+                                                        <span style={{ fontSize: "0.68rem", fontWeight: 700, color: s.color, background: `${s.color}1a`, padding: "0.1rem 0.45rem", borderRadius: "9999px" }}>{s.label}</span>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    )}
+                                </div>
+                            )}
+
                         </>
                     )}
                 </div>
             </div>
-
-            {/* Suppress unused import */}
-            <style>{`.hide{display:none}`}</style>
-            <span className="hide"><ChevronDown size={1} /></span>
         </>
     );
 }

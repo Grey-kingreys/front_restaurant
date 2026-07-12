@@ -7,7 +7,7 @@ import type { ApiResponse } from "@/types";
 
 export interface MouvementCaisse {
     id: number;
-    type_mouvement: "approvisionnement" | "depense";
+    type_mouvement: "approvisionnement" | "depense" | "fermeture" | "ecart";
     type_mouvement_display: string;
     montant: string;
     montant_formate: string;
@@ -15,6 +15,42 @@ export interface MouvementCaisse {
     effectue_par: number;
     effectue_par_login: string | null;
     created_at: string;
+}
+
+export type StatutDemandeAppro = "en_attente" | "approuvee" | "refusee";
+
+export interface DemandeApprovisionnement {
+    id: number;
+    caisse_comptable: number;
+    comptable_nom: string | null;
+    montant: string;
+    motif: string;
+    statut: StatutDemandeAppro;
+    statut_display: string;
+    demande_par: number | null;
+    demande_par_nom: string | null;
+    demande_par_login: string | null;
+    validee_par: number | null;
+    validee_par_login: string | null;
+    motif_refus: string | null;
+    created_at: string;
+    validated_at: string | null;
+}
+
+/** Caisse comptable en version liste (sans mouvements) — pour l'historique */
+export interface CaisseComptableListItem {
+    id: number;
+    comptable: number;
+    comptable_nom: string;
+    comptable_login: string;
+    solde: string;
+    solde_formate: string;
+    is_closed: boolean;
+    statut: "ouverte" | "fermee";
+    montant_physique_fermeture: string | null;
+    motif_ecart: string | null;
+    opened_at: string;
+    closed_at: string | null;
 }
 
 export interface CaisseComptable {
@@ -119,14 +155,48 @@ export async function ouvrirCaisseComptable(): Promise<ApiResponse<CaisseComptab
     return apiRequest("/paiements/caisse-comptable/ouvrir/", { method: "POST" });
 }
 
+/** Le comptable crée une DEMANDE d'approvisionnement (aucun transfert avant validation admin/manager) */
 export async function approvisionnerCaisse(
     pk: number,
     payload: { montant: number; motif: string }
-): Promise<ApiResponse<CaisseComptable>> {
+): Promise<ApiResponse<DemandeApprovisionnement>> {
     return apiRequest(`/paiements/caisse-comptable/${pk}/approvisionner/`, {
         method: "POST",
         body: JSON.stringify(payload),
     });
+}
+
+// ── Demandes d'approvisionnement ────────────────────────────────────────────
+
+export async function listDemandesAppro(
+    statut?: StatutDemandeAppro
+): Promise<ApiResponse<{ count: number; demandes: DemandeApprovisionnement[] }>> {
+    const q = statut ? `?statut=${statut}` : "";
+    return apiRequest(`/paiements/approvisionnements/${q}`);
+}
+
+export async function approuverDemandeAppro(pk: number): Promise<ApiResponse<DemandeApprovisionnement>> {
+    return apiRequest(`/paiements/approvisionnements/${pk}/approuver/`, { method: "POST" });
+}
+
+export async function refuserDemandeAppro(pk: number, motif_refus: string): Promise<ApiResponse<DemandeApprovisionnement>> {
+    return apiRequest(`/paiements/approvisionnements/${pk}/refuser/`, {
+        method: "POST",
+        body: JSON.stringify({ motif_refus }),
+    });
+}
+
+// ── Historique des caisses comptables fermées ────────────────────────────────
+
+export async function listCaissesComptables(
+    isClosed?: boolean
+): Promise<ApiResponse<{ count: number; caisses: CaisseComptableListItem[] }>> {
+    const q = isClosed === undefined ? "" : `?is_closed=${isClosed}`;
+    return apiRequest(`/paiements/caisse-comptable/${q}`);
+}
+
+export async function getCaisseComptable(pk: number): Promise<ApiResponse<CaisseComptable>> {
+    return apiRequest(`/paiements/caisse-comptable/${pk}/`);
 }
 
 export async function fermerCaisseComptable(
