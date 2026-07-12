@@ -1,7 +1,11 @@
 // src/lib/api/client.ts
 // Client HTTP centralisé avec gestion automatique des tokens JWT et du refresh
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+// Base API robuste : on garantit un schéma http(s) absolu et pas de slash final,
+// pour éviter les URL relatives (→ 404 HTML de Next) et les doubles slash (→ 404 HTML de Django)
+// quand NEXT_PUBLIC_API_URL est mal configuré (ex. "localhost:8000/api" ou "…/api/").
+const RAW_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+const BASE_URL = (/^https?:\/\//i.test(RAW_BASE_URL) ? RAW_BASE_URL : `http://${RAW_BASE_URL}`).replace(/\/+$/, "");
 
 // ── Helpers stockage tokens ────────────────────────────────────────────────
 
@@ -189,6 +193,16 @@ export async function apiRequest<T = unknown>(
     // Réponse vide (204 No Content)
     if (response.status === 204) {
         return {} as T;
+    }
+
+    // Garde-fou : si la réponse n'est pas du JSON (page HTML 404/500, mauvaise base API…),
+    // on renvoie une erreur lisible plutôt qu'un "Unexpected token '<'".
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) {
+        return {
+            success: false,
+            message: `Réponse inattendue du serveur (HTTP ${response.status}). Le service est-il joignable ?`,
+        } as T;
     }
 
     const data = await response.json();
