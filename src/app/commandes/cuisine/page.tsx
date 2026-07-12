@@ -224,10 +224,14 @@ function TicketCommande({ cmd, onPrete, isSubmitting, canMarkPrete }: { cmd: Com
             <div className="ticket-header" style={isUrgent ? { background: "rgba(239,68,68,0.15)", borderBottomColor: "rgba(239,68,68,0.3)" } : undefined}>
                 <div>
                     <span style={{ fontSize: "1.25rem", fontWeight: 900, color: "var(--text-primary)" }}>
-                        Table {cmd.table_numero}
+                        {cmd.type_commande === "livraison"
+                            ? "Livraison"
+                            : cmd.type_commande === "emporter"
+                                ? "À emporter"
+                                : `Table ${cmd.table_numero ?? ""}`.trim()}
                     </span>
                     <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "2px", fontWeight: 600 }}>
-                        CMD #{cmd.id}
+                        CMD #{cmd.id}{cmd.client_display ? ` · ${cmd.client_display}` : ""}
                     </div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", color: isUrgent ? "#ef4444" : "var(--amber-glow)", fontWeight: 700, fontSize: "0.9rem", background: "var(--bg-dark)", padding: "0.3rem 0.6rem", borderRadius: radius.md }}>
