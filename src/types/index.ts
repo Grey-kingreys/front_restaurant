@@ -8,10 +8,11 @@ export type Role =
     | "Rchef_cuisinier"
     | "Rcuisinier"
     | "Rcomptable"
+    | "Rlivreur"
     | "Rtable"
     | "Rclient";
 
-export type DashboardType = "admin" | "serveur" | "cuisine" | "comptable" | "table" | "superadmin";
+export type DashboardType = "admin" | "serveur" | "cuisine" | "comptable" | "livreur" | "table" | "superadmin";
 
 export interface User {
     id: number;

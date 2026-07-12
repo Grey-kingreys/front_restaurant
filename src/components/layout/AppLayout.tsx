@@ -23,6 +23,7 @@ const PRIVATE_PREFIXES = [
     "/restaurant/",       // flux commande client (menu/checkout/confirmation) + paramètres restaurant
     "/menu",
     "/commandes",
+    "/livraisons",        // espace livreur / staff (la page publique /livraison/<token> reste sans sidebar)
     "/paiements",
     "/caisse",
     "/caisse-generale",

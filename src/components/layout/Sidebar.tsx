@@ -31,6 +31,7 @@ import {
     X,
     ShieldCheck,
     GitBranch,
+    Truck,
 } from "lucide-react";
 
 // ── Icônes ─────────────────────────────────────────────────────────────────
@@ -44,6 +45,7 @@ function Icon({ name }: { name: string }) {
         qr: <QrCode size={16} />,
         menu: <Menu size={16} />,
         orders: <ClipboardList size={16} />,
+        truck: <Truck size={16} />,
         cash: <Banknote size={16} />,
         report: <BarChart3 size={16} />,
         export: <Download size={16} />,

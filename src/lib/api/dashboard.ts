@@ -85,7 +85,13 @@ export interface SuperadminData {
     stats_restaurants: { nom: string; revenus_jour: string; commandes_actives: number }[];
 }
 
-export type DashboardData = AdminData | ServeurData | CuisineData | ComptableData | TableData | SuperadminData;
+export interface LivreurData {
+    type: "livreur";
+    kpis: { a_expedier: number; en_cours: number; livrees_jour: number };
+    livraisons: { id: number; client: string; adresse: string; montant: string; statut: string; heure: string }[];
+}
+
+export type DashboardData = AdminData | ServeurData | CuisineData | ComptableData | LivreurData | TableData | SuperadminData;
 
 export async function getDashboardStats(): Promise<DashboardData> {
     const res = await apiRequest<ApiResponse<DashboardData>>("/dashboard/stats/");

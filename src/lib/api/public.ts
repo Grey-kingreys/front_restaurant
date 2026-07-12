@@ -222,6 +222,44 @@ export async function registerClient(payload: ClientRegisterPayload): Promise<Ap
     });
 }
 
+// ── Livraison externe (livreur sans compte, via token) ───────────────────────
+
+export interface LivraisonPublique {
+    commande_id: number;
+    restaurant: string;
+    restaurant_telephone: string | null;
+    statut: string;
+    statut_label: string;
+    client_nom: string | null;
+    client_telephone: string | null;
+    adresse_livraison: string | null;
+    latitude: string | null;
+    longitude: string | null;
+    mode_paiement: string;
+    montant_total: string;
+    items: { nom: string; quantite: number; sous_total: string }[];
+    paiement_autorise: boolean;
+    actions: {
+        peut_passer_en_livraison: boolean;
+        peut_etre_servie: boolean;
+        peut_encaisser: boolean;
+    };
+}
+
+export type LivraisonAction = "en_livraison" | "servie" | "payee";
+
+export async function getLivraisonPublique(token: string): Promise<ApiResponse<LivraisonPublique>> {
+    return apiRequest(`/public/livraison/${token}/`, { skipAuth: true });
+}
+
+export async function actionLivraisonPublique(token: string, action: LivraisonAction): Promise<ApiResponse<LivraisonPublique>> {
+    return apiRequest(`/public/livraison/${token}/action/`, {
+        method: "POST",
+        body: JSON.stringify({ action }),
+        skipAuth: true,
+    });
+}
+
 // Labels et helpers paiement — icon est une clé résolue dans le composant via PAYMENT_ICONS
 export const MODES_PAIEMENT: { value: ModePaiement; label: string; icon: "banknote" | "smartphone" | "credit-card" | "globe"; disponible: boolean }[] = [
     { value: "livraison",    label: "Paiement à la livraison", icon: "banknote",    disponible: true },

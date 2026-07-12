@@ -128,6 +128,31 @@ export async function getCommande(id: number): Promise<ApiResponse<Commande>> {
     return apiRequest(`/commandes/${id}/`);
 }
 
+// ── Livraisons ──────────────────────────────────────────────────────────────
+
+/**
+ * Livraisons à traiter (Livreur / Serveur / Admin / Manager).
+ * Par défaut : livraisons actives (ni livrées ni payées).
+ */
+export async function getLivraisons(statut?: StatutCommande): Promise<ApiResponse<{ commandes: Commande[]; count: number }>> {
+    const query = statut ? `?statut=${statut}` : "";
+    return apiRequest(`/commandes/livraisons/${query}`);
+}
+
+export interface LivraisonLien {
+    qr_code_url: string;   // data:image/png;base64,...
+    lien: string;
+    token: string;
+}
+
+/**
+ * Génère (ou régénère) le lien + QR de livraison externe d'une commande.
+ * Accès : permission manage_livraison_links.
+ */
+export async function genererLivraisonLien(id: number): Promise<ApiResponse<LivraisonLien>> {
+    return apiRequest(`/commandes/${id}/livraison-lien/`, { method: "POST" });
+}
+
 /**
  * Mes commandes — Table uniquement (filtrées par session QR courante)
  */

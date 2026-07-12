@@ -17,6 +17,7 @@ export interface Restaurant {
     accept_livraison: boolean;
     accept_emporter: boolean;
     frais_livraison: string | null;
+    livraison_lien_autorise_paiement: boolean;
     reservation_validation_auto: boolean;
     reservation_delai_annulation_heures: number;
     has_geo: boolean;
@@ -162,6 +163,7 @@ export async function updateMonRestaurant(
         accept_livraison?: boolean;
         accept_emporter?: boolean;
         frais_livraison?: number | null;
+        livraison_lien_autorise_paiement?: boolean;
         reservation_validation_auto?: boolean;
         reservation_delai_annulation_heures?: number;
     }

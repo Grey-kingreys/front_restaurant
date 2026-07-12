@@ -40,6 +40,7 @@ const ROLES_CREABLES: { value: Role; label: string }[] = [
     { value: "Rchef_cuisinier", label: "Chef Cuisinier" },
     { value: "Rcuisinier",      label: "Cuisinier" },
     { value: "Rcomptable",      label: "Comptable" },
+    { value: "Rlivreur",        label: "Livreur" },
 ];
 
 const FILTER_ROLES: { value: string; label: string }[] = [
@@ -49,6 +50,7 @@ const FILTER_ROLES: { value: string; label: string }[] = [
     { value: "Rchef_cuisinier", label: "Chef Cuisinier" },
     { value: "Rcuisinier",      label: "Cuisinier" },
     { value: "Rcomptable",      label: "Comptable" },
+    { value: "Rlivreur",        label: "Livreur" },
 ];
 
 // ── Composants utilitaires ───────────────────────────────────────────────────
@@ -476,7 +478,7 @@ export default function EquipePage() {
         }
     };
 
-    const ROLES_SIMULABLES: Role[] = ["Rmanager", "Rserveur", "Rchef_cuisinier", "Rcuisinier", "Rcomptable", "Rtable"];
+    const ROLES_SIMULABLES: Role[] = ["Rmanager", "Rserveur", "Rchef_cuisinier", "Rcuisinier", "Rcomptable", "Rlivreur", "Rtable"];
 
     const handleSimuler = async (u: User) => {
         try {

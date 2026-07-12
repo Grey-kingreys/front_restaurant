@@ -8,7 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getDashboardStats } from "@/lib/api/dashboard";
 import type {
     DashboardData, AdminData, ServeurData, CuisineData,
-    ComptableData, TableData, SuperadminData,
+    ComptableData, LivreurData, TableData, SuperadminData,
 } from "@/lib/api/dashboard";
 import { ROLE_LABELS, ROLE_COLORS } from "@/lib/navigation";
 import { cssVar, typography, radius, roleBadge, avatarBase, btnOutline } from "@/theme/theme";
@@ -21,6 +21,7 @@ import {
 import {
     TrendingUp, Users, Utensils, CreditCard, Clock, ChefHat,
     AlertTriangle, ShoppingCart, Wallet, CheckCircle, MapPin,
+    Truck, Package,
 } from "lucide-react";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -433,6 +434,42 @@ function SuperAdminDashboard({ d }: { d: SuperadminData }) {
     );
 }
 
+// ── Dashboard Livreur ──────────────────────────────────────────────────────
+
+function LivreurDashboard({ d }: { d: LivreurData }) {
+    const k = d.kpis;
+    return (
+        <div style={{ display: "grid", gap: "1rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "0.875rem" }}>
+                <StatCard title="À expédier"      value={k.a_expedier}   icon={Package}     color={cssVar.amberGlow} />
+                <StatCard title="En cours"        value={k.en_cours}     icon={Truck}       color="#8b5cf6" />
+                <StatCard title="Livrées du jour" value={k.livrees_jour} icon={CheckCircle} color="#22c55e" />
+            </div>
+            <SectionCard title="Livraisons en cours">
+                {d.livraisons.length === 0 ? (
+                    <p style={{ padding: "1.25rem", margin: 0, color: cssVar.textMuted, fontSize: typography.sm }}>Aucune livraison active pour le moment.</p>
+                ) : (
+                    d.livraisons.map((l) => (
+                        <div key={l.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", padding: "0.75rem 1.25rem", borderTop: `1px solid ${cssVar.borderSubtle}` }}>
+                            <div style={{ minWidth: 0 }}>
+                                <p style={{ margin: 0, fontWeight: 600, color: cssVar.textPrimary, fontSize: typography.sm }}>{l.client || "—"}</p>
+                                <p style={{ margin: "2px 0 0", color: cssVar.textMuted, fontSize: typography.xs, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{l.adresse || "Adresse non précisée"}</p>
+                            </div>
+                            <div style={{ textAlign: "right", flexShrink: 0 }}>
+                                <p style={{ margin: 0, fontWeight: 700, color: cssVar.amberGlow, fontSize: typography.sm }}>{gnf(l.montant)}</p>
+                                <p style={{ margin: "2px 0 0", color: cssVar.textMuted, fontSize: typography.xs }}>{l.heure}</p>
+                            </div>
+                        </div>
+                    ))
+                )}
+                <div style={{ padding: "0.875rem 1.25rem", borderTop: `1px solid ${cssVar.borderSubtle}` }}>
+                    <Link href="/livraisons" style={btnOutline}>Ouvrir mes livraisons</Link>
+                </div>
+            </SectionCard>
+        </div>
+    );
+}
+
 // ── Page principale ────────────────────────────────────────────────────────
 
 const WELCOME: Record<Role, string> = {
@@ -443,6 +480,7 @@ const WELCOME: Record<Role, string> = {
     Rchef_cuisinier: "Gérez le menu et la file des commandes.",
     Rcuisinier:      "Consultez la file et marquez les plats comme prêts.",
     Rcomptable:      "Gérez votre caisse et suivez les dépenses.",
+    Rlivreur:        "Consultez vos livraisons et faites-les avancer.",
     Rtable:          "Consultez le menu et suivez votre commande.",
     Rclient:         "Parcourez les restaurants et passez vos commandes.",
 };
@@ -529,6 +567,7 @@ export default function DashboardPage() {
                             {data.type === "serveur"    && <ServeurDashboard    d={data} />}
                             {data.type === "cuisine"    && <CuisineDashboard    d={data} />}
                             {data.type === "comptable"  && <ComptableDashboard  d={data} />}
+                            {data.type === "livreur"    && <LivreurDashboard    d={data} />}
                             {data.type === "table"      && <TableDashboard      d={data} />}
                             {data.type === "superadmin" && <SuperAdminDashboard d={data} />}
                         </>

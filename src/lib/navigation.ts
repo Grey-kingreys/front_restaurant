@@ -136,6 +136,15 @@ const PERMISSION_NAV_BLOCKS: PermissionNavBlock[] = [
         ],
     },
 
+    // Livraisons (livreur + staff)
+    {
+        title: "Livraisons",
+        requiredAny: ["view_livraisons"],
+        items: [
+            { label: "Livraisons", href: "/livraisons", icon: "truck" },
+        ],
+    },
+
     // Remises (serveur)
     {
         title: "Historique",
@@ -221,6 +230,7 @@ export const NAV_CONFIG: Record<Role, NavSection[]> = {
     Rchef_cuisinier: [],
     Rcuisinier: [],
     Rcomptable: [],
+    Rlivreur: [],
     Rclient: NAV_CLIENT,
 };
 
@@ -232,6 +242,7 @@ export const ROLE_LABELS: Record<Role, string> = {
     Rchef_cuisinier: "Chef Cuisinier",
     Rcuisinier: "Cuisinier",
     Rcomptable: "Comptable",
+    Rlivreur: "Livreur",
     Rtable: "Table",
     Rclient: "Client",
 };
@@ -244,6 +255,7 @@ export const ROLE_COLORS: Record<Role, { bg: string; text: string; border: strin
     Rchef_cuisinier: { bg: "rgba(249,115,22,0.12)", text: "#f97316", border: "rgba(249,115,22,0.25)" },
     Rcuisinier: { bg: "rgba(234,179,8,0.12)", text: "#eab308", border: "rgba(234,179,8,0.25)" },
     Rcomptable: { bg: "rgba(20,184,166,0.12)", text: "#14b8a6", border: "rgba(20,184,166,0.25)" },
+    Rlivreur: { bg: "rgba(139,92,246,0.12)", text: "#8b5cf6", border: "rgba(139,92,246,0.25)" },
     Rtable: { bg: "rgba(34,197,94,0.12)", text: "#22c55e", border: "rgba(34,197,94,0.25)" },
     Rclient: { bg: "rgba(245,158,11,0.12)", text: "#f59e0b", border: "rgba(245,158,11,0.25)" },
 };

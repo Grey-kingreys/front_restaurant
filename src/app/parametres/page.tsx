@@ -15,7 +15,7 @@ import {
     Building2, ShieldCheck, GitBranch,
     Check, X, RefreshCw, Plus, Pencil, Trash2,
     ChevronDown, ChevronRight, Truck, ShoppingBag, Repeat, MapPin, AlertTriangle,
-    CalendarCheck, Zap, Hand,
+    CalendarCheck, Zap, Hand, Banknote,
 } from "lucide-react";
 
 // ─── Types & constantes ───────────────────────────────────────────────────────
@@ -60,6 +60,7 @@ function TabRestaurant() {
     const [acceptLivraison, setAcceptLivraison] = useState(false);
     const [acceptEmporter, setAcceptEmporter]   = useState(false);
     const [fraisLivraison, setFraisLivraison]   = useState("");
+    const [livraisonLienPaiement, setLivraisonLienPaiement] = useState(false);
     const [validationAuto, setValidationAuto]   = useState(true);
     const [delaiAnnulation, setDelaiAnnulation] = useState("2");
     const [saving, setSaving]         = useState(false);
@@ -79,6 +80,7 @@ function TabRestaurant() {
                 setRayon(String(res.data.rayon_connexion ?? 200));
                 setDuree(String(res.data.duree_session_table ?? 60));
                 setAcceptLivraison(res.data.accept_livraison ?? false);
+                setLivraisonLienPaiement(res.data.livraison_lien_autorise_paiement ?? false);
                 setAcceptEmporter(res.data.accept_emporter ?? false);
                 setFraisLivraison(res.data.frais_livraison ?? "");
                 setValidationAuto(res.data.reservation_validation_auto ?? true);
@@ -109,6 +111,7 @@ function TabRestaurant() {
         payload.duree_session_table = parseInt(duree) || 60;
         // Commande en ligne
         payload.accept_livraison = acceptLivraison;
+        payload.livraison_lien_autorise_paiement = livraisonLienPaiement;
         payload.accept_emporter = acceptEmporter;
         payload.frais_livraison = fraisLivraison.trim() ? parseInt(fraisLivraison.trim()) : null;
         // Réservations
@@ -219,6 +222,18 @@ function TabRestaurant() {
                                     <input type="number" min={0} step={500} value={fraisLivraison} onChange={e => setFraisLivraison(e.target.value)} placeholder="Laisser vide = gratuit"
                                         style={{ width: "100%", maxWidth: 240, padding: "0.5rem 0.75rem", borderRadius: radius.md, border: `1px solid ${cssVar.borderSubtle}`, background: cssVar.bgSectionAlt, color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }} />
                                 </div>
+                            )}
+
+                            {/* Encaissement par lien de livraison — visible si livraison activée */}
+                            {acceptLivraison && (
+                                <label style={{ display: "flex", alignItems: "center", gap: spacing["2"], padding: "0.6rem 0.75rem", marginLeft: "1.85rem", borderRadius: radius.md, border: `1px solid ${livraisonLienPaiement ? "rgba(34,197,94,0.4)" : cssVar.borderSubtle}`, background: livraisonLienPaiement ? "rgba(34,197,94,0.06)" : cssVar.bgSectionAlt, cursor: "pointer", marginBottom: spacing["2"] }}>
+                                    <Banknote size={16} style={{ color: livraisonLienPaiement ? "#22c55e" : cssVar.textMuted, flexShrink: 0 }} />
+                                    <div style={{ flex: 1 }}>
+                                        <p style={{ margin: 0, fontSize: typography.sm, fontWeight: 600, color: cssVar.textPrimary }}>Encaissement par le livreur externe</p>
+                                        <p style={{ margin: 0, fontSize: "0.7rem", color: cssVar.textMuted }}>Autorise un livreur via lien / QR à valider le paiement à la livraison. Sinon, seul le staff encaisse.</p>
+                                    </div>
+                                    <input type="checkbox" checked={livraisonLienPaiement} onChange={e => setLivraisonLienPaiement(e.target.checked)} style={{ width: 18, height: 18, cursor: "pointer", flexShrink: 0 }} />
+                                </label>
                             )}
 
                             {/* Toggle Emporter */}
