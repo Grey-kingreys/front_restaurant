@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { getDashboardStats } from "@/lib/api/dashboard";
+import { addToPanier } from "@/lib/api/commandes";
 import type {
     DashboardData, AdminData, ServeurData, CuisineData,
     ComptableData, LivreurData, TableData, SuperadminData,
@@ -21,7 +22,7 @@ import {
 import {
     TrendingUp, Users, Utensils, CreditCard, Clock, ChefHat,
     AlertTriangle, ShoppingCart, Wallet, CheckCircle, MapPin,
-    Truck, Package,
+    Truck, Package, Plus, Check,
 } from "lucide-react";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -331,9 +332,37 @@ const STATUT_LABELS: Record<string, string> = { en_attente: "En attente", prete:
 function TableDashboard({ d }: { d: TableData }) {
     const c = d.commande_active;
     const stepIdx = c ? STATUT_STEPS.indexOf(c.statut) : -1;
+    const [addingId, setAddingId] = useState<number | null>(null);
+    const [addedId, setAddedId]   = useState<number | null>(null);
+    const [toast, setToast]       = useState<string | null>(null);
+
+    const addSuggestion = async (s: { id: number; nom: string }) => {
+        setAddingId(s.id);
+        try {
+            const res = await addToPanier(s.id, 1);
+            if (res.success) {
+                setAddedId(s.id);
+                setToast(`${s.nom} ajouté au panier`);
+                setTimeout(() => setAddedId((cur) => (cur === s.id ? null : cur)), 1500);
+                setTimeout(() => setToast(null), 2500);
+            } else {
+                setToast(res.message || "Impossible d'ajouter au panier.");
+                setTimeout(() => setToast(null), 3000);
+            }
+        } catch {
+            setToast("Erreur réseau.");
+            setTimeout(() => setToast(null), 3000);
+        }
+        setAddingId(null);
+    };
 
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            {toast && (
+                <div style={{ position: "fixed", bottom: "1.5rem", left: "50%", transform: "translateX(-50%)", zIndex: 200, padding: "0.7rem 1.25rem", borderRadius: radius.xl, background: "rgba(34,197,94,0.96)", color: "#fff", fontWeight: 700, fontSize: typography.sm, display: "flex", alignItems: "center", gap: "0.45rem", boxShadow: "0 8px 32px rgba(0,0,0,0.25)" }}>
+                    <Check size={16} /> {toast}
+                </div>
+            )}
             {/* Commande active */}
             {c ? (
                 <SectionCard title="Ma commande en cours">
@@ -378,13 +407,28 @@ function TableDashboard({ d }: { d: TableData }) {
             {d.suggestions.length > 0 && (
                 <SectionCard title="Suggestions">
                     <div style={{ display: "grid", gap: "0.75rem", padding: "1rem", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))" }}>
-                        {d.suggestions.map((s, i) => (
-                            <div key={i} style={{ padding: "0.75rem", background: cssVar.bgSectionAlt, borderRadius: radius.lg, border: `1px solid ${cssVar.borderSubtle}` }}>
-                                <p style={{ margin: 0, fontSize: typography.sm, fontWeight: typography.semibold, color: cssVar.textPrimary }}>{s.nom}</p>
-                                <p style={{ margin: "0.2rem 0 0", fontSize: typography.xs, color: cssVar.amberGlow, fontWeight: typography.bold }}>{gnf(s.prix)}</p>
-                                <p style={{ margin: "0.1rem 0 0", fontSize: "0.65rem", color: cssVar.textMuted }}>{s.commandes} commande{s.commandes > 1 ? "s" : ""}</p>
-                            </div>
-                        ))}
+                        {d.suggestions.map((s) => {
+                            const busy = addingId === s.id;
+                            const added = addedId === s.id;
+                            return (
+                                <button
+                                    key={s.id}
+                                    onClick={() => addSuggestion(s)}
+                                    disabled={busy}
+                                    title={`Ajouter ${s.nom} au panier`}
+                                    style={{ textAlign: "left", cursor: busy ? "wait" : "pointer", padding: "0.75rem", background: added ? "rgba(34,197,94,0.1)" : cssVar.bgSectionAlt, borderRadius: radius.lg, border: `1px solid ${added ? "rgba(34,197,94,0.4)" : cssVar.borderSubtle}`, transition: "all .15s" }}
+                                >
+                                    <p style={{ margin: 0, fontSize: typography.sm, fontWeight: typography.semibold, color: cssVar.textPrimary }}>{s.nom}</p>
+                                    <p style={{ margin: "0.2rem 0 0", fontSize: typography.xs, color: cssVar.amberGlow, fontWeight: typography.bold }}>{gnf(s.prix)}</p>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.3rem" }}>
+                                        <span style={{ fontSize: "0.65rem", color: cssVar.textMuted }}>{s.commandes} commande{s.commandes > 1 ? "s" : ""}</span>
+                                        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.2rem", fontSize: "0.65rem", fontWeight: typography.bold, color: added ? "#22c55e" : cssVar.amberGlow }}>
+                                            {busy ? "…" : added ? <><Check size={11} /> Ajouté</> : <><Plus size={11} /> Panier</>}
+                                        </span>
+                                    </div>
+                                </button>
+                            );
+                        })}
                     </div>
                 </SectionCard>
             )}

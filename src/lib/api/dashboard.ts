@@ -72,7 +72,7 @@ export interface TableData {
     type: "table";
     commande_active: { id: number; statut: string; montant: string; heure: string; attente_mins: number; items: CmdItem[] } | null;
     nb_plats_disponibles: number;
-    suggestions: { nom: string; categorie: string; prix: string; commandes: number }[];
+    suggestions: { id: number; nom: string; categorie: string; prix: string; commandes: number }[];
 }
 
 export interface SuperadminData {
