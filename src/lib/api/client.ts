@@ -1,7 +1,11 @@
 // src/lib/api/client.ts
 // Client HTTP centralisé avec gestion automatique des tokens JWT et du refresh
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+// Base API robuste : on garantit un schéma http(s) absolu et pas de slash final,
+// pour éviter les URL relatives (→ 404 HTML de Next) et les doubles slash (→ 404 HTML de Django)
+// quand NEXT_PUBLIC_API_URL est mal configuré (ex. "localhost:8000/api" ou "…/api/").
+const RAW_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+const BASE_URL = (/^https?:\/\//i.test(RAW_BASE_URL) ? RAW_BASE_URL : `http://${RAW_BASE_URL}`).replace(/\/+$/, "");
 
 // ── Helpers stockage tokens ────────────────────────────────────────────────
 
@@ -24,6 +28,48 @@ export function clearTokens(): void {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     localStorage.removeItem("user");
+    localStorage.removeItem(QR_SESSION_KEY);
+}
+
+// ── Session QR table ───────────────────────────────────────────────────────
+// Présence de cette clé = la table est connectée via QR Code (session temporaire
+// soumise au GPS, à l'expiration et à la déconnexion post-paiement).
+// Absence = connexion login+password « classique », sans ces restrictions.
+const QR_SESSION_KEY = "session_expires_at";
+
+export function setQrTableSession(expiresAt: string): void {
+    localStorage.setItem(QR_SESSION_KEY, expiresAt);
+}
+
+export function clearQrTableSession(): void {
+    if (typeof window !== "undefined") localStorage.removeItem(QR_SESSION_KEY);
+}
+
+export function hasQrTableSession(): boolean {
+    return typeof window !== "undefined" && !!localStorage.getItem(QR_SESSION_KEY);
+}
+
+// ── Session admin (impersonation) ──────────────────────────────────────────
+
+export function saveAdminSession(access: string, refresh: string, user: unknown): void {
+    localStorage.setItem("admin_access_token", access);
+    localStorage.setItem("admin_refresh_token", refresh);
+    localStorage.setItem("admin_user", JSON.stringify(user));
+}
+
+export function getAdminSession(): { access: string; refresh: string; user: unknown } | null {
+    if (typeof window === "undefined") return null;
+    const access = localStorage.getItem("admin_access_token");
+    const refresh = localStorage.getItem("admin_refresh_token");
+    const raw = localStorage.getItem("admin_user");
+    if (!access || !refresh || !raw) return null;
+    try { return { access, refresh, user: JSON.parse(raw) }; } catch { return null; }
+}
+
+export function clearAdminSession(): void {
+    localStorage.removeItem("admin_access_token");
+    localStorage.removeItem("admin_refresh_token");
+    localStorage.removeItem("admin_user");
 }
 
 export function saveUser(user: unknown): void {
@@ -96,9 +142,13 @@ export async function apiRequest<T = unknown>(
     const { skipAuth = false, skipRefresh = false, ...fetchOptions } = options;
 
     const headers: Record<string, string> = {
-        "Content-Type": "application/json",
         ...(fetchOptions.headers as Record<string, string>),
     };
+
+    // Si le corps n'est pas un FormData, on ajoute par défaut application/json
+    if (!(fetchOptions.body instanceof FormData) && !headers["Content-Type"]) {
+        headers["Content-Type"] = "application/json";
+    }
 
     if (!skipAuth) {
         const token = getAccessToken();
@@ -145,11 +195,19 @@ export async function apiRequest<T = unknown>(
         return {} as T;
     }
 
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw data;
+    // Garde-fou : si la réponse n'est pas du JSON (page HTML 404/500, mauvaise base API…),
+    // on renvoie une erreur lisible plutôt qu'un "Unexpected token '<'".
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) {
+        return {
+            success: false,
+            message: `Réponse inattendue du serveur (HTTP ${response.status}). Le service est-il joignable ?`,
+        } as T;
     }
 
+    const data = await response.json();
+
+    // Retourner la réponse même si status est 4xx/5xx
+    // (laisse le caller décider comment gérer success: false)
     return data as T;
 }

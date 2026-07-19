@@ -5,6 +5,7 @@ import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { requestPasswordReset, confirmPasswordReset } from "@/lib/api/auth";
+import Logo from "@/components/ui/Logo";
 import {
     inputStyle,
     cardBase,
@@ -192,17 +193,7 @@ function ResetContent() {
             <div style={{ width: "100%", maxWidth: 420, position: "relative", zIndex: 1 }}>
                 {/* Logo */}
                 <div style={{ textAlign: "center", marginBottom: spacing["8"] }}>
-                    <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: spacing["3"], textDecoration: "none" }}>
-                        <div style={{
-                            width: 44, height: 44, borderRadius: radius.xl,
-                            background: "linear-gradient(135deg, #f59e0b, #d97706)",
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            fontWeight: typography.extrabold, fontSize: typography.xl, color: palette.btnText,
-                        }}>R</div>
-                        <span style={{ fontSize: typography["3xl"], fontWeight: typography.bold, fontFamily: typography.fontSerif, color: cssVar.textPrimary }}>
-                            Resto<span style={{ background: cssVar.gradientText, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Pro</span>
-                        </span>
-                    </Link>
+                    <Logo href="/" size={44} />
                 </div>
 
                 <div style={{ ...cardBase, padding: spacing["8"] }}>

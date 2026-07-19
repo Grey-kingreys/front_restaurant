@@ -19,11 +19,13 @@ const inputStyle: React.CSSProperties = {
 };
 
 export default function ChangePasswordPage() {
-    const { user } = useAuth();
+    const { user, refreshUser } = useAuth();
     const [oldPwd, setOldPwd] = useState("");
     const [newPwd, setNewPwd] = useState("");
     const [confirmPwd, setConfirmPwd] = useState("");
     const [showPwd, setShowPwd] = useState(false);
+    const [showNew, setShowNew] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -38,8 +40,18 @@ export default function ChangePasswordPage() {
         setLoading(true);
         try {
             const res = await changePassword({ old_password: oldPwd, new_password: newPwd, new_password_confirm: confirmPwd });
-            if (res.success) setSuccess(true);
-            else setError(res.message || "Erreur lors du changement de mot de passe.");
+            if (res.success) {
+                // Rafraîchit le user pour que must_change_password repasse à false,
+                // sinon le guard du dashboard renvoie en boucle vers cette page.
+                await refreshUser();
+                setSuccess(true);
+            }
+            else {
+                // Le vrai motif (ex. « Mot de passe actuel incorrect. ») est dans res.errors,
+                // pas dans res.message — l'afficher au lieu d'un message générique.
+                const fieldErrs = res.errors ? Object.values(res.errors).flat().join(" — ") : "";
+                setError(fieldErrs || res.message || "Erreur lors du changement de mot de passe.");
+            }
         } catch (err: unknown) {
             const e = err as { errors?: Record<string, string[]>; message?: string };
             const firstErr = e?.errors ? Object.values(e.errors).flat()[0] : e?.message;
@@ -74,7 +86,7 @@ export default function ChangePasswordPage() {
                     <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", lineHeight: 1.6, marginBottom: "1.5rem" }}>
                         Votre mot de passe a été mis à jour avec succès.
                     </p>
-                    <Link href="#" style={{
+                    <Link href="/dashboard" style={{
                         display: "inline-block", padding: "0.6rem 1.5rem",
                         borderRadius: "0.65rem", background: "var(--gradient-btn)",
                         color: "#0c0a09", fontWeight: 700, fontSize: "0.875rem", textDecoration: "none",
@@ -166,14 +178,25 @@ export default function ChangePasswordPage() {
                             <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "0.4rem" }}>
                                 Nouveau mot de passe
                             </label>
-                            <input
-                                type={showPwd ? "text" : "password"}
-                                value={newPwd}
-                                onChange={(e) => setNewPwd(e.target.value)}
-                                required minLength={8}
-                                placeholder="8 caractères minimum"
-                                style={inputStyle}
-                            />
+                            <div style={{ position: "relative" }}>
+                                <input
+                                    type={showNew ? "text" : "password"}
+                                    value={newPwd}
+                                    onChange={(e) => setNewPwd(e.target.value)}
+                                    required minLength={8}
+                                    placeholder="8 caractères minimum"
+                                    style={{ ...inputStyle, paddingRight: "2.75rem" }}
+                                />
+                                <button type="button" onClick={() => setShowNew(!showNew)} aria-label={showNew ? "Masquer le mot de passe" : "Afficher le mot de passe"} style={{
+                                    position: "absolute", right: "0.75rem", top: "50%",
+                                    transform: "translateY(-50%)", background: "none",
+                                    border: "none", cursor: "pointer", color: "var(--text-muted)", padding: 0,
+                                }}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: 18, height: 18 }}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                    </svg>
+                                </button>
+                            </div>
                             {/* Indicateur de force */}
                             {newPwd.length > 0 && (
                                 <div style={{ display: "flex", gap: "3px", marginTop: "0.4rem" }}>
@@ -204,16 +227,28 @@ export default function ChangePasswordPage() {
                             <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "0.4rem" }}>
                                 Confirmer le nouveau mot de passe
                             </label>
-                            <input
-                                type={showPwd ? "text" : "password"}
-                                value={confirmPwd}
-                                onChange={(e) => setConfirmPwd(e.target.value)}
-                                required placeholder="••••••••"
-                                style={{
-                                    ...inputStyle,
-                                    borderColor: confirmPwd && confirmPwd !== newPwd ? "rgba(239,68,68,0.5)" : undefined,
-                                }}
-                            />
+                            <div style={{ position: "relative" }}>
+                                <input
+                                    type={showConfirm ? "text" : "password"}
+                                    value={confirmPwd}
+                                    onChange={(e) => setConfirmPwd(e.target.value)}
+                                    required placeholder="••••••••"
+                                    style={{
+                                        ...inputStyle,
+                                        paddingRight: "2.75rem",
+                                        borderColor: confirmPwd && confirmPwd !== newPwd ? "rgba(239,68,68,0.5)" : undefined,
+                                    }}
+                                />
+                                <button type="button" onClick={() => setShowConfirm(!showConfirm)} aria-label={showConfirm ? "Masquer le mot de passe" : "Afficher le mot de passe"} style={{
+                                    position: "absolute", right: "0.75rem", top: "50%",
+                                    transform: "translateY(-50%)", background: "none",
+                                    border: "none", cursor: "pointer", color: "var(--text-muted)", padding: 0,
+                                }}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: 18, height: 18 }}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                    </svg>
+                                </button>
+                            </div>
                             {confirmPwd && confirmPwd !== newPwd && (
                                 <p style={{ fontSize: "0.75rem", color: "#ef4444", marginTop: "0.25rem" }}>
                                     Les mots de passe ne correspondent pas
@@ -246,7 +281,7 @@ export default function ChangePasswordPage() {
 
                 {!isFirstLogin && (
                     <p style={{ textAlign: "center", marginTop: "1.25rem", fontSize: "0.82rem", color: "var(--text-muted)" }}>
-                        <Link href="#" style={{ color: "var(--amber-glow)", textDecoration: "none" }}>
+                        <Link href="/dashboard" style={{ color: "var(--amber-glow)", textDecoration: "none" }}>
                             ← Retour au tableau de bord
                         </Link>
                     </p>

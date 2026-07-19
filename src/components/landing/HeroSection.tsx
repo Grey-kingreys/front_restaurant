@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
+import { Truck, ChefHat } from "lucide-react";
 
 const trustItems = [
   {
@@ -142,24 +144,47 @@ export default function HeroSection() {
         chaque aspect de votre service en temps réel avec une plateforme pensée pour la Guinée.
       </p>
 
-      {/* CTA buttons */}
-      <div className="hero-anim relative z-10 flex flex-wrap items-center justify-center gap-4">
-        <a href="#" className="btn-primary animate-pulse-glow flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 relative z-10">
-            <path fillRule="evenodd" d="M10 1a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 1ZM5.05 3.05a.75.75 0 0 1 1.06 0l1.062 1.06A.75.75 0 1 1 6.11 5.173L5.05 4.11a.75.75 0 0 1 0-1.06Zm9.9 0a.75.75 0 0 1 0 1.06l-1.06 1.062a.75.75 0 0 1-1.062-1.061l1.061-1.06a.75.75 0 0 1 1.06 0ZM3 8a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 3 8Zm11 0a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 14 8Zm-6.828 2.828a.75.75 0 0 1 0 1.061L6.11 12.95a.75.75 0 0 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0Zm3.594-3.317a.75.75 0 0 1 1.06.01l1.95 2a.75.75 0 1 1-1.07 1.05L12 9.44V13.5a.75.75 0 0 1-1.5 0V9.44l-.706.731a.75.75 0 0 1-1.088-1.032l2-2.121a.75.75 0 0 1 .028-.03ZM10 15a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 15Z" clipRule="evenodd" />
-          </svg>
-          <span>Démarrer gratuitement</span>
-        </a>
-        <a
-          href="#"
-          className="btn-outline flex items-center gap-2"
-          style={{ color: "#fbbf24", borderColor: "rgba(251,191,36,0.5)" }}
+      {/* CTA — deux chemins distincts */}
+      <div className="hero-anim relative z-10 flex flex-col sm:flex-row items-stretch justify-center gap-4 w-full max-w-2xl">
+
+        {/* Chemin client — commander */}
+        <Link
+          href="/auth/client/register"
+          style={{
+            flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+            gap: "0.375rem", padding: "1.25rem 1.5rem", borderRadius: "1rem",
+            background: "linear-gradient(135deg, #f59e0b, #d97706)",
+            color: "#0c0a09", textDecoration: "none", fontWeight: 800, fontSize: "1rem",
+            boxShadow: "0 0 32px rgba(245,158,11,0.3)",
+          }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-            <path fillRule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm6.39-2.908a.75.75 0 0 1 .766.027l3.5 2.25a.75.75 0 0 1 0 1.262l-3.5 2.25A.75.75 0 0 1 8 12.25v-4.5a.75.75 0 0 1 .39-.658Z" clipRule="evenodd" />
-          </svg>
-          Voir la démo
-        </a>
+          <Truck size={22} />
+          <span>Commander maintenant</span>
+          <span style={{ fontSize: "0.75rem", fontWeight: 500, opacity: 0.7 }}>Livraison &amp; À emporter</span>
+        </Link>
+
+        {/* Séparateur vertical */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.25rem", padding: "0 0.25rem" }}>
+          <div style={{ flex: 1, width: 1, background: "rgba(255,255,255,0.12)" }} />
+          <span style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.3)", padding: "0.25rem 0.5rem", whiteSpace: "nowrap" }}>ou</span>
+          <div style={{ flex: 1, width: 1, background: "rgba(255,255,255,0.12)" }} />
+        </div>
+
+        {/* Chemin restaurant — gérer */}
+        <Link
+          href="/auth/login"
+          style={{
+            flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+            gap: "0.375rem", padding: "1.25rem 1.5rem", borderRadius: "1rem",
+            background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)",
+            color: "#f5f5f4", textDecoration: "none", fontWeight: 700, fontSize: "1rem",
+            backdropFilter: "blur(8px)",
+          }}
+        >
+          <ChefHat size={22} />
+          <span>Gérer mon restaurant</span>
+          <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "rgba(255,255,255,0.5)" }}>Accès équipe &amp; démo gratuite</span>
+        </Link>
       </div>
 
       {/* Trust items */}

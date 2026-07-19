@@ -1,7 +1,8 @@
 // src/lib/api/auth.ts
 // Toutes les fonctions liées à l'authentification
 
-import { apiRequest, setTokens, clearTokens, saveUser } from "./client";
+import { apiRequest, setTokens, clearTokens, saveUser, setQrTableSession, clearQrTableSession } from "./client";
+import { checkTableDistance } from "./restaurant";
 import type {
     ApiResponse,
     LoginResponse,
@@ -29,6 +30,7 @@ export async function loginWithEmail(
     if (data.success && data.data) {
         setTokens(data.data.access, data.data.refresh);
         saveUser(data.data.user);
+        clearQrTableSession(); // connexion classique → pas de session QR (ni GPS, ni expiration)
     }
 
     return data;
@@ -39,7 +41,8 @@ export async function loginWithEmail(
  */
 export async function loginWithLogin(
     login: string,
-    password: string
+    password: string,
+    coords?: { lat: number; lng: number }
 ): Promise<LoginResponse> {
     const data = await apiRequest<LoginResponse>("/accounts/auth/login/", {
         method: "POST",
@@ -50,22 +53,44 @@ export async function loginWithLogin(
     if (data.success && data.data) {
         setTokens(data.data.access, data.data.refresh);
         saveUser(data.data.user);
+        clearQrTableSession(); // connexion classique → pas de session QR (ni expiration, ni post-paiement)
+
+        // Restriction de distance : refuser l'accès si la table est hors zone.
+        // Tolérant : si le GPS est indisponible (pas de coords), on laisse passer.
+        if (coords) {
+            const dist = await checkTableDistance(coords.lat, coords.lng);
+            if (dist.success && dist.data && !dist.data.in_range) {
+                clearTokens();
+                return {
+                    success: false,
+                    message: dist.data.message ?? "Vous êtes trop loin du restaurant pour vous connecter.",
+                };
+            }
+        }
     }
 
     return data;
 }
 
 /**
- * Connexion automatique via QR Code (token dans l'URL)
- * La route backend est /api/accounts/qr/<token>/
+ * Connexion automatique via QR Code avec validation GPS.
+ * Envoie la position GPS si disponible — requise si le restaurant a des coordonnées.
  */
 export async function loginViaQR(
-    qrToken: string
+    qrToken: string,
+    coords?: { lat: number; lng: number }
 ): Promise<LoginResponse> {
+    const body: Record<string, number> = {};
+    if (coords) {
+        body.lat = coords.lat;
+        body.lng = coords.lng;
+    }
+
     const data = await apiRequest<LoginResponse>(
         `/accounts/qr/${qrToken}/`,
         {
-            method: "GET",
+            method: "POST",
+            body: JSON.stringify(body),
             skipAuth: true,
         }
     );
@@ -73,6 +98,9 @@ export async function loginViaQR(
     if (data.success && data.data) {
         setTokens(data.data.access, data.data.refresh);
         saveUser(data.data.user);
+        if (data.data.expires_at) {
+            setQrTableSession(data.data.expires_at);
+        }
     }
 
     return data;
@@ -102,6 +130,20 @@ export async function logout(refreshToken: string): Promise<ApiResponse> {
  */
 export async function getMe(): Promise<ApiResponse<User>> {
     return apiRequest<ApiResponse<User>>("/accounts/auth/me/");
+}
+
+/**
+ * L'utilisateur modifie son propre profil (nom, email, téléphone)
+ */
+export async function updateMe(payload: {
+    nom_complet?: string;
+    email?: string;
+    telephone?: string;
+}): Promise<ApiResponse<User>> {
+    return apiRequest<ApiResponse<User>>("/accounts/auth/me/", {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+    });
 }
 
 // ── CHANGEMENT MOT DE PASSE ────────────────────────────────────────────────
@@ -212,6 +254,17 @@ export async function deleteUser(id: number): Promise<ApiResponse> {
     return apiRequest<ApiResponse>(`/accounts/auth/users/${id}/`, {
         method: "DELETE",
     });
+}
+
+/**
+ * Simuler un utilisateur (Admin uniquement)
+ * Retourne de vrais tokens JWT pour l'utilisateur cible
+ */
+export async function impersonateUser(userId: number): Promise<ApiResponse<{ access: string; refresh: string; user: User }>> {
+    return apiRequest<ApiResponse<{ access: string; refresh: string; user: User }>>(
+        `/accounts/auth/users/${userId}/impersonate/`,
+        { method: "POST" }
+    );
 }
 
 /**

@@ -5,15 +5,17 @@ import { useState, useEffect, useCallback } from "react";
 import { listPlats, togglePlatDisponibilite, deletePlat } from "@/lib/api/menu";
 import type { Plat, Categorie } from "@/lib/api/menu";
 
+import { LayoutGrid, Utensils, Salad, IceCream, Coffee, Soup } from "lucide-react";
+
 export type { Plat, Categorie };
 
-export const CATEGORIES: { value: Categorie | ""; label: string; emoji: string }[] = [
-    { value: "", label: "Tous", emoji: "🍽️" },
-    { value: "PLAT", label: "Plats", emoji: "🍲" },
-    { value: "ENTREE", label: "Entrées", emoji: "🥗" },
-    { value: "DESSERT", label: "Desserts", emoji: "🍮" },
-    { value: "BOISSON", label: "Boissons", emoji: "🥤" },
-    { value: "ACCOMPAGNEMENT", label: "Accompagnements", emoji: "🍚" },
+export const CATEGORIES: { value: Categorie | ""; label: string; icon: any }[] = [
+    { value: "", label: "Tous", icon: LayoutGrid },
+    { value: "PLAT", label: "Plats", icon: Utensils },
+    { value: "ENTREE", label: "Entrées", icon: Salad },
+    { value: "DESSERT", label: "Desserts", icon: IceCream },
+    { value: "BOISSON", label: "Boissons", icon: Coffee },
+    { value: "ACCOMPAGNEMENT", label: "Accompagnements", icon: Soup },
 ];
 
 export function useMenu(options?: { tableMode?: boolean }) {

@@ -1,11 +1,12 @@
 "use client";
-// src/app/auth/login/page.tsx
+// src/app/auth/login/page.tsx — Page de connexion unifiée (staff, table, client)
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { loginWithEmail, loginWithLogin } from "@/lib/api/auth";
 import { useAuth } from "@/contexts/AuthContext";
+import Logo from "@/components/ui/Logo";
 import {
     inputStyle,
     cardBase,
@@ -24,8 +25,26 @@ import {
 
 type LoginMode = "email" | "login";
 
+// Position du navigateur pour le contrôle de distance des tables.
+// Résout à undefined si le GPS est refusé/indisponible → connexion tolérée.
+function getBrowserPosition(): Promise<{ lat: number; lng: number } | undefined> {
+    return new Promise((resolve) => {
+        if (typeof navigator === "undefined" || !navigator.geolocation) {
+            resolve(undefined);
+            return;
+        }
+        navigator.geolocation.getCurrentPosition(
+            (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+            () => resolve(undefined),
+            { enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 },
+        );
+    });
+}
+
 export default function LoginPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const nextUrl = searchParams?.get("next") ?? null;
     const { setUser } = useAuth();
     const [mode, setMode] = useState<LoginMode>("email");
     const [email, setEmail] = useState("");
@@ -41,12 +60,24 @@ export default function LoginPage() {
         setLoading(true);
         try {
             let res;
-            if (mode === "email") res = await loginWithEmail(email, password);
-            else res = await loginWithLogin(loginVal, password);
+            if (mode === "email") {
+                res = await loginWithEmail(email, password);
+            } else {
+                // Table : on transmet la position pour le contrôle de distance (refusé si hors zone)
+                const coords = await getBrowserPosition();
+                res = await loginWithLogin(loginVal, password, coords);
+            }
 
             if (res.success && res.data) {
                 setUser(res.data.user);
-                router.push("/dashboard");
+                const role = res.data.user.role;
+                if (nextUrl) {
+                    router.push(nextUrl);
+                } else if (role === "Rclient") {
+                    router.push("/client");
+                } else {
+                    router.push("/dashboard");
+                }
             } else {
                 setError(res.message || "Identifiants invalides.");
             }
@@ -60,10 +91,10 @@ export default function LoginPage() {
         } finally {
             setLoading(false);
         }
-    }, [mode, email, loginVal, password, setUser, router]);
+    }, [mode, email, loginVal, password, setUser, router, nextUrl]);
 
     return (
-        <div style={authPageRoot}>
+        <div style={{ ...authPageRoot, padding: "1.5rem" }}>
             <div style={glowOverlay} />
             <div style={{
                 position: "absolute", top: "30%", left: "10%",
@@ -71,29 +102,18 @@ export default function LoginPage() {
                 background: "rgba(245,158,11,0.04)", filter: "blur(80px)", pointerEvents: "none",
             }} />
 
-            <div style={{ width: "100%", maxWidth: 420, position: "relative", zIndex: 1 }}>
+            <div style={{ width: "100%", maxWidth: 440, position: "relative", zIndex: 1 }}>
 
                 {/* Logo */}
                 <div style={{ textAlign: "center", marginBottom: spacing["8"] }}>
-                    <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: spacing["3"], textDecoration: "none" }}>
-                        <div style={{
-                            width: 44, height: 44, borderRadius: radius.xl,
-                            background: "linear-gradient(135deg, #f59e0b, #d97706)",
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            fontWeight: typography.extrabold, fontSize: typography.xl, color: palette.btnText,
-                            fontFamily: typography.fontSerif,
-                        }}>R</div>
-                        <span style={{ fontSize: typography["3xl"], fontWeight: typography.bold, fontFamily: typography.fontSerif, color: cssVar.textPrimary }}>
-                            Resto<span style={{ background: cssVar.gradientText, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Pro</span>
-                        </span>
-                    </Link>
+                    <Logo href="/" size={44} priority />
                     <p style={{ marginTop: spacing["2"], fontSize: typography.md, color: cssVar.textMuted }}>
                         Bienvenue — connectez-vous à votre espace
                     </p>
                 </div>
 
                 {/* Card */}
-                <div style={{ ...cardBase, padding: spacing["8"] }}>
+                <div style={{ ...cardBase, padding: "clamp(1.25rem, 5vw, 2rem)" }}>
 
                     {/* Tabs */}
                     <div style={{
@@ -110,15 +130,15 @@ export default function LoginPage() {
                                 background: mode === m ? cssVar.gradientBtn : "transparent",
                                 color: mode === m ? palette.btnText : cssVar.textMuted,
                             }}>
-                                {m === "email" ? "Connexion Staff" : "Connexion Table"}
+                                {m === "email" ? "Email" : "Identifiant"}
                             </button>
                         ))}
                     </div>
 
                     <p style={{ fontSize: typography.xs, color: cssVar.textMuted, marginBottom: spacing["5"] }}>
                         {mode === "email"
-                            ? "Pour les administrateurs, managers, serveurs, cuisiniers et comptables."
-                            : "Pour les tables — via QR Code ou identifiants fournis par l'admin."}
+                            ? "Clients, administrateurs, managers, serveurs, cuisiniers et comptables."
+                            : "Pour les tables — identifiants fournis par l'administrateur."}
                     </p>
 
                     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: spacing["4"] }}>
@@ -180,12 +200,25 @@ export default function LoginPage() {
                         {error && <div style={alertError}>{error}</div>}
 
                         <button type="submit" disabled={loading}
-                            style={loading ? btnPrimaryDisabled : btnPrimary}>
+                            style={{ ...(loading ? btnPrimaryDisabled : btnPrimary), width: "100%", minHeight: "48px", fontSize: "1rem" }}>
                             {loading ? (
                                 <><div style={spinnerBase} />Connexion…</>
                             ) : "Se connecter"}
                         </button>
                     </form>
+
+                    {/* Lien inscription client */}
+                    {mode === "email" && (
+                        <p style={{ textAlign: "center", marginTop: spacing["5"], fontSize: typography.sm, color: cssVar.textMuted }}>
+                            Pas encore de compte ?{" "}
+                            <Link
+                                href={`/auth/client/register${nextUrl ? `?next=${encodeURIComponent(nextUrl)}` : ""}`}
+                                style={{ color: cssVar.amberGlow, textDecoration: "none", fontWeight: typography.semibold }}
+                            >
+                                Créer un compte client
+                            </Link>
+                        </p>
+                    )}
                 </div>
 
                 <p style={{ textAlign: "center", marginTop: spacing["6"], fontSize: typography.xs, color: cssVar.textMuted }}>
