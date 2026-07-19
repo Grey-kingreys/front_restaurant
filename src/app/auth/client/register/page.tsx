@@ -8,6 +8,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { registerClient } from "@/lib/api/public";
 import { setTokens } from "@/lib/api/client";
 import { useAuth } from "@/contexts/AuthContext";
+import Logo from "@/components/ui/Logo";
 import type { User } from "@/types";
 import {
     inputStyle,
@@ -17,9 +18,7 @@ import {
     authPageRoot,
     cssVar,
     typography,
-    radius,
     spacing,
-    palette,
     btnPrimary,
     btnPrimaryDisabled,
     spinnerBase,
@@ -109,18 +108,7 @@ export default function ClientRegisterPage() {
 
                 {/* Logo */}
                 <div style={{ textAlign: "center", marginBottom: spacing["8"] }}>
-                    <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: spacing["3"], textDecoration: "none" }}>
-                        <div style={{
-                            width: 44, height: 44, borderRadius: radius.xl,
-                            background: "linear-gradient(135deg, #f59e0b, #d97706)",
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            fontWeight: typography.extrabold, fontSize: typography.xl, color: palette.btnText,
-                            fontFamily: typography.fontSerif,
-                        }}>R</div>
-                        <span style={{ fontSize: typography["3xl"], fontWeight: typography.bold, fontFamily: typography.fontSerif, color: cssVar.textPrimary }}>
-                            Resto<span style={{ background: cssVar.gradientText, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Pro</span>
-                        </span>
-                    </Link>
+                    <Logo href="/" size={44} />
                     <p style={{ marginTop: spacing["2"], fontSize: typography.md, color: cssVar.textMuted }}>
                         Créez votre compte — commandez en quelques clics
                     </p>

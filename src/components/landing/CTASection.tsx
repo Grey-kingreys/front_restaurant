@@ -26,7 +26,7 @@ export default function CTASection() {
             <span className="text-gradient">restaurant ?</span>
           </h2>
           <p className="text-base mb-8 max-w-xl mx-auto" style={{ color: "var(--text-secondary)" }}>
-            Rejoignez les restaurants qui font confiance à RestoPro pour digitaliser leur service et
+            Rejoignez les restaurants qui font confiance à resfly pour digitaliser leur service et
             booster leur rentabilité dès aujourd'hui.
           </p>
 

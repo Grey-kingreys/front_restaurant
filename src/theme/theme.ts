@@ -1,6 +1,6 @@
 // src/theme/theme.ts
 // ─────────────────────────────────────────────────────────────
-// Tokens de design centralisés pour RestoPro
+// Tokens de design centralisés pour resfly
 // Usage :  import { t, colors, spacing, ... } from "@/theme/theme";
 // ─────────────────────────────────────────────────────────────
 

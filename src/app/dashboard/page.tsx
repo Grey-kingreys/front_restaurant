@@ -517,7 +517,7 @@ function LivreurDashboard({ d }: { d: LivreurData }) {
 // ── Page principale ────────────────────────────────────────────────────────
 
 const WELCOME: Record<Role, string> = {
-    Rsuper_admin:    "Vue globale de la plateforme RestoPro.",
+    Rsuper_admin:    "Vue globale de la plateforme resfly.",
     Radmin:          "Gérez votre équipe, votre menu et vos finances.",
     Rmanager:        "Supervisez les opérations et les performances.",
     Rserveur:        "Consultez vos tables et validez les paiements.",
@@ -618,7 +618,7 @@ export default function DashboardPage() {
                     )}
 
                     <p style={{ textAlign: "center", marginTop: "2rem", fontSize: typography.xs, color: cssVar.textMuted }}>
-                        RestoPro · {date}
+                        resfly · {date}
                     </p>
                 </div>
             </div>

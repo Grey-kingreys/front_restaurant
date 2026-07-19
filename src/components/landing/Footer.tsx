@@ -1,5 +1,7 @@
 "use client";
 
+import Logo from "@/components/ui/Logo";
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
@@ -15,19 +17,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="col-span-1">
-            <div className="flex items-center gap-2.5 mb-6">
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold"
-                style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)", color: "#0c0a09" }}
-              >
-                R
-              </div>
-              <span
-                className="text-lg font-bold tracking-tight"
-                style={{ fontFamily: "var(--font-playfair), serif", color: "var(--text-primary)" }}
-              >
-                Resto<span className="text-gradient">Pro</span>
-              </span>
+            <div className="mb-6">
+              <Logo size={30} />
             </div>
             <p className="text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>
               La solution SaaS de gestion de restaurant en Guinée. Modernisez votre service,
@@ -98,7 +89,7 @@ export default function Footer() {
                   <path d="M3 4a2 2 0 0 0-2 2v1.161l8.441 4.221a1.25 1.25 0 0 0 1.118 0L19 7.162V6a2 2 0 0 0-2-2H3Z" />
                   <path d="m19 8.839-7.77 3.885a2.75 2.75 0 0 1-2.46 0L1 8.839V14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.839Z" />
                 </svg>
-                contact@restopro.gn
+                contact@resfly.gn
               </li>
               <li className="flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 flex-shrink-0" style={{ color: "var(--icon-primary)" }}>
@@ -116,7 +107,7 @@ export default function Footer() {
           className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs"
           style={{ color: "var(--text-muted)" }}
         >
-          <p>© {currentYear} RestoPro SaaS. Tous droits réservés.</p>
+          <p>© {currentYear} resfly SaaS. Tous droits réservés.</p>
           <div className="flex gap-8">
             {["Mentions légales", "Confidentialité", "Cookies"].map((item) => (
               <a key={item} href="#" className="hover:text-amber-500 transition-colors">

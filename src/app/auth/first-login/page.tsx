@@ -6,6 +6,7 @@ import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { verifyOnboardingToken, activateOnboarding, type OnboardingInfo } from "@/lib/api/company";
+import BrandLogo from "@/components/ui/Logo";
 import {
     inputStyle,
     cardBase,
@@ -114,18 +115,7 @@ function FirstLoginContent() {
 
     const Logo = () => (
         <div style={{ textAlign: "center", marginBottom: spacing["8"] }}>
-            <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: spacing["3"], textDecoration: "none" }}>
-                <div style={{
-                    width: 44, height: 44, borderRadius: radius.xl,
-                    background: "linear-gradient(135deg, #f59e0b, #d97706)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontWeight: typography.extrabold, fontSize: typography.xl, color: palette.btnText,
-                    fontFamily: typography.fontSerif,
-                }}>R</div>
-                <span style={{ fontSize: typography["3xl"], fontWeight: typography.bold, fontFamily: typography.fontSerif, color: cssVar.textPrimary }}>
-                    Resto<span style={{ background: cssVar.gradientText, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Pro</span>
-                </span>
-            </Link>
+            <BrandLogo href="/" size={44} />
         </div>
     );
 

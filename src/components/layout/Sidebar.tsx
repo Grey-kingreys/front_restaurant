@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { getNavSections, ROLE_LABELS, ROLE_COLORS } from "@/lib/navigation";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
+import Logo from "@/components/ui/Logo";
 import type { Role } from "@/types";
 import { cssVar, typography, radius, spacing, roleBadge, avatarBase } from "@/theme/theme";
 
@@ -160,20 +161,12 @@ function SidebarInner({
                 justifyContent: isCollapsed ? "center" : "space-between",
                 minHeight: 60,
             }}>
-                <Link href={homeHref} onClick={onNavClick} style={{ display: "flex", alignItems: "center", gap: spacing["2"], textDecoration: "none" }}>
-                    <div style={{
-                        width: 32, height: 32, borderRadius: radius.lg,
-                        background: "linear-gradient(135deg, #f59e0b, #d97706)",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontWeight: typography.extrabold, fontSize: typography.md, color: "#0c0a09",
-                        fontFamily: typography.fontSerif, flexShrink: 0,
-                    }}>R</div>
-                    {!isCollapsed && (
-                        <span style={{ fontWeight: typography.bold, fontSize: typography.lg, fontFamily: typography.fontSerif, color: cssVar.textPrimary }}>
-                            Resto<span style={{ background: cssVar.gradientText, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Pro</span>
-                        </span>
-                    )}
-                </Link>
+                <Logo
+                    href={homeHref}
+                    onClick={onNavClick}
+                    variant={isCollapsed ? "icon" : "full"}
+                    size={30}
+                />
                 {/* Bouton réduire — visible uniquement en mode étendu */}
                 {toggleCollapse && !isCollapsed && (
                     <button onClick={toggleCollapse} title="Réduire" style={{

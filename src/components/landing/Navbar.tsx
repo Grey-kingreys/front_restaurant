@@ -5,6 +5,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import ThemeSwitcher from "../ui/ThemeSwitcher";
+import Logo from "../ui/Logo";
 import { Menu, X, ChefHat, ShoppingBag } from "lucide-react";
 
 const NAV_LINKS = [
@@ -29,20 +30,7 @@ export default function Navbar({ scrolled }: NavbarProps) {
     <>
       <nav className={`navbar ${scrolled ? "scrolled" : "navbar-hero"}`}>
         {/* Logo */}
-        <div className="flex items-center gap-2.5">
-          <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-lg font-bold"
-            style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)", color: "#0c0a09", fontFamily: "var(--font-playfair), serif", flexShrink: 0 }}
-          >
-            R
-          </div>
-          <span
-            className="text-xl font-bold tracking-tight nav-brand-text"
-            style={{ fontFamily: "var(--font-playfair), serif", color: "var(--text-primary)" }}
-          >
-            Resto<span className="text-gradient">Pro</span>
-          </span>
-        </div>
+        <Logo size={34} className="nav-brand-text" />
 
         {/* Nav links — desktop uniquement */}
         <div className="hidden md:flex items-center gap-8">
@@ -124,14 +112,7 @@ export default function Navbar({ scrolled }: NavbarProps) {
 
             {/* Header drawer */}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.25rem" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
-                <div style={{ width: 32, height: 32, borderRadius: "0.625rem", background: "linear-gradient(135deg, #f59e0b, #d97706)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: "1rem", color: "#0c0a09", fontFamily: "var(--font-playfair), serif", flexShrink: 0 }}>
-                  R
-                </div>
-                <span style={{ fontWeight: 700, fontSize: "1.1rem", fontFamily: "var(--font-playfair), serif", color: "var(--text-primary)" }}>
-                  Resto<span style={{ background: "var(--gradient-text)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Pro</span>
-                </span>
-              </div>
+              <Logo size={30} />
               <button
                 onClick={closeMobile}
                 style={{ width: 36, height: 36, borderRadius: "0.6rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-muted)" }}
