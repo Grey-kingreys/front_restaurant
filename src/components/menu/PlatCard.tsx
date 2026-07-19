@@ -17,8 +17,6 @@ import {
     Zap
 } from "lucide-react";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ?? "http://localhost:8000";
-
 function formatPrix(prix: string) {
     return Number(prix).toLocaleString("fr-FR").replace(/\s/g, " ") + " GNF";
 }
