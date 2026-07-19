@@ -1,11 +1,16 @@
 // src/lib/api/client.ts
 // Client HTTP centralisé avec gestion automatique des tokens JWT et du refresh
 
-// Base API robuste : on garantit un schéma http(s) absolu et pas de slash final,
-// pour éviter les URL relatives (→ 404 HTML de Next) et les doubles slash (→ 404 HTML de Django)
-// quand NEXT_PUBLIC_API_URL est mal configuré (ex. "localhost:8000/api" ou "…/api/").
-const RAW_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
-const BASE_URL = (/^https?:\/\//i.test(RAW_BASE_URL) ? RAW_BASE_URL : `http://${RAW_BASE_URL}`).replace(/\/+$/, "");
+// Base API. Deux modes :
+//  - NEXT_PUBLIC_API_URL absolu (ex. "https://api.domaine.com/api") → appel direct au backend.
+//  - Non défini → base relative "/api" (same-origin) relayée vers le backend par le proxy
+//    Next (rewrites via BACKEND_URL). Configurable au runtime, sans localhost codé en dur.
+// On garantit pas de slash final (→ 404 Django) ; on n'ajoute un schéma http:// que si une
+// valeur absolue sans schéma a été fournie (ex. "localhost:8000/api").
+const RAW_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
+const BASE_URL = RAW_BASE_URL.startsWith("/")
+    ? RAW_BASE_URL.replace(/\/+$/, "")
+    : (/^https?:\/\//i.test(RAW_BASE_URL) ? RAW_BASE_URL : `http://${RAW_BASE_URL}`).replace(/\/+$/, "");
 
 // ── Helpers stockage tokens ────────────────────────────────────────────────
 

@@ -200,7 +200,7 @@ export async function validerPaiement(id: number): Promise<ApiResponse<Commande>
  */
 export async function downloadRecu(id: number): Promise<Blob> {
     const token = (await import("./client")).getAccessToken();
-    const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
     const res = await fetch(`${BASE_URL}/commandes/${id}/recu/`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
