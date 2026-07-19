@@ -24,10 +24,12 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Variables NEXT_PUBLIC_* : injectées à la compilation (inlinées dans le bundle client).
-# À fournir via --build-arg lors du docker build.
-ARG NEXT_PUBLIC_API_URL
-ARG NEXT_PUBLIC_MAPBOX_TOKEN
+# Variables NEXT_PUBLIC_* : les valeurs de Next sont figées au BUILD. Pour permettre une
+# config au RUNTIME (variable d'env Dokploy classique, sans rebuild), on compile avec des
+# SENTINELLES que l'entrypoint remplace au démarrage du conteneur par les vraies valeurs.
+# (On peut toujours court-circuiter en passant --build-arg : la valeur est alors figée.)
+ARG NEXT_PUBLIC_API_URL=http://RUNTIME_API_URL_PLACEHOLDER
+ARG NEXT_PUBLIC_MAPBOX_TOKEN=RUNTIME_MAPBOX_TOKEN_PLACEHOLDER
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_MAPBOX_TOKEN=$NEXT_PUBLIC_MAPBOX_TOKEN
 
@@ -52,9 +54,12 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Entrypoint : remplace les sentinelles NEXT_PUBLIC_* par les valeurs runtime, puis démarre.
+COPY --chmod=555 docker/entrypoint.sh /entrypoint.sh
+
 USER nextjs
 
 EXPOSE 3000
 
-# server.js est généré par le build standalone de Next.js
-CMD ["node", "server.js"]
+# L'entrypoint injecte la config runtime puis lance `node server.js`.
+ENTRYPOINT ["/entrypoint.sh"]
