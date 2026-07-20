@@ -46,7 +46,7 @@ function PageLoader() {
 
 function StatutBadge({ active }: { active: boolean }) {
     return (
-        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.6rem", borderRadius: "9999px", fontSize: "0.7rem", fontWeight: 700, color: active ? "#22c55e" : "#ef4444", background: active ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)", border: `1px solid ${active ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}` }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.6rem", borderRadius: "9999px", fontSize: "0.7rem", fontWeight: 700, color: active ? "#22c55e" : "#ef4444", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
             <span style={{ width: 5, height: 5, borderRadius: "50%", background: active ? "#22c55e" : "#ef4444" }} />
             {active ? "Actif" : "Suspendu"}
         </span>

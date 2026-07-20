@@ -153,7 +153,7 @@ function TabRestaurant() {
                         <p style={{ margin: 0, fontSize: typography.xs, color: cssVar.textMuted }}>
                             Créé le {new Date(restaurant.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
                         </p>
-                        <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "3px 10px", borderRadius: "99px", fontSize: typography.xs, fontWeight: typography.bold, color: restaurant.is_active ? "#22c55e" : "#ef4444", background: restaurant.is_active ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)", border: `1px solid ${restaurant.is_active ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}` }}>
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "3px 10px", borderRadius: "99px", fontSize: typography.xs, fontWeight: typography.bold, color: restaurant.is_active ? "#22c55e" : "#ef4444", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
                             <span style={{ width: 5, height: 5, borderRadius: "50%", background: restaurant.is_active ? "#22c55e" : "#ef4444" }} />
                             {restaurant.is_active ? "Actif" : "Suspendu"}
                         </span>

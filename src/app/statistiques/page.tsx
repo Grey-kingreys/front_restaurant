@@ -152,7 +152,7 @@ export default function StatistiquesPage() {
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.15rem 0.5rem", borderRadius: "9999px", fontSize: "0.7rem", fontWeight: 700, color: r.is_active ? "#22c55e" : "#ef4444", background: r.is_active ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)", border: `1px solid ${r.is_active ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}` }}>
+                                                        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.15rem 0.5rem", borderRadius: "9999px", fontSize: "0.7rem", fontWeight: 700, color: r.is_active ? "#22c55e" : "#ef4444", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
                                                             <span style={{ width: 4, height: 4, borderRadius: "50%", background: r.is_active ? "#22c55e" : "#ef4444" }} />
                                                             {r.is_active ? "Actif" : "Suspendu"}
                                                         </span>

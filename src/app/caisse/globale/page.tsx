@@ -259,7 +259,7 @@ export default function CaisseGlobalePage() {
                             </p>
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.5rem" }}>
-                            <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "0.25rem 0.65rem", borderRadius: radius.full, fontSize: typography.xs, fontWeight: typography.semibold, background: active.is_closed ? "rgba(148,163,184,.08)" : "rgba(34,197,94,.10)", color: active.is_closed ? cssVar.textMuted : "#22c55e", border: `1px solid ${active.is_closed ? cssVar.borderSubtle : "rgba(34,197,94,.25)"}` }}>
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "0.25rem 0.65rem", borderRadius: radius.full, fontSize: typography.xs, fontWeight: typography.semibold, background: "var(--bg-section-alt)", color: active.is_closed ? cssVar.textMuted : "#22c55e", border: "1px solid var(--border-subtle)" }}>
                                 <span style={{ width: 6, height: 6, borderRadius: "50%", background: active.is_closed ? cssVar.textMuted : "#22c55e" }} />
                                 {active.is_closed ? "Clôturée" : "Ouverte"}
                             </span>
