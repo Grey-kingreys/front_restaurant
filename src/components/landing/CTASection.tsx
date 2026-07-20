@@ -31,7 +31,7 @@ export default function CTASection() {
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/auth/login" className="btn-primary text-base px-8 py-3.5 animate-pulse-glow">
+            <Link href="/auth/login" className="btn-primary text-base px-8 py-3.5">
               Démarrer l'essai gratuit
             </Link>
             <button className="btn-outline text-base px-8 py-3.5">

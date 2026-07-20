@@ -168,7 +168,7 @@ export default function ProfilPage() {
                                     {user.nom_complet || user.login}
                                 </h1>
                                 <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: spacing["2"] }}>
-                                    <span style={roleBadge(rc.bg, rc.text, rc.border)}>
+                                    <span style={roleBadge(rc.text)}>
                                         <span style={{ width: 5, height: 5, borderRadius: "50%", background: rc.text }} />
                                         {ROLE_LABELS[role]}
                                     </span>
@@ -264,7 +264,7 @@ export default function ProfilPage() {
                         <Card title="Rôle et accès" icon={iconShield}>
                             <div style={{ padding: `${spacing["3"]} 0`, borderBottom: `1px solid ${cssVar.borderSubtle}` }}>
                                 <p style={{ fontSize: typography.xs, color: cssVar.textMuted, margin: `0 0 ${spacing["1"]}` }}>Rôle attribué</p>
-                                <span style={roleBadge(rc.bg, rc.text, rc.border)}>
+                                <span style={roleBadge(rc.text)}>
                                     <span style={{ width: 5, height: 5, borderRadius: "50%", background: rc.text }} />
                                     {ROLE_LABELS[role]}
                                 </span>

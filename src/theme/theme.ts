@@ -192,7 +192,7 @@ export const btnOutline: React.CSSProperties = {
 /** Card de base */
 export const cardBase: React.CSSProperties = {
     background: cssVar.bgCard,
-    border: `1px solid ${cssVar.borderAmber}`,
+    border: `1px solid ${cssVar.borderSubtle}`,
     borderRadius: radius["2xl"],
     boxShadow: cssVar.shadowCard,
 };
@@ -216,11 +216,7 @@ export const spinnerBase: React.CSSProperties = {
 };
 
 /** Badge rôle — prend les couleurs depuis ROLE_COLORS */
-export const roleBadge = (
-    bg: string,
-    text: string,
-    border: string
-): React.CSSProperties => ({
+export const roleBadge = (text: string): React.CSSProperties => ({
     display: "inline-flex",
     alignItems: "center",
     gap: "0.25rem",
@@ -228,9 +224,9 @@ export const roleBadge = (
     borderRadius: radius.full,
     fontSize: typography.xs,
     fontWeight: typography.bold,
-    background: bg,
+    background: cssVar.bgSectionAlt,
     color: text,
-    border: `1px solid ${border}`,
+    border: `1px solid ${cssVar.borderSubtle}`,
 });
 
 /** Badge de statut (actif / inactif) */
@@ -242,9 +238,9 @@ export const statusBadge = (active: boolean): React.CSSProperties => ({
     borderRadius: radius.full,
     fontSize: typography.xs,
     fontWeight: typography.bold,
-    background: active ? "rgba(34,197,94,0.10)" : "rgba(239,68,68,0.10)",
+    background: cssVar.bgSectionAlt,
     color: active ? palette.green[500] : palette.red[500],
-    border: `1px solid ${active ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}`,
+    border: `1px solid ${cssVar.borderSubtle}`,
 });
 
 /** Dot de statut */
@@ -290,19 +286,21 @@ export const avatarBase = (size: number = 44): React.CSSProperties => ({
 export const alertAmber: React.CSSProperties = {
     padding: "0.65rem 0.875rem",
     borderRadius: radius.lg,
-    background: "rgba(245,158,11,0.08)",
-    border: "1px solid rgba(245,158,11,0.2)",
+    background: cssVar.bgSectionAlt,
+    border: `1px solid ${cssVar.borderSubtle}`,
+    borderLeft: `3px solid ${palette.amber[500]}`,
     fontSize: typography.sm,
-    color: palette.amber[500],
+    color: cssVar.textPrimary,
 };
 
 /** Bandeau d'erreur */
 export const alertError: React.CSSProperties = {
     padding: "0.65rem 0.875rem",
     borderRadius: radius.md,
-    background: "rgba(239,68,68,0.08)",
-    border: "1px solid rgba(239,68,68,0.2)",
-    color: palette.red[500],
+    background: cssVar.bgSectionAlt,
+    border: `1px solid ${cssVar.borderSubtle}`,
+    borderLeft: `3px solid ${palette.red[500]}`,
+    color: cssVar.textPrimary,
     fontSize: "0.82rem",
 };
 

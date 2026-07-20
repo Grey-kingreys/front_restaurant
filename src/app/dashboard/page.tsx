@@ -587,7 +587,7 @@ export default function DashboardPage() {
                             </h1>
                             <p style={{ margin: "0.2rem 0 0.5rem", fontSize: typography.sm, color: cssVar.textMuted }}>{WELCOME[role]}</p>
                             <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-                                <span style={roleBadge(rc.bg, rc.text, rc.border)}>
+                                <span style={roleBadge(rc.text)}>
                                     <span style={{ width: 6, height: 6, borderRadius: "50%", background: rc.text, display: "inline-block" }} />
                                     {ROLE_LABELS[role]}
                                 </span>

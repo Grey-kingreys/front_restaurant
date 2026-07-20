@@ -217,7 +217,7 @@ function SidebarInner({
                             <ChevronRight size={14} color={cssVar.textMuted} />
                         </Link>
                         <div style={{ marginTop: spacing["1"], paddingLeft: "0.2rem" }}>
-                            <span style={roleBadge(rc.bg, rc.text, rc.border)}>
+                            <span style={roleBadge(rc.text)}>
                                 <span style={{ width: 5, height: 5, borderRadius: "50%", background: rc.text }} />
                                 {ROLE_LABELS[role]}
                             </span>
