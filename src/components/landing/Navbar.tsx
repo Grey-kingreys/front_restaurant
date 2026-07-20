@@ -78,7 +78,7 @@ export default function Navbar({ scrolled }: NavbarProps) {
                   style={{
                     display: "flex", alignItems: "center", gap: "0.4rem",
                     padding: "0.55rem 1.1rem", borderRadius: "0.625rem",
-                    background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.3)",
+                    background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)",
                     color: "#fbbf24", fontSize: "0.85rem", fontWeight: 600,
                     textDecoration: "none", whiteSpace: "nowrap",
                   }}
@@ -153,7 +153,7 @@ export default function Navbar({ scrolled }: NavbarProps) {
               {!isAuthenticated && (
                 <>
                   <Link href="/auth/client/register" onClick={closeMobile}
-                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", minHeight: "48px", fontSize: "1rem", borderRadius: "0.75rem", background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.35)", color: "#fbbf24", fontWeight: 700, textDecoration: "none" }}>
+                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", minHeight: "48px", fontSize: "1rem", borderRadius: "0.75rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color: "#fbbf24", fontWeight: 700, textDecoration: "none" }}>
                     <ShoppingBag size={16} /> Commander
                   </Link>
                   <Link href="/auth/login" className="btn-primary" onClick={closeMobile} style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "48px", fontSize: "1rem" }}>

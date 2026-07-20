@@ -9,7 +9,7 @@ export default function Footer() {
     <footer
       className="py-16 px-6"
       style={{
-        borderTop: "1px solid var(--border-amber)",
+        borderTop: "1px solid var(--border-subtle)",
         background: "var(--bg-card)",
       }}
     >

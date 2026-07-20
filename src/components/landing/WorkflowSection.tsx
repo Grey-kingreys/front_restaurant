@@ -126,7 +126,7 @@ export default function WorkflowSection() {
                 ))}
 
                 {/* Total */}
-                <div className="w-full flex items-center justify-between pt-2 border-t" style={{ borderColor: "var(--border-amber)" }}>
+                <div className="w-full flex items-center justify-between pt-2 border-t" style={{ borderColor: "var(--border-subtle)" }}>
                   <span className="font-bold" style={{ color: "var(--text-primary)" }}>Total</span>
                   <span className="font-extrabold text-lg text-gradient">88 000 GNF</span>
                 </div>

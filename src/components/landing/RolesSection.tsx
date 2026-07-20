@@ -85,8 +85,8 @@ export default function RolesSection() {
                 <div
                   className="w-14 h-14 rounded-2xl flex items-center justify-center"
                   style={{
-                    background: "var(--icon-bg)",
-                    border: "1px solid var(--icon-border)",
+                    background: "var(--bg-section-alt)",
+                    border: "1px solid var(--border-subtle)",
                     color: "var(--icon-primary)",
                   }}
                 >

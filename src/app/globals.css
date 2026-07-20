@@ -321,7 +321,7 @@ body {
   background: var(--bg-card);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-amber);
+  border: 1px solid var(--border-subtle);
   border-radius: 1.25rem;
   box-shadow: var(--shadow-card);
   transition: all 0.35s ease;
@@ -397,15 +397,15 @@ body {
   text-align: center;
   padding: 2rem 1.5rem;
   border-radius: 1.25rem;
-  background: var(--icon-bg);
-  border: 1px solid var(--border-amber);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   transition: all 0.35s ease;
 }
 
 .stat-card:hover {
-  background: rgba(245, 158, 11, 0.12);
-  border-color: var(--border-amber-hover);
-  transform: scale(1.04);
+  background: var(--bg-card-hover);
+  border-color: var(--border-subtle);
+  transform: scale(1.02);
 }
 
 /* ── Feature icon ── */
@@ -413,8 +413,8 @@ body {
   width: 3.5rem;
   height: 3.5rem;
   border-radius: 1rem;
-  background: var(--icon-bg);
-  border: 1px solid var(--icon-border);
+  background: var(--bg-section-alt);
+  border: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -424,9 +424,9 @@ body {
 }
 
 .glass-card:hover .feature-icon {
-  background: rgba(245, 158, 11, 0.18);
-  border-color: var(--border-amber-hover);
-  transform: scale(1.1) rotate(5deg);
+  background: var(--bg-card-hover);
+  border-color: var(--border-subtle);
+  transform: scale(1.05);
 }
 
 /* ── Role badge ── */
@@ -438,8 +438,8 @@ body {
   border-radius: 9999px;
   font-size: 0.78rem;
   font-weight: 600;
-  background: var(--icon-bg);
-  border: 1px solid var(--icon-border);
+  background: var(--bg-section-alt);
+  border: 1px solid var(--border-subtle);
   color: var(--amber-glow);
   letter-spacing: 0.04em;
 }
@@ -681,7 +681,6 @@ body {
   top: -4px;
   left: 50%;
   transform: translateX(-50%);
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
 }
 
 /* ── Section label ── */
@@ -695,8 +694,8 @@ body {
   padding: 0.3rem 0.85rem;
   border-radius: 9999px;
   color: var(--amber-glow);
-  background: var(--icon-bg);
-  border: 1px solid var(--icon-border);
+  background: var(--bg-section-alt);
+  border: 1px solid var(--border-subtle);
 }
 
 /* ══════════════════════════════════════════
