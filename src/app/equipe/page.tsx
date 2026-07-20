@@ -62,7 +62,7 @@ function RoleBadge({ role }: { role: Role }) {
             display: "inline-flex", alignItems: "center", gap: "0.3rem",
             padding: "0.2rem 0.55rem", borderRadius: "9999px",
             fontSize: "0.7rem", fontWeight: 700,
-            color: rc.text, background: rc.bg, border: `1px solid ${rc.border}`,
+            color: rc.text, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)",
         }}>
             <span style={{ width: 5, height: 5, borderRadius: "50%", background: rc.text, flexShrink: 0 }} />
             {ROLE_LABELS[role] ?? role}
