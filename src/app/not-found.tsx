@@ -71,8 +71,8 @@ export default function NotFound() {
           100% { transform: translateY(100vh); }
         }
         @keyframes errorGlow {
-          0%, 100% { text-shadow: 0 0 20px rgba(245,158,11,0.3); }
-          50%       { text-shadow: 0 0 40px rgba(245,158,11,0.7), 0 0 80px rgba(245,158,11,0.2); }
+          0%, 100% { text-shadow: 0 2px 6px rgba(0,0,0,0.35); }
+          50%       { text-shadow: 0 2px 10px rgba(0,0,0,0.45); }
         }
         .plate-float {
           animation: plateLift 4s ease-in-out infinite;
@@ -94,7 +94,7 @@ export default function NotFound() {
                     className="absolute inset-0 pointer-events-none"
                     style={{
                         background:
-                            "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(245,158,11,0.06) 0%, transparent 70%)",
+                            "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 70%)",
                     }}
                 />
 
@@ -256,8 +256,8 @@ export default function NotFound() {
                     <div
                         className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase mb-6"
                         style={{
-                            background: "var(--icon-bg)",
-                            border: "1px solid var(--icon-border)",
+                            background: "var(--bg-section-alt)",
+                            border: "1px solid var(--border-subtle)",
                             color: "var(--amber-glow)",
                         }}
                     >
@@ -308,7 +308,7 @@ export default function NotFound() {
                 </div>
 
                 {/* Bottom ambient line */}
-                <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(245,158,11,0.2), transparent)" }} />
+                <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, var(--border-subtle), transparent)" }} />
             </main>
         </>
     );

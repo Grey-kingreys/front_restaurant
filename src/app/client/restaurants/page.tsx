@@ -121,7 +121,7 @@ export default function ClientRestaurantsPage() {
                         <Link key={r.id} href={`/restaurant/${r.slug}`} style={{ textDecoration: "none", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1rem", overflow: "hidden", transition: "transform .15s, box-shadow .15s" }}
                             onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 28px rgba(0,0,0,0.25)"; }}
                             onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "none"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}>
-                            <div style={{ height: 110, background: "linear-gradient(135deg, rgba(245,158,11,0.18), rgba(217,119,6,0.06))", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <div style={{ height: 110, background: "var(--bg-section-alt)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                 <ChefHat size={36} style={{ color: "#f59e0b", opacity: 0.7 }} />
                             </div>
                             <div style={{ padding: "1rem" }}>
@@ -132,7 +132,7 @@ export default function ClientRestaurantsPage() {
                                 {r.adresse && <p style={{ margin: "0 0 0.75rem", display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.78rem", color: "var(--text-muted)" }}><MapPin size={12} />{r.adresse}</p>}
                                 <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
                                     {r.accept_livraison && <span style={{ display: "flex", alignItems: "center", gap: "0.25rem", padding: "3px 9px", borderRadius: "99px", background: "rgba(139,92,246,0.12)", border: "1px solid rgba(139,92,246,0.25)", color: "#8b5cf6", fontSize: "0.7rem", fontWeight: 700 }}><Truck size={11} />Livraison</span>}
-                                    {r.accept_emporter && <span style={{ display: "flex", alignItems: "center", gap: "0.25rem", padding: "3px 9px", borderRadius: "99px", background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.25)", color: "#f59e0b", fontSize: "0.7rem", fontWeight: 700 }}><ShoppingBag size={11} />À emporter</span>}
+                                    {r.accept_emporter && <span style={{ display: "flex", alignItems: "center", gap: "0.25rem", padding: "3px 9px", borderRadius: "99px", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color: "#f59e0b", fontSize: "0.7rem", fontWeight: 700 }}><ShoppingBag size={11} />À emporter</span>}
                                 </div>
                             </div>
                         </Link>

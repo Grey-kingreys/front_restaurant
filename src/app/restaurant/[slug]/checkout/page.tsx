@@ -232,7 +232,7 @@ export default function CheckoutPage() {
                         return (
                             <div style={{
                                 display: "flex", alignItems: "center", gap: "0.875rem", padding: "0 1rem", borderRadius: "0.875rem",
-                                border: "2px solid #f59e0b", background: "rgba(245,158,11,0.08)",
+                                border: "2px solid var(--border-subtle)", background: "var(--bg-section-alt)",
                             }}>
                                 <Icon size={20} style={{ flexShrink: 0, color: "#f59e0b" }} />
                                 <select value={modePaiement} onChange={(e) => setModePaiement(e.target.value as ModePaiement)}
@@ -280,7 +280,7 @@ export default function CheckoutPage() {
 
                 {/* Bouton commander / connexion */}
                 {!isAuthenticated || user?.role !== "Rclient" ? (
-                    <div style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: "0.875rem", padding: "1rem", textAlign: "center" }}>
+                    <div style={{ background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", borderRadius: "0.875rem", padding: "1rem", textAlign: "center" }}>
                         <p style={{ margin: "0 0 0.75rem", color: "var(--text-secondary)", fontSize: "0.85rem" }}>Connectez-vous pour finaliser votre commande.</p>
                         <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}>
                             <button onClick={() => router.push(`/auth/login?next=/restaurant/${slug}/checkout?mode=${typeCommande}`)} style={{ padding: "0.625rem 1.25rem", borderRadius: "0.625rem", border: "none", background: "#f59e0b", color: "#0c0a09", fontWeight: 700, cursor: "pointer", fontSize: "0.85rem" }}>

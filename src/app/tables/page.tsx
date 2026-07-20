@@ -390,12 +390,10 @@ export default function TablesPage() {
                 .tbl-inner { max-width:1100px; margin:0 auto; }
                 .tbl-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:1rem; }
                 .tbl-card { background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:1.125rem; padding:1.125rem; display:flex; flex-direction:column; gap:0.75rem; animation:fadeIn 0.2s ease; transition:border-color 0.15s, box-shadow 0.15s; }
-                .tbl-card:hover { border-color:var(--border-amber); box-shadow:0 2px 12px rgba(245,158,11,0.07); }
+                .tbl-card:hover { border-color:var(--border-amber); box-shadow:0 2px 12px rgba(0,0,0,0.2); }
                 .icon-btn { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:0.5rem; border:1px solid var(--border-subtle); background:transparent; cursor:pointer; color:var(--text-muted); transition:all 0.15s; }
                 .icon-btn:hover { border-color:var(--border-amber); color:var(--amber-glow); }
             `}</style>
-
-            <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "35vh", pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 70% 35% at 50% -5%, rgba(245,158,11,0.05) 0%, transparent 70%)" }} />
 
             {/* Toast */}
             {toast && (
@@ -410,7 +408,7 @@ export default function TablesPage() {
                 <>
                     <div onClick={closeModal} style={{ position: "fixed", inset: 0, zIndex: 90, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} />
                     <div style={{ position: "fixed", inset: 0, zIndex: 91, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-                        <div style={{ width: "100%", maxWidth: 420, background: "var(--bg-card)", border: "1px solid var(--border-amber)", borderRadius: "1.25rem", padding: "1.5rem", animation: "modalIn 0.25s ease" }}>
+                        <div style={{ width: "100%", maxWidth: 420, background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1.25rem", padding: "1.5rem", animation: "modalIn 0.25s ease" }}>
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
                                 <h2 style={{ margin: 0, fontSize: typography.lg, fontWeight: 800, color: cssVar.textPrimary }}>
                                     {modal === "create" ? "Nouvelle table" : modal === "edit" ? "Modifier la table" : modal === "delete" ? "Supprimer la table" : "QR Code"}
@@ -495,7 +493,7 @@ export default function TablesPage() {
                     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", marginBottom: "1.75rem" }}>
                         <div>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.3rem" }}>
-                                <div style={{ width: 40, height: 40, borderRadius: "0.875rem", background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.2)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--amber-glow)" }}>
+                                <div style={{ width: 40, height: 40, borderRadius: "0.875rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--amber-glow)" }}>
                                     <QrCode size={20} />
                                 </div>
                                 <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: cssVar.textPrimary }}>Tables & QR Codes</h1>
@@ -577,7 +575,7 @@ export default function TablesPage() {
                                             {isAdmin && (
                                                 <button
                                                     onClick={() => ext.a_qr_code ? handleShowQR(t) : handleCreateQR(t)}
-                                                    style={{ flex: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.5rem", borderRadius: "0.5rem", border: "1px solid var(--border-amber)", background: "rgba(245,158,11,0.06)", color: "var(--amber-glow)", fontSize: "0.75rem", fontWeight: 700, cursor: "pointer" }}
+                                                    style={{ flex: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.5rem", borderRadius: "0.5rem", border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: "var(--amber-glow)", fontSize: "0.75rem", fontWeight: 700, cursor: "pointer" }}
                                                 >
                                                     <QrCode size={13} /> {ext.a_qr_code ? "Voir QR" : "Créer QR"}
                                                 </button>

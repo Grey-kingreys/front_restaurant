@@ -407,8 +407,8 @@ export function PlatCardTable({ plat, onAddToCart, quantiteInCart = 0, adding }:
                             style={{
                                 width: 44, height: 44,
                                 borderRadius: "50%",
-                                background: quantiteInCart > 0 ? "var(--gradient-btn)" : "var(--icon-bg)",
-                                border: `1px solid ${quantiteInCart > 0 ? "transparent" : "var(--icon-border)"}`,
+                                background: quantiteInCart > 0 ? "var(--gradient-btn)" : "var(--bg-section-alt)",
+                                border: `1px solid ${quantiteInCart > 0 ? "transparent" : "var(--border-subtle)"}`,
                                 cursor: adding ? "not-allowed" : "pointer",
                                 display: "flex", alignItems: "center", justifyContent: "center",
                                 color: quantiteInCart > 0 ? "#0c0a09" : "var(--icon-primary)",
@@ -423,7 +423,7 @@ export function PlatCardTable({ plat, onAddToCart, quantiteInCart = 0, adding }:
                             }}
                             onMouseLeave={(e) => {
                                 if (quantiteInCart === 0) {
-                                    (e.currentTarget as HTMLButtonElement).style.background = "var(--icon-bg)";
+                                    (e.currentTarget as HTMLButtonElement).style.background = "var(--bg-section-alt)";
                                     (e.currentTarget as HTMLButtonElement).style.color = "var(--icon-primary)";
                                 }
                             }}

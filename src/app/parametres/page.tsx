@@ -254,7 +254,7 @@ function TabRestaurant() {
                                     <p style={{ margin: 0, fontSize: typography.sm, fontWeight: 600, color: cssVar.textPrimary }}>Aller Retour</p>
                                     <p style={{ margin: 0, fontSize: "0.7rem", color: cssVar.textMuted }}>Livraison assurée par le service partenaire Aller Retour.</p>
                                 </div>
-                                <span style={{ flexShrink: 0, fontSize: "0.65rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: cssVar.amberGlow, background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.25)", borderRadius: "99px", padding: "2px 8px" }}>Bientôt</span>
+                                <span style={{ flexShrink: 0, fontSize: "0.65rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: cssVar.amberGlow, background: cssVar.bgSectionAlt, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: "99px", padding: "2px 8px" }}>Bientôt</span>
                             </div>
                         </div>
 
@@ -390,7 +390,7 @@ function RoleModal({ initial, permissions, onClose, onSaved }: { initial?: RoleC
 
     return (
         <div style={{ position: "fixed", inset: 0, zIndex: 100, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", padding: spacing["4"] }} onClick={onClose}>
-            <div style={{ background: cssVar.bgCard, border: `1px solid ${cssVar.borderAmber}`, borderRadius: radius.xl, width: "100%", maxWidth: 620, maxHeight: "90vh", overflow: "hidden", display: "flex", flexDirection: "column", animation: "modalIn 0.2s ease" }} onClick={e => e.stopPropagation()}>
+            <div style={{ background: cssVar.bgCard, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: radius.xl, width: "100%", maxWidth: 620, maxHeight: "90vh", overflow: "hidden", display: "flex", flexDirection: "column", animation: "modalIn 0.2s ease" }} onClick={e => e.stopPropagation()}>
                 <div style={{ padding: `${spacing["4"]} ${spacing["5"]}`, borderBottom: `1px solid ${cssVar.borderSubtle}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <h3 style={{ margin: 0, fontSize: typography.base, fontWeight: typography.bold, color: cssVar.textPrimary }}>
                         {isEdit ? `Modifier : ${initial!.nom}` : "Nouveau rôle"}
@@ -476,7 +476,7 @@ function RoleCard({ role, onEdit, onDelete }: { role: RoleConfig; onEdit: (r: Ro
                 <div>
                     <div style={{ display: "flex", alignItems: "center", gap: spacing["2"], flexWrap: "wrap" }}>
                         <span style={{ fontWeight: typography.bold, fontSize: typography.base, color: cssVar.textPrimary }}>{role.nom}</span>
-                        {role.is_system && <span style={{ fontSize: typography.xs, padding: "2px 8px", background: "rgba(245,158,11,0.12)", color: cssVar.amberGlow, border: "1px solid rgba(245,158,11,0.25)", borderRadius: "99px" }}>système</span>}
+                        {role.is_system && <span style={{ fontSize: typography.xs, padding: "2px 8px", background: cssVar.bgSectionAlt, color: cssVar.amberGlow, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: "99px" }}>système</span>}
                     </div>
                     <p style={{ margin: "2px 0 0", fontSize: typography.xs, color: cssVar.textMuted, fontFamily: "monospace" }}>{role.slug}</p>
                 </div>
@@ -591,7 +591,7 @@ function TabRoles({ onToast }: { onToast: (msg: string, type?: "success" | "erro
 function TabWorkflow() {
     return (
         <div style={{ maxWidth: 560, padding: `${spacing["8"]} 0`, textAlign: "center" }}>
-            <div style={{ width: 64, height: 64, borderRadius: radius.xl, background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.15)", display: "flex", alignItems: "center", justifyContent: "center", margin: `0 auto ${spacing["4"]}` }}>
+            <div style={{ width: 64, height: 64, borderRadius: radius.xl, background: cssVar.bgSectionAlt, border: `1px solid ${cssVar.borderSubtle}`, display: "flex", alignItems: "center", justifyContent: "center", margin: `0 auto ${spacing["4"]}` }}>
                 <GitBranch size={28} color={cssVar.amberGlow} style={{ opacity: 0.6 }} />
             </div>
             <h3 style={{ margin: `0 0 ${spacing["2"]}`, fontSize: typography.lg, fontWeight: typography.bold, color: cssVar.textPrimary }}>Workflow commandes</h3>

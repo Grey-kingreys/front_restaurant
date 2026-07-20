@@ -113,7 +113,7 @@ export default function HistoriqueCaissesPage() {
                                             </p>
                                         </div>
                                         {ecart !== null && ecart !== 0 && (
-                                            <span style={{ fontSize: "0.68rem", fontWeight: 700, color: "#f59e0b", background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.3)", padding: "0.2rem 0.55rem", borderRadius: "9999px", whiteSpace: "nowrap" }}>
+                                            <span style={{ fontSize: "0.68rem", fontWeight: 700, color: "#f59e0b", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", padding: "0.2rem 0.55rem", borderRadius: "9999px", whiteSpace: "nowrap" }}>
                                                 {ecart > 0 ? "Excédent" : "Manquant"} {Math.abs(ecart).toLocaleString("fr-FR")}
                                             </span>
                                         )}

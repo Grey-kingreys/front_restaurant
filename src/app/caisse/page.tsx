@@ -220,7 +220,7 @@ export default function CaissePage() {
                 .action-btn { display:flex; align-items:center; justify-content:center; gap:0.4rem; padding:0.6rem 1rem; border-radius:0.625rem; border:1px solid; cursor:pointer; font-size:0.8rem; font-weight:700; transition:all 0.15s; }
             `}</style>
 
-            <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "35vh", pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 70% 35% at 50% -5%, rgba(245,158,11,0.05) 0%, transparent 70%)" }} />
+            <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "35vh", pointerEvents: "none", zIndex: 0, background: "transparent" }} />
 
             {/* Toast */}
             {toast && (
@@ -235,7 +235,7 @@ export default function CaissePage() {
                 <>
                     <div onClick={closeModal} style={{ position: "fixed", inset: 0, zIndex: 90, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} />
                     <div style={{ position: "fixed", inset: 0, zIndex: 91, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-                        <div style={{ width: "100%", maxWidth: 420, background: "var(--bg-card)", border: "1px solid var(--border-amber)", borderRadius: "1.25rem", padding: "1.5rem", animation: "modalIn 0.25s ease" }}>
+                        <div style={{ width: "100%", maxWidth: 420, background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1.25rem", padding: "1.5rem", animation: "modalIn 0.25s ease" }}>
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
                                 <h2 style={{ margin: 0, fontSize: typography.lg, fontWeight: 800, color: cssVar.textPrimary }}>
                                     {modal === "ouvrir" ? "Ouvrir la caisse" : modal === "fermer" ? "Fermer la caisse" : modal === "appro" ? "Demande d'approvisionnement" : modal === "depense" ? "Enregistrer une dépense" : "Valider la remise"}

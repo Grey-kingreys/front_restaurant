@@ -154,7 +154,7 @@ export default function PanierPage() {
                 .qty-btn:disabled { opacity: 0.3; cursor: not-allowed; }
                 .checkout-bar {
                     position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card);
-                    border-top: 1px solid var(--border-amber); padding: 0.875rem 1.25rem;
+                    border-top: 1px solid var(--border-subtle); padding: 0.875rem 1.25rem;
                     display: flex; align-items: center; justify-content: space-between; gap: 1rem;
                     box-shadow: 0 -4px 20px rgba(0,0,0,0.2); z-index: 100;
                     padding-bottom: max(0.875rem, env(safe-area-inset-bottom));
@@ -166,8 +166,6 @@ export default function PanierPage() {
                     .checkout-bar.collapsed { left: 4.5rem; }
                 }
             `}</style>
-
-            <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "40vh", pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 80% 40% at 50% -10%, rgba(245,158,11,0.06) 0%, transparent 70%)" }} />
 
             {toast && (
                 <div style={{ position: "fixed", bottom: "5rem", right: "1.5rem", zIndex: 200, padding: "0.75rem 1.25rem", borderRadius: "1rem", background: toast.type === "success" ? "rgba(34,197,94,0.95)" : "rgba(239,68,68,0.95)", color: "#fff", fontWeight: 600, fontSize: "0.85rem", boxShadow: "0 8px 32px rgba(0,0,0,0.3)", animation: "slideIn 0.3s ease", display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -199,7 +197,7 @@ export default function PanierPage() {
                         </div>
                     ) : items.length === 0 ? (
                         <div style={{ textAlign: "center", padding: "4rem 2rem", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1.25rem" }}>
-                            <div style={{ width: 64, height: 64, borderRadius: "50%", background: "var(--icon-bg)", color: "var(--icon-primary)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.5rem" }}>
+                            <div style={{ width: 64, height: 64, borderRadius: "50%", background: "var(--bg-section-alt)", color: "var(--icon-primary)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.5rem" }}>
                                 <ShoppingCart size={32} />
                             </div>
                             <h2 style={{ fontSize: typography.lg, fontWeight: 700, color: "var(--text-primary)", marginBottom: "0.5rem" }}>Votre panier est vide</h2>

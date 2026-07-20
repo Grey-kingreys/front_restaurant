@@ -529,9 +529,6 @@ export default function EquipePage() {
                 @media (max-width: 1023px) { .rp-table-desktop { display:none !important; } }
             `}</style>
 
-            {/* Glow */}
-            <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "35vh", pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 70% 35% at 50% -5%, rgba(245,158,11,0.05) 0%, transparent 70%)" }} />
-
             {/* Toast */}
             {toast && (
                 <div style={{ position: "fixed", bottom: "1.5rem", right: "1.5rem", zIndex: 200, padding: "0.75rem 1.25rem", borderRadius: radius.xl, background: toast.type === "success" ? "rgba(34,197,94,0.96)" : "rgba(239,68,68,0.96)", color: "#fff", fontWeight: 600, fontSize: "0.85rem", boxShadow: "0 8px 32px rgba(0,0,0,0.25)", animation: "toastIn 0.3s ease", display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -545,7 +542,7 @@ export default function EquipePage() {
                 <>
                     <div onClick={closeModal} style={{ position: "fixed", inset: 0, zIndex: 90, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} />
                     <div style={{ position: "fixed", inset: 0, zIndex: 91, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-                        <div style={{ width: "100%", maxWidth: 460, background: "var(--bg-card)", border: "1px solid var(--border-amber)", borderRadius: "1.25rem", padding: "1.5rem", animation: "modalIn 0.25s ease", maxHeight: "90vh", overflowY: "auto" }}>
+                        <div style={{ width: "100%", maxWidth: 460, background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1.25rem", padding: "1.5rem", animation: "modalIn 0.25s ease", maxHeight: "90vh", overflowY: "auto" }}>
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
                                 <h2 style={{ margin: 0, fontSize: typography.lg, fontWeight: 800, color: cssVar.textPrimary }}>
                                     {modal === "create" ? "Ajouter un membre" : modal === "edit" ? "Modifier le membre" : "Réinitialiser le mot de passe"}
@@ -602,7 +599,7 @@ export default function EquipePage() {
                     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", marginBottom: "1.75rem" }}>
                         <div>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.3rem" }}>
-                                <div style={{ width: 40, height: 40, borderRadius: "0.875rem", background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.2)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--amber-glow)" }}>
+                                <div style={{ width: 40, height: 40, borderRadius: "0.875rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--amber-glow)" }}>
                                     <Users size={20} />
                                 </div>
                                 <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: cssVar.textPrimary }}>
@@ -776,7 +773,7 @@ export default function EquipePage() {
                                             <span style={{ fontSize: typography.xs, color: cssVar.textMuted }}>{u.email ?? "Pas d'email"}</span>
                                         </div>
                                         {u.must_change_password && (
-                                            <span style={{ fontSize: "0.7rem", color: "#f59e0b", background: "rgba(245,158,11,0.08)", padding: "0.2rem 0.5rem", borderRadius: "0.375rem", width: "fit-content" }}>⚠ MDP temporaire à changer</span>
+                                            <span style={{ fontSize: "0.7rem", color: "#f59e0b", background: "var(--bg-section-alt)", padding: "0.2rem 0.5rem", borderRadius: "0.375rem", width: "fit-content" }}>⚠ MDP temporaire à changer</span>
                                         )}
                                         <div style={{ display: "flex", gap: "0.4rem", borderTop: "1px solid var(--border-subtle)", paddingTop: "0.5rem" }}>
                                             <button onClick={() => openEdit(u)} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "0.5rem", border: "1px solid var(--border-subtle)", background: "transparent", color: cssVar.textMuted, fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>

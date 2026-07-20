@@ -58,7 +58,7 @@ export function ImageUploader({ value, preview, onChange, error }: ImageUploader
                         ? "var(--amber-glow)"
                         : error
                             ? "rgba(239,68,68,0.5)"
-                            : "var(--border-amber)"}`,
+                            : "var(--border-subtle)"}`,
                     borderRadius: "1rem",
                     background: dragging
                         ? "rgba(245,158,11,0.05)"
@@ -135,7 +135,7 @@ export function ImageUploader({ value, preview, onChange, error }: ImageUploader
                     <div style={{ textAlign: "center", padding: "2rem", pointerEvents: "none" }}>
                         <div style={{
                             width: 52, height: 52, borderRadius: "50%",
-                            background: "var(--icon-bg)", border: "1px solid var(--icon-border)",
+                            background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)",
                             display: "flex", alignItems: "center", justifyContent: "center",
                             margin: "0 auto 0.875rem",
                             color: "var(--icon-primary)",

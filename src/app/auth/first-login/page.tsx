@@ -125,7 +125,7 @@ function FirstLoginContent() {
             <div style={{ ...authPageRoot }}>
                 <div style={glowOverlay} />
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: spacing["4"], position: "relative", zIndex: 1 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: "50%", border: "3px solid var(--border-amber)", borderTopColor: "var(--amber-glow)", animation: "spin .75s linear infinite" }} />
+                    <div style={{ width: 36, height: 36, borderRadius: "50%", border: "3px solid var(--border-subtle)", borderTopColor: "var(--amber-glow)", animation: "spin .75s linear infinite" }} />
                     <p style={{ color: cssVar.textMuted, fontSize: typography.sm }}>Vérification du lien…</p>
                 </div>
                 <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
@@ -202,11 +202,6 @@ function FirstLoginContent() {
     return (
         <div style={{ ...authPageRoot, padding: "1.5rem" }}>
             <div style={glowOverlay} />
-            <div style={{
-                position: "absolute", top: "30%", left: "10%",
-                width: 300, height: 300, borderRadius: "50%",
-                background: "rgba(245,158,11,0.04)", filter: "blur(80px)", pointerEvents: "none",
-            }} />
 
             <div style={{ width: "100%", maxWidth: 440, position: "relative", zIndex: 1 }}>
                 <Logo />
@@ -214,7 +209,7 @@ function FirstLoginContent() {
                 <div style={{ ...cardBase, padding: "clamp(1.25rem, 5vw, 2rem)" }}>
                     {/* En-tête */}
                     <div style={{ display: "flex", alignItems: "center", gap: spacing["3"], marginBottom: spacing["6"] }}>
-                        <div style={{ ...iconContainer(44), borderRadius: radius.xl, flexShrink: 0 }}>
+                        <div style={{ ...iconContainer(44), borderRadius: radius.xl, flexShrink: 0, background: cssVar.bgSectionAlt, border: `1px solid ${cssVar.borderSubtle}` }}>
                             <IconKey />
                         </div>
                         <div>

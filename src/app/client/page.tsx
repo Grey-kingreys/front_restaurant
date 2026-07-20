@@ -170,7 +170,7 @@ export default function ClientDashboardPage() {
                                     </div>
                                     <div style={{ display: "flex", gap: "0.3rem", flexShrink: 0 }}>
                                         {r.accept_livraison && <span style={{ display: "flex", alignItems: "center", gap: "0.2rem", padding: "2px 7px", borderRadius: "99px", background: "rgba(139,92,246,0.12)", color: "#8b5cf6", fontSize: "0.66rem", fontWeight: 700 }}><Truck size={10} />Livraison</span>}
-                                        {r.accept_emporter && <span style={{ display: "flex", alignItems: "center", gap: "0.2rem", padding: "2px 7px", borderRadius: "99px", background: "rgba(245,158,11,0.12)", color: "#f59e0b", fontSize: "0.66rem", fontWeight: 700 }}><ShoppingBag size={10} />Emporter</span>}
+                                        {r.accept_emporter && <span style={{ display: "flex", alignItems: "center", gap: "0.2rem", padding: "2px 7px", borderRadius: "99px", background: "var(--bg-section-alt)", color: "#f59e0b", fontSize: "0.66rem", fontWeight: 700 }}><ShoppingBag size={10} />Emporter</span>}
                                     </div>
                                 </Link>
                             ))}

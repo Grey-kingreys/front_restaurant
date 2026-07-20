@@ -130,7 +130,7 @@ export default function CaisseDetailPage() {
                     </div>
 
                     {caisse.motif_ecart && (
-                        <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem", padding: "0.8rem 1rem", borderRadius: radius.lg, background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.25)", color: "#f59e0b", fontSize: typography.sm, marginBottom: "1.5rem" }}>
+                        <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem", padding: "0.8rem 1rem", borderRadius: radius.lg, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color: "#f59e0b", fontSize: typography.sm, marginBottom: "1.5rem" }}>
                             <AlertTriangle size={15} style={{ flexShrink: 0, marginTop: "0.1rem" }} />
                             <span><strong>Motif de l&apos;écart :</strong> {caisse.motif_ecart}</span>
                         </div>

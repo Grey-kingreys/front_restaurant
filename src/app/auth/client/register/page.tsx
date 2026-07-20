@@ -98,11 +98,6 @@ export default function ClientRegisterPage() {
     return (
         <div style={{ ...authPageRoot, padding: "1.5rem" }}>
             <div style={glowOverlay} />
-            <div style={{
-                position: "absolute", top: "30%", left: "10%",
-                width: 300, height: 300, borderRadius: "50%",
-                background: "rgba(245,158,11,0.04)", filter: "blur(80px)", pointerEvents: "none",
-            }} />
 
             <div style={{ width: "100%", maxWidth: 440, position: "relative", zIndex: 1 }}>
 

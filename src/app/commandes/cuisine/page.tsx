@@ -91,7 +91,7 @@ export default function CuisinePage() {
                 
                 .ticket-card {
                     background: var(--bg-card);
-                    border: 1px solid var(--border-amber);
+                    border: 1px solid var(--border-subtle);
                     border-radius: ${radius.xl};
                     box-shadow: 0 8px 32px rgba(0,0,0,0.15);
                     animation: fadeIn 0.3s ease forwards;
@@ -100,9 +100,9 @@ export default function CuisinePage() {
                     overflow: hidden;
                 }
                 .ticket-header {
-                    background: rgba(245,158,11,0.1);
+                    background: var(--bg-section-alt);
                     padding: 1rem 1.25rem;
-                    border-bottom: 1px solid var(--border-amber);
+                    border-bottom: 1px solid var(--border-subtle);
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
@@ -140,8 +140,6 @@ export default function CuisinePage() {
                 .btn-prete:disabled { opacity: 0.7; cursor: not-allowed; }
             `}</style>
 
-            <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "35vh", pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 70% 35% at 50% -5%, rgba(245,158,11,0.08) 0%, transparent 70%)" }} />
-
             <div style={{ position: "relative", zIndex: 1, flex: 1, display: "flex", flexDirection: "column" }}>
                 
                 {/* Header global */}
@@ -175,7 +173,7 @@ export default function CuisinePage() {
                         <div style={{ width: 40, height: 40, borderRadius: "50%", border: "4px solid var(--border-amber)", borderTopColor: "var(--amber-glow)", animation: "spin 0.75s linear infinite" }} />
                     </div>
                 ) : commandes.length === 0 ? (
-                    <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "rgba(245,158,11,0.02)", border: "1px dashed var(--border-amber)", borderRadius: radius["2xl"] }}>
+                    <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "var(--bg-section-alt)", border: "1px dashed var(--border-subtle)", borderRadius: radius["2xl"] }}>
                         <Utensils size={64} style={{ color: "var(--border-amber)", marginBottom: "1rem", opacity: 0.5 }} />
                         <h2 style={{ color: cssVar.textPrimary, fontFamily: typography.fontSerif, marginBottom: "0.5rem" }}>Aucune commande en attente</h2>
                         <p style={{ color: cssVar.textMuted }}>La cuisine est calme pour le moment. Bon travail !</p>

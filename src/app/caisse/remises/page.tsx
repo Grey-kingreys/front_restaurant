@@ -241,7 +241,7 @@ export default function RemisesPage() {
                     </p>
                 </div>
                 {enAttente.length > 0 && filter === "en_attente" && (
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "0.35rem 0.75rem", borderRadius: radius.full, fontSize: typography.sm, fontWeight: typography.bold, background: "rgba(245,158,11,.12)", color: "#f59e0b", border: "1px solid rgba(245,158,11,.25)" }}>
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "0.35rem 0.75rem", borderRadius: radius.full, fontSize: typography.sm, fontWeight: typography.bold, background: cssVar.bgSectionAlt, color: "#f59e0b", border: `1px solid ${cssVar.borderSubtle}` }}>
                         {enAttente.length} en attente
                     </span>
                 )}

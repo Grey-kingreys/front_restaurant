@@ -154,7 +154,7 @@ export default function RestaurantPublicPage() {
 
                                             {inCart ? (
                                                 <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                                                    <button onClick={() => updateQuantite(plat.id, inCart.quantite - 1)} className="add-btn" style={{ width: 28, height: 28, borderRadius: "50%", border: "1px solid rgba(245,158,11,0.4)", background: "rgba(245,158,11,0.08)", color: "#f59e0b", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                    <button onClick={() => updateQuantite(plat.id, inCart.quantite - 1)} className="add-btn" style={{ width: 28, height: 28, borderRadius: "50%", border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: "#f59e0b", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                                         {inCart.quantite === 1 ? <Trash2 size={12} /> : <Minus size={12} />}
                                                     </button>
                                                     <span style={{ fontWeight: 700, color: "var(--text-primary)", minWidth: 20, textAlign: "center" }}>{inCart.quantite}</span>
@@ -179,7 +179,7 @@ export default function RestaurantPublicPage() {
 
             {/* Barre panier fixe en bas */}
             {count > 0 && (
-                <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "0.875rem 1rem", background: "var(--bg-card)", borderTop: "1px solid rgba(245,158,11,0.2)", backdropFilter: "blur(12px)", zIndex: 50 }}>
+                <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "0.875rem 1rem", background: "var(--bg-card)", borderTop: "1px solid var(--border-subtle)", backdropFilter: "blur(12px)", zIndex: 50 }}>
                     <button onClick={handleCommander} style={{ width: "100%", maxWidth: 500, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.875rem 1.25rem", borderRadius: "0.875rem", border: "none", background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "#0c0a09", fontWeight: 800, fontSize: "0.95rem", cursor: "pointer" }}>
                         <span style={{ background: "rgba(0,0,0,0.15)", borderRadius: "0.4rem", padding: "0.2rem 0.6rem" }}>{count}</span>
                         <span>Passer la commande</span>

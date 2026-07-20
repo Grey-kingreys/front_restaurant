@@ -26,7 +26,7 @@ function PublicHeader({ slug, inApp }: { slug: string; inApp: boolean }) {
         }}>
             {/* Logo */}
             <button onClick={() => router.push(`/restaurant/${slug}`)} style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "none", border: "none", cursor: "pointer" }}>
-                <div style={{ width: 32, height: 32, borderRadius: "0.5rem", background: "rgba(245,158,11,0.15)", border: "1px solid rgba(245,158,11,0.3)", display: "flex", alignItems: "center", justifyContent: "center", color: "#f59e0b" }}>
+                <div style={{ width: 32, height: 32, borderRadius: "0.5rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "#f59e0b" }}>
                     <ChefHat size={16} />
                 </div>
                 <span style={{ fontWeight: 800, fontSize: "1rem", color: "var(--text-primary)" }}>{restaurantNom || "Menu"}</span>

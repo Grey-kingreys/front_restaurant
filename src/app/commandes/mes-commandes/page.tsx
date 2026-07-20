@@ -124,7 +124,7 @@ export default function MesCommandesPage() {
                 }
                 .overlay-panel {
                     position:fixed; left:0; right:0; bottom:0; z-index:61;
-                    background:var(--bg-card); border-top:1px solid var(--border-amber);
+                    background:var(--bg-card); border-top:1px solid var(--border-subtle);
                     border-radius:1.5rem 1.5rem 0 0;
                     max-height:85vh; overflow-y:auto;
                     animation:slideUp 0.3s cubic-bezier(0.4,0,0.2,1);

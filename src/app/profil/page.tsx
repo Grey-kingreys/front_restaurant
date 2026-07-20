@@ -145,8 +145,6 @@ export default function ProfilPage() {
         @media(min-width:1024px) { .profil-root{padding:2rem 2rem 3rem;} .profil-grid{grid-template-columns:repeat(2,1fr);gap:1rem;} }
       `}</style>
 
-            <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "40vh", background: "radial-gradient(ellipse 70% 40% at 50% -5%, rgba(245,158,11,0.07) 0%, transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
-
             <div className="profil-root">
                 <div className="profil-inner">
 
@@ -160,7 +158,7 @@ export default function ProfilPage() {
                     </nav>
 
                     {/* Hero card */}
-                    <div style={{ background: cssVar.bgCard, border: `1px solid ${cssVar.borderAmber}`, borderRadius: radius["2xl"], padding: `${spacing["5"]} ${spacing["5"]}`, marginBottom: spacing["4"], boxShadow: cssVar.shadowCard }}>
+                    <div style={{ background: cssVar.bgCard, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: radius["2xl"], padding: `${spacing["5"]} ${spacing["5"]}`, marginBottom: spacing["4"], boxShadow: cssVar.shadowCard }}>
                         <div style={{ display: "flex", alignItems: "flex-start", gap: spacing["3"] }}>
                             <div style={{ ...avatarBase(50), boxShadow: "0 0 0 3px rgba(245,158,11,0.15)" }}>{initials}</div>
                             <div style={{ flex: 1, minWidth: 0 }}>
@@ -184,7 +182,7 @@ export default function ProfilPage() {
                         </div>
 
                         {user.must_change_password && (
-                            <div style={{ marginTop: spacing["3"], padding: `${spacing["2"]} ${spacing["3"]}`, borderRadius: radius.lg, background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)", fontSize: typography.sm, color: palette.amber[500], display: "flex", alignItems: "flex-start", gap: spacing["2"], lineHeight: 1.4 }}>
+                            <div style={{ marginTop: spacing["3"], padding: `${spacing["2"]} ${spacing["3"]}`, borderRadius: radius.lg, background: cssVar.bgSectionAlt, border: `1px solid ${cssVar.borderSubtle}`, fontSize: typography.sm, color: palette.amber[500], display: "flex", alignItems: "flex-start", gap: spacing["2"], lineHeight: 1.4 }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: 14, height: 14, flexShrink: 0, marginTop: 1 }}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
                                 </svg>

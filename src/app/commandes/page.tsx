@@ -223,9 +223,9 @@ export default function CommandesPage() {
         .action-btn { display:inline-flex; align-items:center; gap:0.35rem; padding:0.5rem 0.75rem; border-radius:0.5rem; border:1px solid; cursor:pointer; font-size:0.8rem; font-weight:600; transition:all 0.15s; min-height:40px; }
         .cmd-row { cursor:pointer; }
         .cmd-card-click { cursor:pointer; transition: border-color 0.15s, box-shadow 0.15s; }
-        .cmd-card-click:hover { border-color: var(--border-amber) !important; box-shadow: 0 2px 12px rgba(245,158,11,0.08); }
+        .cmd-card-click:hover { border-color: var(--border-amber) !important; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
         .drawer-overlay { position:fixed; inset:0; z-index:80; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); animation:fadeIn 0.2s ease; }
-        .drawer-panel { position:fixed; top:0; right:0; bottom:0; z-index:81; width:min(480px,100vw); background:var(--bg-card); border-left:1px solid var(--border-amber); display:flex; flex-direction:column; overflow:hidden; animation:drawerSlide 0.28s cubic-bezier(0.4,0,0.2,1); }
+        .drawer-panel { position:fixed; top:0; right:0; bottom:0; z-index:81; width:min(480px,100vw); background:var(--bg-card); border-left:1px solid var(--border-subtle); display:flex; flex-direction:column; overflow:hidden; animation:drawerSlide 0.28s cubic-bezier(0.4,0,0.2,1); }
         @keyframes drawerSlide { from { transform:translateX(100%); opacity:0; } to { transform:translateX(0); opacity:1; } }
         .drawer-body { flex:1; overflow-y:auto; padding:1.25rem; display:flex; flex-direction:column; gap:1rem; }
         .drawer-section { background:var(--bg-section-alt); border:1px solid var(--border-subtle); border-radius:0.875rem; padding:0.875rem 1rem; }
@@ -239,8 +239,6 @@ export default function CommandesPage() {
         @media (min-width: 1024px) { .rp-cards-mobile { display:none !important; } }
         @media (max-width: 1023px) { .rp-table-desktop { display:none !important; } }
       `}</style>
-
-            <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "35vh", pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 70% 35% at 50% -5%, rgba(245,158,11,0.05) 0%, transparent 70%)" }} />
 
             {/* Toast */}
             {toast && (
@@ -530,7 +528,7 @@ function CommandeCard({ cmd, isServeur, isCuisinier, actionLoading, onAction, on
 function EmptyState({ statutFilter }: { statutFilter: StatutCommande | "" }) {
     return (
         <div style={{ textAlign: "center", padding: "4rem 2rem", background: "var(--bg-card)", borderRadius: radius.xl, border: "1px solid var(--border-subtle)" }}>
-            <div style={{ width: 56, height: 56, borderRadius: "50%", background: "var(--icon-bg)", border: "1px solid var(--icon-border)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1rem", color: "var(--icon-primary)" }}>
+            <div style={{ width: 56, height: 56, borderRadius: "50%", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1rem", color: "var(--icon-primary)" }}>
                 <Clock size={24} />
             </div>
             <h3 style={{ margin: "0 0 0.5rem", color: "var(--text-primary)" }}>Aucune commande</h3>
@@ -667,7 +665,7 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
                             <a
                                 href={`https://www.google.com/maps?q=${cmd.client_latitude},${cmd.client_longitude}`}
                                 target="_blank" rel="noopener noreferrer"
-                                style={{ display: "inline-flex", alignItems: "center", gap: "0.45rem", margin: "0 0 1rem", padding: "0.6rem 1rem", borderRadius: radius.lg, border: `1px solid ${cssVar.borderAmber}`, background: "rgba(245,158,11,0.06)", color: cssVar.amberGlow, textDecoration: "none", fontSize: typography.sm, fontWeight: 600 }}
+                                style={{ display: "inline-flex", alignItems: "center", gap: "0.45rem", margin: "0 0 1rem", padding: "0.6rem 1rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.amberGlow, textDecoration: "none", fontSize: typography.sm, fontWeight: 600 }}
                             >
                                 <MapPin size={15} /> Voir la position sur la carte
                             </a>

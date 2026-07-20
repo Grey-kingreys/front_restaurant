@@ -119,9 +119,6 @@ export default function MenuPage() {
         .stat-pill { padding:0.5rem 0.875rem; border-radius:0.65rem; background:var(--bg-card); border:1px solid var(--border-subtle); display:flex; align-items:center; gap:0.4rem; white-space:nowrap; }
       `}</style>
 
-            {/* Background glow */}
-            <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "35vh", pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 70% 35% at 50% -5%, rgba(245,158,11,0.06) 0%, transparent 70%)" }} />
-
             {/* Toast */}
             {toastMsg && (
                 <div style={{
@@ -357,7 +354,7 @@ export default function MenuPage() {
 function EmptyState({ search, canEdit, categorie }: { search: string; canEdit: boolean; categorie: string }) {
     return (
         <div style={{ textAlign: "center", padding: "4rem 2rem", background: "var(--bg-card)", borderRadius: radius.xl, border: "1px solid var(--border-subtle)" }}>
-            <div style={{ width: 64, height: 64, borderRadius: "50%", background: "var(--icon-bg)", border: "1px solid var(--icon-border)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1rem", color: "var(--icon-primary)" }}>
+            <div style={{ width: 64, height: 64, borderRadius: "50%", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1rem", color: "var(--icon-primary)" }}>
                 <ClipboardList size={28} />
             </div>
             <h3 style={{ margin: "0 0 0.5rem", color: "var(--text-primary)" }}>

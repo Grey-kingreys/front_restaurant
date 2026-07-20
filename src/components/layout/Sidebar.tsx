@@ -343,7 +343,7 @@ export default function Sidebar({ mobileOpen, onMobileClose, isCollapsed, toggle
     const base: React.CSSProperties = {
         width: isCollapsed ? "4.5rem" : SIDEBAR_W,
         background: cssVar.bgCard,
-        borderRight: `1px solid ${cssVar.borderAmber}`,
+        borderRight: `1px solid ${cssVar.borderSubtle}`,
         height: "100%",
         display: "flex",
         flexDirection: "column",

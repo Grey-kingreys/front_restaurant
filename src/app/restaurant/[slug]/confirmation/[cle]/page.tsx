@@ -73,7 +73,7 @@ export default function ConfirmationPage() {
 
                 {/* Header statut */}
                 <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 56, height: 56, borderRadius: "50%", margin: "0 auto 0.75rem", background: isDone ? "rgba(34,197,94,0.12)" : "rgba(245,158,11,0.12)", border: `1px solid ${isDone ? "rgba(34,197,94,0.3)" : "rgba(245,158,11,0.3)"}` }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 56, height: 56, borderRadius: "50%", margin: "0 auto 0.75rem", background: isDone ? "rgba(34,197,94,0.12)" : "var(--bg-section-alt)", border: `1px solid ${isDone ? "rgba(34,197,94,0.3)" : "var(--border-subtle)"}` }}>
                         {isDone
                             ? <CheckCircle2 size={28} style={{ color: "#22c55e" }} />
                             : commande.statut === "en_livraison"

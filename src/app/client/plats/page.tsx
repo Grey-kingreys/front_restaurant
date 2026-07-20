@@ -141,7 +141,7 @@ export default function TousLesPlatsPage() {
 
             {loading ? (
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "40vh", color: "var(--text-muted)", gap: "0.75rem" }}>
-                    <div style={{ width: 26, height: 26, borderRadius: "50%", border: "3px solid var(--border-amber)", borderTopColor: "var(--amber-glow)", animation: "spin .75s linear infinite" }} />
+                    <div style={{ width: 26, height: 26, borderRadius: "50%", border: "3px solid var(--border-subtle)", borderTopColor: "var(--amber-glow)", animation: "spin .75s linear infinite" }} />
                     Chargement…
                     <style>{`@keyframes spin { to { transform:rotate(360deg); } }`}</style>
                 </div>

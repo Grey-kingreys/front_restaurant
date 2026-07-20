@@ -272,7 +272,7 @@ export default function CaisseGlobalePage() {
                     </div>
                 </div>
             ) : (
-                <div style={{ ...cardBase, padding: "1.5rem", marginBottom: spacing["5"], border: `1px solid rgba(245,158,11,0.2)`, background: "rgba(245,158,11,0.05)" }}>
+                <div style={{ ...cardBase, padding: "1.5rem", marginBottom: spacing["5"], border: `1px solid ${cssVar.borderSubtle}`, background: cssVar.bgSectionAlt }}>
                     <p style={{ margin: "0 0 1rem", fontSize: typography.sm, color: "#f59e0b", fontWeight: typography.semibold }}>
                         ⏰ {activeErr || "Aucune caisse globale ouverte pour aujourd'hui."}
                     </p>
