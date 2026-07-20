@@ -35,7 +35,7 @@ const STATUT_CFG = {
 function StatutBadge({ statut }: { statut: keyof typeof STATUT_CFG }) {
     const cfg = STATUT_CFG[statut] ?? STATUT_CFG.en_attente_remise;
     return (
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "0.15rem 0.5rem", borderRadius: radius.full, fontSize: typography.xs, fontWeight: typography.semibold, background: cfg.bg, color: cfg.text, border: `1px solid ${cfg.border}` }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "0.15rem 0.5rem", borderRadius: radius.full, fontSize: typography.xs, fontWeight: typography.semibold, background: "var(--bg-section-alt)", color: cfg.text, border: "1px solid var(--border-subtle)" }}>
             <span style={{ width: 5, height: 5, borderRadius: "50%", background: cfg.text }} />
             {cfg.label}
         </span>

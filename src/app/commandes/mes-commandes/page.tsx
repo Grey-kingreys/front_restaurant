@@ -223,7 +223,7 @@ export default function MesCommandesPage() {
                                             display: "inline-flex", alignItems: "center", gap: "0.25rem",
                                             padding: "0.2rem 0.6rem", borderRadius: "999px",
                                             fontSize: typography.xs, fontWeight: 700,
-                                            color: sc.color, background: sc.bg, border: `1px solid ${sc.border}`,
+                                            color: sc.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)",
                                         }}>
                                             {sc.label}
                                         </span>

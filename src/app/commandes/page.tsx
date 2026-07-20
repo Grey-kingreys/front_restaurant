@@ -69,7 +69,7 @@ function TypeBadge({ type, label }: { type?: string; label?: string }) {
     if (!type) return null;
     const c = TYPE_CONFIG[type] ?? { label: label ?? type, color: "#9ca3af", bg: "rgba(156,163,175,0.1)", border: "rgba(156,163,175,0.25)" };
     return (
-        <span style={{ alignSelf: "flex-start", display: "inline-block", padding: "1px 7px", borderRadius: "9999px", fontSize: "0.66rem", fontWeight: 700, color: c.color, background: c.bg, border: `1px solid ${c.border}` }}>
+        <span style={{ alignSelf: "flex-start", display: "inline-block", padding: "1px 7px", borderRadius: "9999px", fontSize: "0.66rem", fontWeight: 700, color: c.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
             {label ?? c.label}
         </span>
     );
@@ -324,7 +324,7 @@ export default function CommandesPage() {
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.6rem", borderRadius: "9999px", fontSize: "0.72rem", fontWeight: 700, color: sc.color, background: sc.bg, border: `1px solid ${sc.border}` }}>
+                                                        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.6rem", borderRadius: "9999px", fontSize: "0.72rem", fontWeight: 700, color: sc.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
                                                             <StatutIcon statut={cmd.statut} />
                                                             {sc.label}
                                                         </span>
@@ -485,7 +485,7 @@ function CommandeCard({ cmd, isServeur, isCuisinier, actionLoading, onAction, on
         <div className="cmd-card-click" style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: radius.xl, padding: "1rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <span style={{ fontWeight: 700, color: cssVar.amberGlow, fontFamily: "monospace" }}>#{cmd.id}</span>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.6rem", borderRadius: "9999px", fontSize: "0.72rem", fontWeight: 700, color: sc.color, background: sc.bg, border: `1px solid ${sc.border}` }}>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.6rem", borderRadius: "9999px", fontSize: "0.72rem", fontWeight: 700, color: sc.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
                     <StatutIcon statut={cmd.statut} />
                     {sc.label}
                 </span>
@@ -613,7 +613,7 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
                             {cmd ? `Commande #${cmd.id}` : "Chargement…"}
                         </span>
                         {sc && (
-                            <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", padding: "0.15rem 0.55rem", borderRadius: "9999px", fontSize: "0.72rem", fontWeight: 700, color: sc.color, background: sc.bg, border: `1px solid ${sc.border}` }}>
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", padding: "0.15rem 0.55rem", borderRadius: "9999px", fontSize: "0.72rem", fontWeight: 700, color: sc.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
                                 <StatutIcon statut={cmd!.statut} />
                                 {sc.label}
                             </span>

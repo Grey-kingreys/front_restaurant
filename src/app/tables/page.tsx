@@ -48,7 +48,7 @@ function PageLoader() {
 function StatutBadge({ statut }: { statut: string }) {
     const cfg = STATUT_TABLE_CONFIG[statut] ?? STATUT_TABLE_CONFIG.libre;
     return (
-        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.55rem", borderRadius: "9999px", fontSize: "0.7rem", fontWeight: 700, color: cfg.color, background: cfg.bg, border: `1px solid ${cfg.border}` }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.55rem", borderRadius: "9999px", fontSize: "0.7rem", fontWeight: 700, color: cfg.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
             <span style={{ width: 5, height: 5, borderRadius: "50%", background: cfg.color }} />
             {cfg.label}
         </span>

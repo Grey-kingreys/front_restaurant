@@ -131,7 +131,7 @@ export default function ReservationsStaffPage() {
                             const actif = r.statut === "en_attente" || r.statut === "confirmee";
                             return (
                                 <div key={r.id} style={{ background: cssVar.bgCard, border: `1px solid ${r.client_a_risque ? "rgba(239,68,68,0.4)" : cssVar.borderSubtle}`, borderRadius: radius.xl, padding: "1rem 1.25rem", display: "flex", gap: "1rem", alignItems: "flex-start", flexWrap: "wrap" }}>
-                                    <div style={{ width: 44, height: 44, borderRadius: "0.7rem", flexShrink: 0, background: sc.bg, border: `1px solid ${sc.border}`, display: "flex", alignItems: "center", justifyContent: "center", color: sc.color }}>
+                                    <div style={{ width: 44, height: 44, borderRadius: "0.7rem", flexShrink: 0, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: sc.color }}>
                                         <Armchair size={20} />
                                     </div>
                                     <div style={{ flex: 1, minWidth: 220 }}>
@@ -139,7 +139,7 @@ export default function ReservationsStaffPage() {
                                             <span style={{ fontWeight: 800, color: cssVar.textPrimary, fontSize: typography.base }}>
                                                 {r.table_numero ? `Table ${r.table_numero}` : "Table non attribuée"}
                                             </span>
-                                            <span style={{ padding: "2px 9px", borderRadius: "99px", background: sc.bg, border: `1px solid ${sc.border}`, color: sc.color, fontSize: "0.7rem", fontWeight: 700 }}>{r.statut_label}</span>
+                                            <span style={{ padding: "2px 9px", borderRadius: "99px", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color: sc.color, fontSize: "0.7rem", fontWeight: 700 }}>{r.statut_label}</span>
                                             {r.client_bloque && (
                                                 <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", padding: "2px 9px", borderRadius: "99px", background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)", color: "#ef4444", fontSize: "0.68rem", fontWeight: 700 }}>
                                                     <Ban size={11} />Bloqué
