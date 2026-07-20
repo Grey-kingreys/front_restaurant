@@ -131,7 +131,7 @@ export default function ClientRestaurantsPage() {
                                 </div>
                                 {r.adresse && <p style={{ margin: "0 0 0.75rem", display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.78rem", color: "var(--text-muted)" }}><MapPin size={12} />{r.adresse}</p>}
                                 <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
-                                    {r.accept_livraison && <span style={{ display: "flex", alignItems: "center", gap: "0.25rem", padding: "3px 9px", borderRadius: "99px", background: "rgba(139,92,246,0.12)", border: "1px solid rgba(139,92,246,0.25)", color: "#8b5cf6", fontSize: "0.7rem", fontWeight: 700 }}><Truck size={11} />Livraison</span>}
+                                    {r.accept_livraison && <span style={{ display: "flex", alignItems: "center", gap: "0.25rem", padding: "3px 9px", borderRadius: "99px", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color: "#8b5cf6", fontSize: "0.7rem", fontWeight: 700 }}><Truck size={11} />Livraison</span>}
                                     {r.accept_emporter && <span style={{ display: "flex", alignItems: "center", gap: "0.25rem", padding: "3px 9px", borderRadius: "99px", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color: "#f59e0b", fontSize: "0.7rem", fontWeight: 700 }}><ShoppingBag size={11} />À emporter</span>}
                                 </div>
                             </div>

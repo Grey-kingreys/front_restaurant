@@ -141,7 +141,7 @@ export default function ReservationsStaffPage() {
                                             </span>
                                             <span style={{ padding: "2px 9px", borderRadius: "99px", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color: sc.color, fontSize: "0.7rem", fontWeight: 700 }}>{r.statut_label}</span>
                                             {r.client_bloque && (
-                                                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", padding: "2px 9px", borderRadius: "99px", background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)", color: "#ef4444", fontSize: "0.68rem", fontWeight: 700 }}>
+                                                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", padding: "2px 9px", borderRadius: "99px", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color: "#ef4444", fontSize: "0.68rem", fontWeight: 700 }}>
                                                     <Ban size={11} />Bloqué
                                                 </span>
                                             )}

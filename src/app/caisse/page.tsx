@@ -454,7 +454,7 @@ export default function CaissePage() {
                                                 </div>
                                                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                                                     {r.valide ? (
-                                                        <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "#22c55e", background: "rgba(34,197,94,0.1)", padding: "0.2rem 0.5rem", borderRadius: "9999px" }}>✓ Validée</span>
+                                                        <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "#22c55e", background: "var(--bg-section-alt)", padding: "0.2rem 0.5rem", borderRadius: "9999px" }}>✓ Validée</span>
                                                     ) : (
                                                         <button
                                                             onClick={() => { setSelectedRemise(r); setFMontantPhysique(r.montant_virtuel); setModal("remise"); }}

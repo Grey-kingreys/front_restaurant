@@ -48,7 +48,7 @@ function HistoRow({ c, isActive }: { c: CaisseGlobale; isActive: boolean }) {
                         {fmtDate(c.date_ouverture)}
                     </span>
                     {isActive && (
-                        <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "0.1rem 0.45rem", borderRadius: radius.full, fontSize: typography.xs, fontWeight: typography.semibold, background: "rgba(34,197,94,.10)", color: "#22c55e", border: "1px solid rgba(34,197,94,.25)" }}>
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "0.1rem 0.45rem", borderRadius: radius.full, fontSize: typography.xs, fontWeight: typography.semibold, background: "var(--bg-section-alt)", color: "#22c55e", border: "1px solid var(--border-subtle)" }}>
                             <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#22c55e" }} />
                             En cours
                         </span>

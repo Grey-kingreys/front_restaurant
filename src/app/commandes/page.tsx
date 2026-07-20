@@ -711,7 +711,7 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
 
                         {/* Timeline workflow */}
                         <div className="drawer-section">
-                            <p className="drawer-section-title">Workflow{!avecCuisine && <span style={{ marginLeft: "0.4rem", fontSize: "0.65rem", fontWeight: 600, color: "#22c55e", background: "rgba(34,197,94,0.1)", padding: "0.1rem 0.4rem", borderRadius: "9999px" }}>Sans étape cuisine</span>}</p>
+                            <p className="drawer-section-title">Workflow{!avecCuisine && <span style={{ marginLeft: "0.4rem", fontSize: "0.65rem", fontWeight: 600, color: "#22c55e", background: "var(--bg-section-alt)", padding: "0.1rem 0.4rem", borderRadius: "9999px" }}>Sans étape cuisine</span>}</p>
                             {TIMELINE.map((step, i) => {
                                 const done = i <= currentIdx;
                                 const isCurrent = i === currentIdx;
