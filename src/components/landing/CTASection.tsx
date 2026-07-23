@@ -5,7 +5,7 @@ import { ChefHat, Truck } from "lucide-react";
 
 export default function CTASection() {
   return (
-    <section className="py-24 px-6 relative overflow-hidden" id="tarifs">
+    <section className="py-24 px-6 relative overflow-hidden" id="demarrer">
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full -z-10"
         style={{ background: "transparent", filter: "blur(120px)" }}
@@ -17,7 +17,7 @@ export default function CTASection() {
         <div className="glass-card p-10 text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-500/5 to-transparent -translate-x-full pointer-events-none" />
 
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 48, height: 48, borderRadius: "0.75rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color: "#f59e0b", margin: "0 auto 0.75rem" }}><ChefHat size={22} /></div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 48, height: 48, borderRadius: "var(--radius-lg)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color: "#f59e0b", margin: "0 auto 0.75rem" }}><ChefHat size={22} /></div>
           <h2
             className="text-3xl sm:text-4xl font-bold mb-4"
             style={{ fontFamily: "var(--font-playfair), serif", color: "var(--text-primary)" }}
@@ -49,7 +49,7 @@ export default function CTASection() {
           className="glass-card p-10 text-center relative overflow-hidden"
           style={{ borderColor: "var(--border-subtle)" }}
         >
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 48, height: 48, borderRadius: "0.75rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color: "#f59e0b", margin: "0 auto 0.75rem" }}><Truck size={22} /></div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 48, height: 48, borderRadius: "var(--radius-lg)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color: "#f59e0b", margin: "0 auto 0.75rem" }}><Truck size={22} /></div>
           <h2
             className="text-2xl sm:text-3xl font-bold mb-3"
             style={{ fontFamily: "var(--font-playfair), serif", color: "var(--text-primary)" }}

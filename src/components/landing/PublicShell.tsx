@@ -1,20 +1,19 @@
 "use client";
+// src/components/landing/PublicShell.tsx
+// Enveloppe pour les pages publiques statiques (À propos, Contact, Blog) :
+// Navbar (avec état "scrolled") + contenu + Footer, plus l'observer scroll-reveal
+// pour que les animations d'apparition fonctionnent comme sur la landing.
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Navbar from "./Navbar";
-import HeroSection from "./HeroSection";
-import FeaturesSection from "./FeaturesSection";
-import WorkflowSection from "./WorkflowSection";
-import PricingSection from "./PricingSection";
-import PartnersSection from "./PartnersSection";
-import CTASection from "./CTASection";
 import Footer from "./Footer";
 
-export default function LandingPage() {
+export default function PublicShell({ children }: { children: ReactNode }) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
+    handleScroll();
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -44,12 +43,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-dark)" }}>
       <Navbar scrolled={scrolled} />
-      <HeroSection />
-      <FeaturesSection />
-      <WorkflowSection />
-      <PricingSection />
-      <PartnersSection />
-      <CTASection />
+      <main style={{ paddingTop: "6.5rem" }}>{children}</main>
       <Footer />
     </div>
   );

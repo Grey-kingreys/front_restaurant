@@ -152,7 +152,7 @@ export default function HeroSection() {
           href="/auth/client/register"
           style={{
             flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-            gap: "0.375rem", padding: "1.25rem 1.5rem", borderRadius: "1rem",
+            gap: "0.375rem", padding: "1.25rem 1.5rem", borderRadius: "var(--radius-xl)",
             background: "linear-gradient(135deg, #f59e0b, #d97706)",
             color: "#0c0a09", textDecoration: "none", fontWeight: 800, fontSize: "1rem",
             boxShadow: "0 2px 12px rgba(245,158,11,0.22)",
@@ -175,7 +175,7 @@ export default function HeroSection() {
           href="/auth/login"
           style={{
             flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-            gap: "0.375rem", padding: "1.25rem 1.5rem", borderRadius: "1rem",
+            gap: "0.375rem", padding: "1.25rem 1.5rem", borderRadius: "var(--radius-xl)",
             background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)",
             color: "#f5f5f4", textDecoration: "none", fontWeight: 700, fontSize: "1rem",
             backdropFilter: "blur(8px)",
