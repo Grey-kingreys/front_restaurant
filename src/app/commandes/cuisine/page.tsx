@@ -150,6 +150,19 @@ export default function CuisinePage() {
                             <h1 className="rp-h1" style={{ margin: 0, fontWeight: typography.bold, fontFamily: typography.fontSerif, color: cssVar.textPrimary }}>
                                 File d&apos;Attente Cuisine
                             </h1>
+                            <span
+                                aria-label={`${commandes.length} commande${commandes.length > 1 ? "s" : ""} en file`}
+                                style={{
+                                    display: "inline-flex", alignItems: "center", justifyContent: "center",
+                                    minWidth: 26, height: 24, padding: "0 0.5rem",
+                                    borderRadius: radius.full,
+                                    background: cssVar.bgSectionAlt, border: `1px solid ${cssVar.borderSubtle}`,
+                                    color: cssVar.textSecondary, fontSize: typography.sm, fontWeight: 700,
+                                    fontVariantNumeric: "tabular-nums", lineHeight: 1,
+                                }}
+                            >
+                                {commandes.length}
+                            </span>
                         </div>
                         <p style={{ margin: 0, color: cssVar.textMuted, fontSize: typography.sm }}>
                             {commandes.length} commande{commandes.length > 1 ? "s" : ""} à préparer

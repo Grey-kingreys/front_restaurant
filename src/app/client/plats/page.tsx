@@ -98,11 +98,11 @@ export default function TousLesPlatsPage() {
                 <div style={{ position: "relative", flex: 1, minWidth: 220 }}>
                     <Search size={15} style={{ position: "absolute", left: "0.75rem", top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)", pointerEvents: "none" }} />
                     <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Rechercher un plat ou un restaurant…"
-                        style={{ width: "100%", padding: "0.65rem 0.85rem 0.65rem 2.2rem", borderRadius: "0.75rem", border: "1px solid var(--border-subtle)", background: "var(--bg-card)", color: "var(--text-primary)", fontSize: "0.9rem", boxSizing: "border-box", outline: "none" }} />
+                        style={{ width: "100%", padding: "0.65rem 0.85rem 0.65rem 2.2rem", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)", background: "var(--bg-card)", color: "var(--text-primary)", fontSize: "0.9rem", boxSizing: "border-box", outline: "none" }} />
                 </div>
                 {CATEGORIES.map((c) => (
                     <button key={c.value} onClick={() => setCategorie(c.value)}
-                        style={{ padding: "0.5rem 0.9rem", borderRadius: "99px", cursor: "pointer", border: `1px solid ${categorie === c.value ? "#f59e0b" : "var(--border-subtle)"}`, background: categorie === c.value ? "rgba(245,158,11,0.12)" : "transparent", color: categorie === c.value ? "#f59e0b" : "var(--text-muted)", fontSize: "0.8rem", fontWeight: 600, whiteSpace: "nowrap" }}>
+                        style={{ padding: "0.5rem 0.9rem", borderRadius: "var(--radius-full)", cursor: "pointer", border: `1px solid ${categorie === c.value ? "#f59e0b" : "var(--border-subtle)"}`, background: categorie === c.value ? "var(--bg-section-alt)" : "transparent", color: categorie === c.value ? "#f59e0b" : "var(--text-muted)", fontSize: "0.8rem", fontWeight: 600, whiteSpace: "nowrap" }}>
                         {c.label}
                     </button>
                 ))}
@@ -113,7 +113,7 @@ export default function TousLesPlatsPage() {
                 <label style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.8rem", color: "var(--text-muted)" }}>
                     Trier&nbsp;:
                     <select value={sortBy} onChange={(e) => handleSort(e.target.value as SortBy)}
-                        style={{ padding: "0.5rem 0.7rem", borderRadius: "0.65rem", border: "1px solid var(--border-subtle)", background: "var(--bg-card)", color: "var(--text-primary)", fontSize: "0.82rem", cursor: "pointer" }}>
+                        style={{ padding: "0.5rem 0.7rem", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)", background: "var(--bg-card)", color: "var(--text-primary)", fontSize: "0.82rem", cursor: "pointer" }}>
                         <option value="pertinence">Pertinence</option>
                         <option value="prix_asc">Prix croissant</option>
                         <option value="prix_desc">Prix décroissant</option>
@@ -124,11 +124,11 @@ export default function TousLesPlatsPage() {
                 <label style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.8rem", color: "var(--text-muted)" }}>
                     Prix max&nbsp;:
                     <input type="number" min={0} step={1000} value={maxPrix} onChange={(e) => setMaxPrix(e.target.value)} placeholder="GNF"
-                        style={{ width: 110, padding: "0.5rem 0.7rem", borderRadius: "0.65rem", border: "1px solid var(--border-subtle)", background: "var(--bg-card)", color: "var(--text-primary)", fontSize: "0.82rem", boxSizing: "border-box" }} />
+                        style={{ width: 110, padding: "0.5rem 0.7rem", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)", background: "var(--bg-card)", color: "var(--text-primary)", fontSize: "0.82rem", boxSizing: "border-box" }} />
                 </label>
 
                 <button onClick={request} disabled={status === "loading"}
-                    style={{ display: "flex", alignItems: "center", gap: "0.4rem", padding: "0.5rem 0.85rem", borderRadius: "0.65rem", border: `1px solid ${location ? "rgba(59,130,246,0.4)" : "var(--border-subtle)"}`, background: location ? "rgba(59,130,246,0.08)" : "var(--bg-card)", color: location ? "#3b82f6" : "var(--text-primary)", fontSize: "0.8rem", fontWeight: 700, cursor: "pointer" }}>
+                    style={{ display: "flex", alignItems: "center", gap: "0.4rem", padding: "0.5rem 0.85rem", borderRadius: "var(--radius-lg)", border: `1px solid ${location ? "rgba(59,130,246,0.4)" : "var(--border-subtle)"}`, background: location ? "rgba(59,130,246,0.08)" : "var(--bg-card)", color: location ? "#3b82f6" : "var(--text-primary)", fontSize: "0.8rem", fontWeight: 700, cursor: "pointer" }}>
                     <LocateFixed size={13} />{status === "loading" ? "Localisation…" : location ? "Position active" : "Activer ma position"}
                 </button>
             </div>
@@ -159,7 +159,7 @@ export default function TousLesPlatsPage() {
                         {filtered.map((p) => {
                             const color = CATEGORIE_COLOR[p.categorie] ?? "#f59e0b";
                             return (
-                                <Link key={`${p.restaurant.slug}-${p.id}`} href={`/restaurant/${p.restaurant.slug}`} style={{ textDecoration: "none", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1rem", overflow: "hidden", display: "flex", flexDirection: "column", transition: "transform .15s, box-shadow .15s" }}
+                                <Link key={`${p.restaurant.slug}-${p.id}`} href={`/restaurant/${p.restaurant.slug}`} style={{ textDecoration: "none", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-xl)", overflow: "hidden", display: "flex", flexDirection: "column", transition: "transform .15s, box-shadow .15s" }}
                                     onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 28px rgba(0,0,0,0.22)"; }}
                                     onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "none"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}>
                                     {/* Image */}
@@ -169,7 +169,7 @@ export default function TousLesPlatsPage() {
                                         ) : (
                                             <Utensils size={34} style={{ opacity: 0.2, color: "var(--text-muted)" }} />
                                         )}
-                                        <span style={{ position: "absolute", top: "0.5rem", left: "0.5rem", padding: "2px 8px", borderRadius: "99px", background: `${color}22`, border: `1px solid ${color}44`, color, fontSize: "0.68rem", fontWeight: 700 }}>
+                                        <span style={{ position: "absolute", top: "0.5rem", left: "0.5rem", padding: "2px 8px", borderRadius: "var(--radius-full)", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", color, fontSize: "0.68rem", fontWeight: 700 }}>
                                             {CATEGORIES.find((c) => c.value === p.categorie)?.label ?? p.categorie}
                                         </span>
                                     </div>

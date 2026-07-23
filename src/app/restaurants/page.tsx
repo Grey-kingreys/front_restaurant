@@ -46,7 +46,7 @@ function PageLoader() {
 
 function StatutBadge({ active }: { active: boolean }) {
     return (
-        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.6rem", borderRadius: "9999px", fontSize: "0.7rem", fontWeight: 700, color: active ? "#22c55e" : "#ef4444", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.6rem", borderRadius: "var(--radius-full)", fontSize: "0.7rem", fontWeight: 700, color: active ? "#22c55e" : "#ef4444", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
             <span style={{ width: 5, height: 5, borderRadius: "50%", background: active ? "#22c55e" : "#ef4444" }} />
             {active ? "Actif" : "Suspendu"}
         </span>
@@ -319,12 +319,12 @@ export default function RestaurantsPage() {
                 <>
                     <div onClick={closeModal} style={{ position: "fixed", inset: 0, zIndex: 90, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} />
                     <div style={{ position: "fixed", inset: 0, zIndex: 91, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-                        <div style={{ width: "100%", maxWidth: 480, background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1.25rem", padding: "1.5rem", animation: "modalIn 0.25s ease", maxHeight: "90vh", overflowY: "auto" }}>
+                        <div style={{ width: "100%", maxWidth: 480, background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-2xl)", padding: "1.5rem", animation: "modalIn 0.25s ease", maxHeight: "90vh", overflowY: "auto" }}>
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
                                 <h2 style={{ margin: 0, fontSize: typography.lg, fontWeight: 800, color: cssVar.textPrimary }}>
                                     {modal === "create" ? "Nouveau restaurant" : modal === "edit" ? "Modifier le restaurant" : selected?.is_active ? "Suspendre le restaurant" : "Activer le restaurant"}
                                 </h2>
-                                <button onClick={closeModal} style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "0.5rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", cursor: "pointer", color: cssVar.textMuted }}>
+                                <button onClick={closeModal} style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--radius-md)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", cursor: "pointer", color: cssVar.textMuted }}>
                                     <X size={15} />
                                 </button>
                             </div>
@@ -395,7 +395,7 @@ export default function RestaurantsPage() {
                     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", marginBottom: "1.75rem" }}>
                         <div>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.3rem" }}>
-                                <div style={{ width: 40, height: 40, borderRadius: "0.875rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--amber-glow)" }}>
+                                <div style={{ width: 40, height: 40, borderRadius: "var(--radius-xl)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--amber-glow)" }}>
                                     <Building2 size={20} />
                                 </div>
                                 <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: cssVar.textPrimary }}>Restaurants</h1>
@@ -421,7 +421,7 @@ export default function RestaurantsPage() {
                                 { label: "Actifs", val: stats.restaurants_actifs, color: "#22c55e" },
                                 { label: "Suspendus", val: stats.restaurants_suspendus, color: "#ef4444" },
                             ].map(s => (
-                                <div key={s.label} style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "0.875rem", padding: "0.875rem 1rem" }}>
+                                <div key={s.label} style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-xl)", padding: "0.875rem 1rem" }}>
                                     <p style={{ margin: "0 0 2px", fontSize: typography.xs, color: cssVar.textMuted, textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 700 }}>{s.label}</p>
                                     <p style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: s.color }}>{s.val}</p>
                                 </div>
@@ -492,7 +492,7 @@ export default function RestaurantsPage() {
                                             <tr key={r.id} className="rts-row">
                                                 <td>
                                                     <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
-                                                        <div style={{ width: 34, height: 34, borderRadius: "0.625rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.72rem", fontWeight: 800, color: "var(--amber-glow)", flexShrink: 0 }}>
+                                                        <div style={{ width: 34, height: 34, borderRadius: "var(--radius-lg)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.72rem", fontWeight: 800, color: "var(--amber-glow)", flexShrink: 0 }}>
                                                             {r.nom.slice(0, 2).toUpperCase()}
                                                         </div>
                                                         <span style={{ fontSize: typography.sm, fontWeight: 700, color: cssVar.textPrimary }}>{r.nom}</span>
@@ -525,7 +525,7 @@ export default function RestaurantsPage() {
                                     <div key={r.id} className="rts-card">
                                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                                             <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
-                                                <div style={{ width: 36, height: 36, borderRadius: "0.625rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.75rem", fontWeight: 800, color: "var(--amber-glow)", flexShrink: 0 }}>
+                                                <div style={{ width: 36, height: 36, borderRadius: "var(--radius-lg)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.75rem", fontWeight: 800, color: "var(--amber-glow)", flexShrink: 0 }}>
                                                     {r.nom.slice(0, 2).toUpperCase()}
                                                 </div>
                                                 <div>
@@ -540,13 +540,13 @@ export default function RestaurantsPage() {
                                             <span>Créé {fmt(r.created_at)}</span>
                                         </div>
                                         <div style={{ display: "flex", gap: "0.4rem", borderTop: "1px solid var(--border-subtle)", paddingTop: "0.5rem" }}>
-                                            <button onClick={() => { setSelected(r); setFormError(null); setModal("edit"); }} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "0.5rem", border: "1px solid var(--border-subtle)", background: "transparent", color: cssVar.textMuted, fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
+                                            <button onClick={() => { setSelected(r); setFormError(null); setModal("edit"); }} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "var(--radius-md)", border: "1px solid var(--border-subtle)", background: "transparent", color: cssVar.textMuted, fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
                                                 <Pencil size={12} /> Modifier
                                             </button>
-                                            <button onClick={() => { setSelected(r); setModal("toggle"); }} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "0.5rem", border: `1px solid ${r.is_active ? "rgba(239,68,68,0.3)" : "rgba(34,197,94,0.3)"}`, background: "transparent", color: r.is_active ? "#ef4444" : "#22c55e", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
+                                            <button onClick={() => { setSelected(r); setModal("toggle"); }} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "var(--radius-md)", border: `1px solid ${r.is_active ? "rgba(239,68,68,0.3)" : "rgba(34,197,94,0.3)"}`, background: "transparent", color: r.is_active ? "#ef4444" : "#22c55e", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
                                                 <Power size={12} /> {r.is_active ? "Suspendre" : "Activer"}
                                             </button>
-                                            <button onClick={() => { setSelected(r); setDeletePassword(""); setDeleteError(""); setModal("delete"); }} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "0.5rem", border: "1px solid rgba(239,68,68,0.3)", background: "transparent", color: "#ef4444", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
+                                            <button onClick={() => { setSelected(r); setDeletePassword(""); setDeleteError(""); setModal("delete"); }} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "var(--radius-md)", border: "1px solid rgba(239,68,68,0.3)", background: "transparent", color: "#ef4444", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
                                                 <Trash2 size={12} /> Supprimer
                                             </button>
                                         </div>

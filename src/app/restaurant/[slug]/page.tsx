@@ -111,12 +111,12 @@ export default function RestaurantPublicPage() {
                         <input
                             value={search} onChange={(e) => setSearch(e.target.value)}
                             placeholder="Rechercher un plat…"
-                            style={{ width: "100%", padding: "0.55rem 0.75rem 0.55rem 2rem", borderRadius: "0.65rem", border: "1px solid var(--border-subtle)", background: "var(--bg-card)", color: "var(--text-primary)", fontSize: "0.85rem", boxSizing: "border-box", outline: "none" }}
+                            style={{ width: "100%", padding: "0.55rem 0.75rem 0.55rem 2rem", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)", background: "var(--bg-card)", color: "var(--text-primary)", fontSize: "0.85rem", boxSizing: "border-box", outline: "none" }}
                         />
                     </div>
                     {CATEGORIES.map((c) => (
                         <button key={c.value} onClick={() => setCategorie(c.value)} className="cat-pill"
-                            style={{ padding: "0.45rem 0.875rem", borderRadius: "99px", border: `1px solid ${categorie === c.value ? "#f59e0b" : "var(--border-subtle)"}`, background: categorie === c.value ? "rgba(245,158,11,0.12)" : "transparent", color: categorie === c.value ? "#f59e0b" : "var(--text-muted)", fontSize: "0.8rem", fontWeight: 600, whiteSpace: "nowrap" }}>
+                            style={{ padding: "0.45rem 0.875rem", borderRadius: "var(--radius-full)", border: `1px solid ${categorie === c.value ? "#f59e0b" : "var(--border-subtle)"}`, background: categorie === c.value ? "var(--bg-section-alt)" : "transparent", color: categorie === c.value ? "#f59e0b" : "var(--text-muted)", fontSize: "0.8rem", fontWeight: 600, whiteSpace: "nowrap" }}>
                             {c.label}
                         </button>
                     ))}
@@ -131,7 +131,7 @@ export default function RestaurantPublicPage() {
                             const inCart = items.find((i) => i.platId === plat.id);
                             const color = CATEGORIE_COLOR[plat.categorie] ?? "#f59e0b";
                             return (
-                                <div key={plat.id} className="plat-card" style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1rem", overflow: "hidden" }}>
+                                <div key={plat.id} className="plat-card" style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-xl)", overflow: "hidden" }}>
                                     {/* Image */}
                                     <div style={{ height: 160, background: "var(--bg-section-alt)", position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                         {plat.image_url ? (
@@ -139,7 +139,7 @@ export default function RestaurantPublicPage() {
                                         ) : (
                                             <Utensils size={36} style={{ opacity: 0.12, color: "var(--text-muted)" }} />
                                         )}
-                                        <span style={{ position: "absolute", top: "0.5rem", left: "0.5rem", padding: "2px 8px", borderRadius: "99px", background: `${color}22`, border: `1px solid ${color}44`, color, fontSize: "0.7rem", fontWeight: 700 }}>
+                                        <span style={{ position: "absolute", top: "0.5rem", left: "0.5rem", padding: "2px 8px", borderRadius: "var(--radius-full)", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", color, fontSize: "0.7rem", fontWeight: 700 }}>
                                             {CATEGORIES.find(c => c.value === plat.categorie)?.label ?? plat.categorie}
                                         </span>
                                     </div>
@@ -180,8 +180,8 @@ export default function RestaurantPublicPage() {
             {/* Barre panier fixe en bas */}
             {count > 0 && (
                 <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "0.875rem 1rem", background: "var(--bg-card)", borderTop: "1px solid var(--border-subtle)", backdropFilter: "blur(12px)", zIndex: 50 }}>
-                    <button onClick={handleCommander} style={{ width: "100%", maxWidth: 500, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.875rem 1.25rem", borderRadius: "0.875rem", border: "none", background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "#0c0a09", fontWeight: 800, fontSize: "0.95rem", cursor: "pointer" }}>
-                        <span style={{ background: "rgba(0,0,0,0.15)", borderRadius: "0.4rem", padding: "0.2rem 0.6rem" }}>{count}</span>
+                    <button onClick={handleCommander} style={{ width: "100%", maxWidth: 500, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.875rem 1.25rem", borderRadius: "var(--radius-xl)", border: "none", background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "#0c0a09", fontWeight: 800, fontSize: "0.95rem", cursor: "pointer" }}>
+                        <span style={{ background: "rgba(0,0,0,0.15)", borderRadius: "var(--radius-sm)", padding: "0.2rem 0.6rem" }}>{count}</span>
                         <span>Passer la commande</span>
                         <span>{total.toLocaleString("fr-FR")} GNF</span>
                     </button>

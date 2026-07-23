@@ -74,7 +74,7 @@ export default function QRLoginPage() {
 
                     {/* Icône */}
                     <div style={{
-                        width: 56, height: 56, borderRadius: "1rem",
+                        width: 56, height: 56, borderRadius: "var(--radius-xl)",
                         background: phase === "error" ? "rgba(239,68,68,0.1)" : phase === "requesting_gps" ? "rgba(59,130,246,0.1)" : "rgba(245,158,11,0.1)",
                         border: `1px solid ${phase === "error" ? "rgba(239,68,68,0.25)" : phase === "requesting_gps" ? "rgba(59,130,246,0.25)" : "rgba(245,158,11,0.25)"}`,
                         display: "flex", alignItems: "center", justifyContent: "center",
@@ -108,7 +108,7 @@ export default function QRLoginPage() {
                             <p style={{ margin: "0 0 1.5rem", fontSize: "0.875rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.6 }}>{error}</p>
                             <button
                                 onClick={() => router.replace("/auth/login")}
-                                style={{ padding: "0.7rem 1.75rem", borderRadius: "0.75rem", border: `1px solid rgba(245,158,11,0.3)`, background: "transparent", color: amber, fontWeight: 700, fontSize: "0.875rem", cursor: "pointer" }}
+                                style={{ padding: "0.7rem 1.75rem", borderRadius: "var(--radius-lg)", border: `1px solid rgba(245,158,11,0.3)`, background: "transparent", color: amber, fontWeight: 700, fontSize: "0.875rem", cursor: "pointer" }}
                             >
                                 Aller à la connexion
                             </button>

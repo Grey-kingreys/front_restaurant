@@ -118,7 +118,7 @@ export default function ApprovisionnementsPage() {
                     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", marginBottom: "1.5rem" }}>
                         <div>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.3rem" }}>
-                                <div style={{ width: 40, height: 40, borderRadius: "0.875rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "#f59e0b" }}>
+                                <div style={{ width: 40, height: 40, borderRadius: "var(--radius-xl)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "#f59e0b" }}>
                                     <Wallet size={20} />
                                 </div>
                                 <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: cssVar.textPrimary }}>Approvisionnements</h1>
@@ -163,7 +163,7 @@ export default function ApprovisionnementsPage() {
                                                     {d.comptable_nom ?? d.demande_par_login ?? "—"} · {fmt(d.created_at)}
                                                 </p>
                                             </div>
-                                            <span style={{ fontSize: "0.7rem", fontWeight: 700, color: s.color, background: `${s.color}1a`, border: `1px solid ${s.color}40`, padding: "0.2rem 0.6rem", borderRadius: "9999px", whiteSpace: "nowrap" }}>{s.label}</span>
+                                            <span style={{ fontSize: "0.7rem", fontWeight: 700, color: s.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", padding: "0.2rem 0.6rem", borderRadius: "var(--radius-full)", whiteSpace: "nowrap" }}>{s.label}</span>
                                         </div>
                                         <p style={{ margin: "0 0 0.5rem", fontSize: typography.sm, color: cssVar.textSecondary }}>{d.motif}</p>
                                         {d.statut === "refusee" && d.motif_refus && (

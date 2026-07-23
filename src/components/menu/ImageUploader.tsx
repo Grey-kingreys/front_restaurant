@@ -59,7 +59,7 @@ export function ImageUploader({ value, preview, onChange, error }: ImageUploader
                         : error
                             ? "rgba(239,68,68,0.5)"
                             : "var(--border-subtle)"}`,
-                    borderRadius: "1rem",
+                    borderRadius: "var(--radius-xl)",
                     background: dragging
                         ? "rgba(245,158,11,0.05)"
                         : "var(--bg-section-alt)",

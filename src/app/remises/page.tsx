@@ -29,10 +29,10 @@ function StatutBadge({ valide }: { valide: boolean }) {
     return (
         <span style={{
             display: "inline-flex", alignItems: "center", gap: "0.3rem",
-            padding: "0.2rem 0.6rem", borderRadius: "9999px", fontSize: "0.7rem", fontWeight: 700,
+            padding: "0.2rem 0.6rem", borderRadius: "var(--radius-full)", fontSize: "0.7rem", fontWeight: 700,
             color: valide ? "#22c55e" : "#f59e0b",
-            background: valide ? "rgba(34,197,94,0.1)" : "rgba(245,158,11,0.1)",
-            border: `1px solid ${valide ? "rgba(34,197,94,0.25)" : "rgba(245,158,11,0.25)"}`,
+            background: "var(--bg-section-alt)",
+            border: "1px solid var(--border-subtle)",
         }}>
             <span style={{ width: 5, height: 5, borderRadius: "50%", background: valide ? "#22c55e" : "#f59e0b" }} />
             {valide ? "Validée" : "En attente"}
@@ -115,7 +115,7 @@ export default function RemisesPage() {
                     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", marginBottom: "1.75rem" }}>
                         <div>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.3rem" }}>
-                                <div style={{ width: 40, height: 40, borderRadius: "0.875rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "#a855f7" }}>
+                                <div style={{ width: 40, height: 40, borderRadius: "var(--radius-xl)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "#a855f7" }}>
                                     <Banknote size={20} />
                                 </div>
                                 <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: cssVar.textPrimary }}>Mes remises</h1>
@@ -138,7 +138,7 @@ export default function RemisesPage() {
                                 { label: "En attente", val: enAttente.length, color: "#f59e0b" },
                                 { label: "Total virtuel", val: `${totalVirtuels.toLocaleString("fr-FR")} GNF`, color: "#3b82f6" },
                             ].map(s => (
-                                <div key={s.label} style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "0.875rem", padding: "0.875rem 1rem" }}>
+                                <div key={s.label} style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-xl)", padding: "0.875rem 1rem" }}>
                                     <p style={{ margin: "0 0 2px", fontSize: typography.xs, color: cssVar.textMuted, textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 700 }}>{s.label}</p>
                                     <p style={{ margin: 0, fontSize: "1.125rem", fontWeight: 800, color: s.color }}>{s.val}</p>
                                 </div>
@@ -152,7 +152,7 @@ export default function RemisesPage() {
                             <select
                                 value={filterValide}
                                 onChange={e => setFilterValide(e.target.value as "" | "true" | "false")}
-                                style={{ background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", borderRadius: "0.625rem", padding: "0.5rem 2rem 0.5rem 0.75rem", color: cssVar.textPrimary, fontSize: "0.8rem", fontWeight: 600, outline: "none", appearance: "none", cursor: "pointer" }}
+                                style={{ background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-lg)", padding: "0.5rem 2rem 0.5rem 0.75rem", color: cssVar.textPrimary, fontSize: "0.8rem", fontWeight: 600, outline: "none", appearance: "none", cursor: "pointer" }}
                             >
                                 <option value="">Toutes les remises</option>
                                 <option value="true">Validées</option>
@@ -204,7 +204,7 @@ export default function RemisesPage() {
                                             {fmt(r.created_at)}
                                         </p>
                                         {r.motif_ecart && (
-                                            <p style={{ margin: "0.2rem 0 0", fontSize: "0.7rem", color: "#f59e0b", background: "rgba(245,158,11,0.08)", padding: "0.15rem 0.4rem", borderRadius: "0.375rem", display: "inline-block" }}>
+                                            <p style={{ margin: "0.2rem 0 0", fontSize: "0.7rem", color: "#f59e0b", background: "rgba(245,158,11,0.08)", padding: "0.15rem 0.4rem", borderRadius: "var(--radius-sm)", display: "inline-block" }}>
                                                 ⚠ {r.motif_ecart}
                                             </p>
                                         )}

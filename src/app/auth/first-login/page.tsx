@@ -58,6 +58,14 @@ const IconEye = ({ open }: { open: boolean }) => (
     </svg>
 );
 
+// Défini au niveau module : sinon recréé à chaque render (frappe clavier) →
+// BrandLogo se remonte → clignotement du logo (retour incubateur #6).
+const Logo = () => (
+    <div style={{ textAlign: "center", marginBottom: spacing["8"] }}>
+        <BrandLogo href="/" size={44} priority />
+    </div>
+);
+
 // ── Contenu principal ──────────────────────────────────────────────────────
 
 function FirstLoginContent() {
@@ -112,12 +120,6 @@ function FirstLoginContent() {
             setSubmitting(false);
         }
     };
-
-    const Logo = () => (
-        <div style={{ textAlign: "center", marginBottom: spacing["8"] }}>
-            <BrandLogo href="/" size={44} />
-        </div>
-    );
 
     // ── Chargement ──────────────────────────────────────────────────────────
     if (state === "loading") {

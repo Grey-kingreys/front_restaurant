@@ -105,7 +105,7 @@ function SidebarInner({
                 fontSize: typography.base, fontWeight: active ? typography.semibold : typography.medium,
                 color: active ? cssVar.amberGlow : cssVar.textSecondary,
                 textDecoration: "none",
-                background: active ? "rgba(245,158,11,0.08)" : "transparent",
+                background: active ? cssVar.bgSectionAlt : "transparent",
                 borderLeft: `2px solid ${active ? cssVar.amberGlow : "transparent"}`,
                 transition: "all 0.15s ease",
             }}

@@ -71,9 +71,9 @@ export default function ClientDashboardPage() {
                 {statCards.map((s) => {
                     const Ic = s.icon;
                     return (
-                        <div key={s.label} style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1rem", padding: "1.25rem" }}>
+                        <div key={s.label} style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-xl)", padding: "1.25rem" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.6rem" }}>
-                                <div style={{ width: 36, height: 36, borderRadius: "0.6rem", background: `${s.color}1f`, border: `1px solid ${s.color}40`, display: "flex", alignItems: "center", justifyContent: "center", color: s.color }}>
+                                <div style={{ width: 36, height: 36, borderRadius: "var(--radius-lg)", background: `${s.color}1f`, border: `1px solid ${s.color}40`, display: "flex", alignItems: "center", justifyContent: "center", color: s.color }}>
                                     <Ic size={18} />
                                 </div>
                                 <span style={{ fontSize: "0.82rem", color: "var(--text-muted)" }}>{s.label}</span>
@@ -87,7 +87,7 @@ export default function ClientDashboardPage() {
             {/* CTA parcourir */}
             <Link href="/client/restaurants" style={{
                 display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem",
-                padding: "1.25rem 1.5rem", borderRadius: "1rem", marginBottom: "1.75rem",
+                padding: "1.25rem 1.5rem", borderRadius: "var(--radius-xl)", marginBottom: "1.75rem",
                 background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "#0c0a09", textDecoration: "none",
             }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.875rem" }}>
@@ -113,7 +113,7 @@ export default function ClientDashboardPage() {
                     {loading ? (
                         <div style={{ color: "var(--text-muted)", fontSize: "0.9rem", padding: "1rem 0" }}>Chargement…</div>
                     ) : commandes.length === 0 ? (
-                        <div style={{ background: "var(--bg-card)", border: "1px dashed var(--border-subtle)", borderRadius: "1rem", padding: "2rem", textAlign: "center", color: "var(--text-muted)" }}>
+                        <div style={{ background: "var(--bg-card)", border: "1px dashed var(--border-subtle)", borderRadius: "var(--radius-xl)", padding: "2rem", textAlign: "center", color: "var(--text-muted)" }}>
                             <ClipboardList size={28} style={{ opacity: 0.4, marginBottom: "0.5rem" }} />
                             <p style={{ margin: 0, fontSize: "0.9rem" }}>Aucune commande pour l'instant.</p>
                         </div>
@@ -123,7 +123,7 @@ export default function ClientDashboardPage() {
                                 const color = STATUT_COLOR[c.statut] ?? "#f59e0b";
                                 return (
                                     <button key={c.commande_id} onClick={() => router.push(`/restaurant/${c.restaurant_slug}/confirmation/${c.cle_suivi}`)}
-                                        style={{ textAlign: "left", cursor: "pointer", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "0.875rem", padding: "0.875rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem" }}>
+                                        style={{ textAlign: "left", cursor: "pointer", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-xl)", padding: "0.875rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem" }}>
                                         <div style={{ minWidth: 0 }}>
                                             <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontWeight: 700, color: "var(--text-primary)", fontSize: "0.9rem" }}>
                                                 {c.type_commande === "livraison" ? <Truck size={14} /> : <ShoppingBag size={14} />}
@@ -135,7 +135,7 @@ export default function ClientDashboardPage() {
                                         </div>
                                         <div style={{ textAlign: "right", flexShrink: 0 }}>
                                             <div style={{ fontWeight: 800, color: "#f59e0b", fontSize: "0.9rem" }}>{formatGNF(c.montant_total)}</div>
-                                            <span style={{ display: "inline-block", marginTop: "0.2rem", padding: "2px 8px", borderRadius: "99px", background: `${color}1f`, border: `1px solid ${color}40`, color, fontSize: "0.68rem", fontWeight: 700 }}>{c.statut_label}</span>
+                                            <span style={{ display: "inline-block", marginTop: "0.2rem", padding: "2px 8px", borderRadius: "var(--radius-full)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color, fontSize: "0.68rem", fontWeight: 700 }}>{c.statut_label}</span>
                                         </div>
                                     </button>
                                 );
@@ -156,21 +156,21 @@ export default function ClientDashboardPage() {
                     {loading ? (
                         <div style={{ color: "var(--text-muted)", fontSize: "0.9rem", padding: "1rem 0" }}>Chargement…</div>
                     ) : restos.length === 0 ? (
-                        <div style={{ background: "var(--bg-card)", border: "1px dashed var(--border-subtle)", borderRadius: "1rem", padding: "2rem", textAlign: "center", color: "var(--text-muted)" }}>
+                        <div style={{ background: "var(--bg-card)", border: "1px dashed var(--border-subtle)", borderRadius: "var(--radius-xl)", padding: "2rem", textAlign: "center", color: "var(--text-muted)" }}>
                             <ChefHat size={28} style={{ opacity: 0.4, marginBottom: "0.5rem" }} />
                             <p style={{ margin: 0, fontSize: "0.9rem" }}>Aucun restaurant disponible.</p>
                         </div>
                     ) : (
                         <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
                             {restos.slice(0, 4).map((r) => (
-                                <Link key={r.id} href={`/restaurant/${r.slug}`} style={{ textDecoration: "none", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "0.875rem", padding: "0.875rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem" }}>
+                                <Link key={r.id} href={`/restaurant/${r.slug}`} style={{ textDecoration: "none", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-xl)", padding: "0.875rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem" }}>
                                     <div style={{ minWidth: 0 }}>
                                         <div style={{ fontWeight: 700, color: "var(--text-primary)", fontSize: "0.9rem" }}>{r.nom}</div>
                                         {r.adresse && <div style={{ display: "flex", alignItems: "center", gap: "0.25rem", fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.2rem" }}><MapPin size={11} />{r.adresse}</div>}
                                     </div>
                                     <div style={{ display: "flex", gap: "0.3rem", flexShrink: 0 }}>
-                                        {r.accept_livraison && <span style={{ display: "flex", alignItems: "center", gap: "0.2rem", padding: "2px 7px", borderRadius: "99px", background: "var(--bg-section-alt)", color: "#8b5cf6", fontSize: "0.66rem", fontWeight: 700 }}><Truck size={10} />Livraison</span>}
-                                        {r.accept_emporter && <span style={{ display: "flex", alignItems: "center", gap: "0.2rem", padding: "2px 7px", borderRadius: "99px", background: "var(--bg-section-alt)", color: "#f59e0b", fontSize: "0.66rem", fontWeight: 700 }}><ShoppingBag size={10} />Emporter</span>}
+                                        {r.accept_livraison && <span style={{ display: "flex", alignItems: "center", gap: "0.2rem", padding: "2px 7px", borderRadius: "var(--radius-full)", background: "var(--bg-section-alt)", color: "#8b5cf6", fontSize: "0.66rem", fontWeight: 700 }}><Truck size={10} />Livraison</span>}
+                                        {r.accept_emporter && <span style={{ display: "flex", alignItems: "center", gap: "0.2rem", padding: "2px 7px", borderRadius: "var(--radius-full)", background: "var(--bg-section-alt)", color: "#f59e0b", fontSize: "0.66rem", fontWeight: 700 }}><ShoppingBag size={10} />Emporter</span>}
                                     </div>
                                 </Link>
                             ))}

@@ -38,7 +38,7 @@ interface ThemeSwitcherProps {
 export default function ThemeSwitcher({ variant = "sidebar" }: ThemeSwitcherProps) {
     const { themeMode, setThemeMode } = useTheme();
     const [open, setOpen] = useState(false);
-    const [dropRect, setDropRect] = useState<{ top: number; left: number; width: number } | null>(null);
+    const [dropRect, setDropRect] = useState<{ top?: number; bottom?: number; left: number; width: number } | null>(null);
     const ref     = useRef<HTMLDivElement>(null);
     const btnRef  = useRef<HTMLButtonElement>(null);
 
@@ -63,7 +63,14 @@ export default function ThemeSwitcher({ variant = "sidebar" }: ThemeSwitcherProp
     const handlePageToggle = () => {
         if (!open && btnRef.current) {
             const r = btnRef.current.getBoundingClientRect();
-            setDropRect({ top: r.bottom + 6, left: r.left, width: r.width });
+            const MENU_H = 148; // hauteur approx. des 3 options + padding
+            const openUp = window.innerHeight - r.bottom < MENU_H + 12;
+            setDropRect({
+                top: openUp ? undefined : r.bottom + 6,
+                bottom: openUp ? window.innerHeight - r.top + 6 : undefined,
+                left: r.left,
+                width: r.width,
+            });
         }
         setOpen((v) => !v);
     };
@@ -81,7 +88,7 @@ export default function ThemeSwitcher({ variant = "sidebar" }: ThemeSwitcherProp
                         display: "flex", alignItems: "center", justifyContent: "center",
                         borderRadius: radius.md,
                         border: `1px solid ${open ? cssVar.borderAmberHover : cssVar.borderSubtle}`,
-                        background: open ? "rgba(245,158,11,0.08)" : "transparent",
+                        background: open ? cssVar.bgSectionAlt : "transparent",
                         color: open ? cssVar.amberGlow : cssVar.textMuted,
                         cursor: "pointer",
                         transition: "all 0.15s ease",
@@ -126,7 +133,7 @@ export default function ThemeSwitcher({ variant = "sidebar" }: ThemeSwitcherProp
                                         display: "flex", alignItems: "center", gap: "0.55rem",
                                         width: "100%", padding: "0.45rem 0.65rem",
                                         borderRadius: radius.lg, border: "none",
-                                        background: active ? "rgba(245,158,11,0.10)" : "transparent",
+                                        background: active ? cssVar.bgSectionAlt : "transparent",
                                         color: active ? cssVar.amberGlow : cssVar.textSecondary,
                                         fontWeight: active ? typography.semibold : typography.medium,
                                         fontSize: typography.base, cursor: "pointer",
@@ -229,8 +236,8 @@ export default function ThemeSwitcher({ variant = "sidebar" }: ThemeSwitcherProp
             {open && (
                 <div style={{
                     position: variant === "page" && dropRect ? "fixed" : "absolute",
-                    top: variant === "page" && dropRect ? dropRect.top : (dropUp ? "auto" : "calc(100% + 6px)"),
-                    bottom: variant === "page" ? "auto" : (dropUp ? "calc(100% + 6px)" : "auto"),
+                    top: variant === "page" && dropRect ? (dropRect.top ?? "auto") : (dropUp ? "auto" : "calc(100% + 6px)"),
+                    bottom: variant === "page" && dropRect ? (dropRect.bottom ?? "auto") : (variant === "page" ? "auto" : (dropUp ? "calc(100% + 6px)" : "auto")),
                     left: variant === "page" && dropRect ? dropRect.left : 0,
                     right: variant === "page" ? "auto" : (isSidebar ? 0 : "auto"),
                     minWidth: variant === "page" && dropRect ? dropRect.width : 160,
@@ -239,7 +246,8 @@ export default function ThemeSwitcher({ variant = "sidebar" }: ThemeSwitcherProp
                     borderRadius: radius.xl,
                     boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
                     zIndex: 9999,
-                    overflow: "hidden",
+                    maxHeight: "calc(100vh - 1.5rem)",
+                    overflowY: "auto",
                     padding: "0.3rem",
                 }}>
                     {OPTIONS.map((opt) => {
@@ -256,7 +264,7 @@ export default function ThemeSwitcher({ variant = "sidebar" }: ThemeSwitcherProp
                                     padding: "0.45rem 0.65rem",
                                     borderRadius: radius.lg,
                                     border: "none",
-                                    background: active ? "rgba(245,158,11,0.10)" : "transparent",
+                                    background: active ? cssVar.bgSectionAlt : "transparent",
                                     color: active ? cssVar.amberGlow : cssVar.textSecondary,
                                     fontWeight: active ? typography.semibold : typography.medium,
                                     fontSize: typography.base,

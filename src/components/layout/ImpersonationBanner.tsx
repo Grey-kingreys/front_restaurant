@@ -44,7 +44,7 @@ export default function ImpersonationBanner() {
                 color: "#fff",
                 background: "rgba(255,255,255,0.15)",
                 padding: "0.1rem 0.6rem",
-                borderRadius: "9999px",
+                borderRadius: "var(--radius-full)",
                 border: "1px solid rgba(255,255,255,0.25)",
             }}>
                 {user.nom_complet ?? user.login} · {roleLabel}
@@ -54,7 +54,7 @@ export default function ImpersonationBanner() {
                 style={{
                     height: "1.6rem",
                     padding: "0 0.65rem",
-                    borderRadius: "9999px",
+                    borderRadius: "var(--radius-full)",
                     border: "1px solid rgba(255,255,255,0.35)",
                     background: "rgba(255,255,255,0.12)",
                     color: "#fff",

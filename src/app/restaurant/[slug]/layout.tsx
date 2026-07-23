@@ -26,7 +26,7 @@ function PublicHeader({ slug, inApp }: { slug: string; inApp: boolean }) {
         }}>
             {/* Logo */}
             <button onClick={() => router.push(`/restaurant/${slug}`)} style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "none", border: "none", cursor: "pointer" }}>
-                <div style={{ width: 32, height: 32, borderRadius: "0.5rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "#f59e0b" }}>
+                <div style={{ width: 32, height: 32, borderRadius: "var(--radius-md)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "#f59e0b" }}>
                     <ChefHat size={16} />
                 </div>
                 <span style={{ fontWeight: 800, fontSize: "1rem", color: "var(--text-primary)" }}>{restaurantNom || "Menu"}</span>
@@ -36,7 +36,7 @@ function PublicHeader({ slug, inApp }: { slug: string; inApp: boolean }) {
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                 {/* Connexion — uniquement pour un visiteur anonyme (le client connecté a la sidebar) */}
                 {!isClient && (
-                    <button onClick={() => router.push(`/auth/login?next=/restaurant/${slug}`)} style={{ display: "flex", alignItems: "center", gap: "0.35rem", padding: "0.4rem 0.875rem", borderRadius: "0.5rem", border: "1px solid var(--border-subtle)", background: "none", color: "var(--text-muted)", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer" }}>
+                    <button onClick={() => router.push(`/auth/login?next=/restaurant/${slug}`)} style={{ display: "flex", alignItems: "center", gap: "0.35rem", padding: "0.4rem 0.875rem", borderRadius: "var(--radius-md)", border: "1px solid var(--border-subtle)", background: "none", color: "var(--text-muted)", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer" }}>
                         <User size={14} />
                         Connexion
                     </button>
@@ -47,7 +47,7 @@ function PublicHeader({ slug, inApp }: { slug: string; inApp: boolean }) {
                     onClick={() => router.push(`/restaurant/${slug}/checkout`)}
                     style={{
                         position: "relative", display: "flex", alignItems: "center", gap: "0.4rem",
-                        padding: "0.5rem 1rem", borderRadius: "0.65rem",
+                        padding: "0.5rem 1rem", borderRadius: "var(--radius-lg)",
                         background: count > 0 ? "linear-gradient(135deg,#f59e0b,#d97706)" : "var(--bg-section-alt)",
                         border: count > 0 ? "none" : "1px solid var(--border-subtle)",
                         color: count > 0 ? "#0c0a09" : "var(--text-muted)",

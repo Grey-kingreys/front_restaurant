@@ -99,7 +99,7 @@ export default function ReservationsPage() {
     };
 
     const inputStyle: React.CSSProperties = {
-        width: "100%", padding: "0.6rem 0.75rem", borderRadius: "0.65rem",
+        width: "100%", padding: "0.6rem 0.75rem", borderRadius: "var(--radius-lg)",
         border: "1px solid var(--border-subtle)", background: "var(--bg-card)",
         color: "var(--text-primary)", fontSize: "0.9rem", boxSizing: "border-box", outline: "none",
     };
@@ -113,7 +113,7 @@ export default function ReservationsPage() {
             </div>
 
             {/* Formulaire de réservation */}
-            <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1rem", padding: "1.25rem", marginBottom: "2rem" }}>
+            <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-xl)", padding: "1.25rem", marginBottom: "2rem" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: "0.875rem", marginBottom: "1rem" }}>
                     <div>
                         <label style={labelStyle}><Store size={13} />Restaurant</label>
@@ -143,25 +143,25 @@ export default function ReservationsPage() {
 
                 <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap", marginTop: "1rem" }}>
                     <button onClick={verifier} disabled={!slug || checking}
-                        style={{ padding: "0.65rem 1.1rem", borderRadius: "0.75rem", border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: "var(--text-primary)", fontWeight: 700, fontSize: "0.88rem", cursor: slug ? "pointer" : "not-allowed" }}>
+                        style={{ padding: "0.65rem 1.1rem", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: "var(--text-primary)", fontWeight: 700, fontSize: "0.88rem", cursor: slug ? "pointer" : "not-allowed" }}>
                         {checking ? "Vérification…" : "Vérifier la disponibilité"}
                     </button>
                     <button onClick={handleReserver} disabled={!slug || submitting}
-                        style={{ flex: 1, minWidth: 180, padding: "0.65rem 1.25rem", borderRadius: "0.75rem", border: "none", background: (!slug || submitting) ? "rgba(245,158,11,0.5)" : "linear-gradient(135deg,#f59e0b,#d97706)", color: "#0c0a09", fontWeight: 800, fontSize: "0.9rem", cursor: (!slug || submitting) ? "not-allowed" : "pointer" }}>
+                        style={{ flex: 1, minWidth: 180, padding: "0.65rem 1.25rem", borderRadius: "var(--radius-lg)", border: "none", background: (!slug || submitting) ? "rgba(245,158,11,0.5)" : "linear-gradient(135deg,#f59e0b,#d97706)", color: "#0c0a09", fontWeight: 800, fontSize: "0.9rem", cursor: (!slug || submitting) ? "not-allowed" : "pointer" }}>
                         {submitting ? "Envoi…" : "Réserver"}
                     </button>
                 </div>
 
                 {/* Résultat de la vérification */}
                 {dispo && (
-                    <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.7rem 0.9rem", borderRadius: "0.75rem", fontSize: "0.82rem", background: dispo.disponible ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)", border: `1px solid ${dispo.disponible ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}`, color: dispo.disponible ? "#22c55e" : "#ef4444" }}>
+                    <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.7rem 0.9rem", borderRadius: "var(--radius-lg)", fontSize: "0.82rem", background: dispo.disponible ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)", border: `1px solid ${dispo.disponible ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}`, color: dispo.disponible ? "#22c55e" : "#ef4444" }}>
                         {dispo.disponible ? <Check size={15} /> : <AlertCircle size={15} />}
                         <span>{dispo.message}{dispo.disponible && ` — durée prévue ${dispo.duree_minutes} min (jusqu'à ${dispo.heure_fin}).`}</span>
                     </div>
                 )}
 
                 {formMsg && (
-                    <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.7rem 0.9rem", borderRadius: "0.75rem", fontSize: "0.82rem", background: formMsg.type === "ok" ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)", border: `1px solid ${formMsg.type === "ok" ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}`, color: formMsg.type === "ok" ? "#22c55e" : "#ef4444" }}>
+                    <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.7rem 0.9rem", borderRadius: "var(--radius-lg)", fontSize: "0.82rem", background: formMsg.type === "ok" ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)", border: `1px solid ${formMsg.type === "ok" ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}`, color: formMsg.type === "ok" ? "#22c55e" : "#ef4444" }}>
                         {formMsg.type === "ok" ? <Check size={15} /> : <AlertCircle size={15} />}
                         {formMsg.text}
                     </div>
@@ -177,7 +177,7 @@ export default function ReservationsPage() {
             {loadingResas ? (
                 <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Chargement…</p>
             ) : reservations.length === 0 ? (
-                <div style={{ background: "var(--bg-card)", border: "1px dashed var(--border-subtle)", borderRadius: "1rem", padding: "2rem", textAlign: "center", color: "var(--text-muted)" }}>
+                <div style={{ background: "var(--bg-card)", border: "1px dashed var(--border-subtle)", borderRadius: "var(--radius-xl)", padding: "2rem", textAlign: "center", color: "var(--text-muted)" }}>
                     <CalendarDays size={28} style={{ opacity: 0.4, marginBottom: "0.5rem" }} />
                     <p style={{ margin: 0, fontSize: "0.9rem" }}>Aucune réservation pour l'instant.</p>
                 </div>
@@ -186,8 +186,8 @@ export default function ReservationsPage() {
                     {reservations.map((r) => {
                         const color = STATUT_COLOR[r.statut] ?? "#9ca3af";
                         return (
-                            <div key={r.id} style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1rem", padding: "1rem 1.1rem", display: "flex", alignItems: "center", gap: "1rem" }}>
-                                <div style={{ width: 42, height: 42, borderRadius: "0.7rem", flexShrink: 0, background: `${color}1f`, border: `1px solid ${color}40`, display: "flex", alignItems: "center", justifyContent: "center", color }}>
+                            <div key={r.id} style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-xl)", padding: "1rem 1.1rem", display: "flex", alignItems: "center", gap: "1rem" }}>
+                                <div style={{ width: 42, height: 42, borderRadius: "var(--radius-lg)", flexShrink: 0, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color }}>
                                     <Armchair size={20} />
                                 </div>
                                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -197,9 +197,9 @@ export default function ReservationsPage() {
                                     </div>
                                 </div>
                                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.4rem", flexShrink: 0 }}>
-                                    <span style={{ padding: "2px 9px", borderRadius: "99px", background: `${color}1f`, border: `1px solid ${color}40`, color, fontSize: "0.68rem", fontWeight: 700 }}>{r.statut_label}</span>
+                                    <span style={{ padding: "2px 9px", borderRadius: "var(--radius-full)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color, fontSize: "0.68rem", fontWeight: 700 }}>{r.statut_label}</span>
                                     {r.annulable && (
-                                        <button onClick={() => handleAnnuler(r.id)} style={{ display: "flex", alignItems: "center", gap: "0.2rem", padding: "0.25rem 0.6rem", borderRadius: "0.5rem", border: "1px solid var(--border-subtle)", background: "none", color: "var(--text-muted)", fontSize: "0.72rem", cursor: "pointer" }}>
+                                        <button onClick={() => handleAnnuler(r.id)} style={{ display: "flex", alignItems: "center", gap: "0.2rem", padding: "0.25rem 0.6rem", borderRadius: "var(--radius-md)", border: "1px solid var(--border-subtle)", background: "none", color: "var(--text-muted)", fontSize: "0.72rem", cursor: "pointer" }}>
                                             <X size={11} />Annuler
                                         </button>
                                     )}

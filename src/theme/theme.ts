@@ -32,12 +32,12 @@ export const spacing = {
 
 // ── Border-radius ─────────────────────────────────────────────
 export const radius = {
-    sm: "0.375rem",
-    md: "0.5rem",
-    lg: "0.65rem",
-    xl: "0.875rem",
-    "2xl": "1.25rem",
-    full: "9999px",
+    sm: "var(--radius-sm)",
+    md: "var(--radius-md)",
+    lg: "var(--radius-lg)",
+    xl: "var(--radius-xl)",
+    "2xl": "var(--radius-2xl)",
+    full: "var(--radius-full)",
 } as const;
 
 // ── Typography ────────────────────────────────────────────────
@@ -347,10 +347,12 @@ export const authPageRoot: React.CSSProperties = {
 };
 
 // ── Glow ambiant ─────────────────────────────────────────────
+// Lumière chaude discrète en haut de page (pages auth). Atténué (retour
+// incubateur #2 « AI slop ») : d'un halo ambré marqué à une lueur ambiante.
 export const glowOverlay: React.CSSProperties = {
     position: "absolute",
     inset: 0,
     pointerEvents: "none",
     background:
-        "radial-gradient(ellipse 60% 50% at 50% 0%, rgba(245,158,11,0.07) 0%, transparent 70%)",
+        "radial-gradient(ellipse 70% 45% at 50% -5%, rgba(245,158,11,0.035) 0%, transparent 72%)",
 };

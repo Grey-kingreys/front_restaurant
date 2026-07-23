@@ -30,8 +30,8 @@ function PageLoader() {
 
 function StatCard({ title, value, icon, color }: { title: string; value: React.ReactNode; icon: React.ReactNode; color: string }) {
     return (
-        <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1rem", padding: "1rem 1.1rem", display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            <div style={{ width: 40, height: 40, borderRadius: "0.75rem", background: `${color}18`, border: `1px solid ${color}30`, display: "flex", alignItems: "center", justifyContent: "center", color, flexShrink: 0 }}>{icon}</div>
+        <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-xl)", padding: "1rem 1.1rem", display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <div style={{ width: 40, height: 40, borderRadius: "var(--radius-lg)", background: `${color}18`, border: `1px solid ${color}30`, display: "flex", alignItems: "center", justifyContent: "center", color, flexShrink: 0 }}>{icon}</div>
             <div style={{ minWidth: 0 }}>
                 <p style={{ margin: 0, fontSize: typography.xs, color: cssVar.textMuted, textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 700 }}>{title}</p>
                 <p style={{ margin: "2px 0 0", fontSize: typography.base, fontWeight: 800, color: cssVar.textPrimary }}>{value}</p>
@@ -106,7 +106,7 @@ export default function CaisseDetailPage() {
                     {/* En-tête */}
                     <div style={{ marginBottom: "1.5rem" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.3rem" }}>
-                            <div style={{ width: 40, height: 40, borderRadius: "0.875rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "#14b8a6" }}>
+                            <div style={{ width: 40, height: 40, borderRadius: "var(--radius-xl)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "#14b8a6" }}>
                                 <Lock size={18} />
                             </div>
                             <h1 style={{ margin: 0, fontSize: "1.4rem", fontWeight: 800, color: cssVar.textPrimary }}>Caisse du {dateLabel(caisse.opened_at)}</h1>

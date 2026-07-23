@@ -42,7 +42,7 @@ const STATUT_BADGE: Record<string, { label: string; color: string }> = {
 function StatutBadge({ statut }: { statut: string }) {
     const c = STATUT_BADGE[statut] ?? { label: statut, color: "#9ca3af" };
     return (
-        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.6rem", borderRadius: "9999px", fontSize: "0.7rem", fontWeight: 700, color: c.color, background: `${c.color}1a`, border: `1px solid ${c.color}40` }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.6rem", borderRadius: "var(--radius-full)", fontSize: "0.7rem", fontWeight: 700, color: c.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
             <span style={{ width: 5, height: 5, borderRadius: "50%", background: c.color }} />
             {c.label}
         </span>
@@ -141,7 +141,7 @@ export default function LivraisonsPage() {
                     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", marginBottom: "1.75rem" }}>
                         <div>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.3rem" }}>
-                                <div style={{ width: 40, height: 40, borderRadius: "0.875rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "#8b5cf6" }}>
+                                <div style={{ width: 40, height: 40, borderRadius: "var(--radius-xl)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "#8b5cf6" }}>
                                     <Truck size={20} />
                                 </div>
                                 <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: cssVar.textPrimary }}>Livraisons</h1>

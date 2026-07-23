@@ -153,7 +153,7 @@ function TabRestaurant() {
                         <p style={{ margin: 0, fontSize: typography.xs, color: cssVar.textMuted }}>
                             Créé le {new Date(restaurant.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
                         </p>
-                        <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "3px 10px", borderRadius: "99px", fontSize: typography.xs, fontWeight: typography.bold, color: restaurant.is_active ? "#22c55e" : "#ef4444", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "3px 10px", borderRadius: "var(--radius-full)", fontSize: typography.xs, fontWeight: typography.bold, color: restaurant.is_active ? "#22c55e" : "#ef4444", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
                             <span style={{ width: 5, height: 5, borderRadius: "50%", background: restaurant.is_active ? "#22c55e" : "#ef4444" }} />
                             {restaurant.is_active ? "Actif" : "Suspendu"}
                         </span>
@@ -254,7 +254,7 @@ function TabRestaurant() {
                                     <p style={{ margin: 0, fontSize: typography.sm, fontWeight: 600, color: cssVar.textPrimary }}>Aller Retour</p>
                                     <p style={{ margin: 0, fontSize: "0.7rem", color: cssVar.textMuted }}>Livraison assurée par le service partenaire Aller Retour.</p>
                                 </div>
-                                <span style={{ flexShrink: 0, fontSize: "0.65rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: cssVar.amberGlow, background: cssVar.bgSectionAlt, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: "99px", padding: "2px 8px" }}>Bientôt</span>
+                                <span style={{ flexShrink: 0, fontSize: "0.65rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: cssVar.amberGlow, background: cssVar.bgSectionAlt, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: "var(--radius-full)", padding: "2px 8px" }}>Bientôt</span>
                             </div>
                         </div>
 
@@ -476,7 +476,7 @@ function RoleCard({ role, onEdit, onDelete }: { role: RoleConfig; onEdit: (r: Ro
                 <div>
                     <div style={{ display: "flex", alignItems: "center", gap: spacing["2"], flexWrap: "wrap" }}>
                         <span style={{ fontWeight: typography.bold, fontSize: typography.base, color: cssVar.textPrimary }}>{role.nom}</span>
-                        {role.is_system && <span style={{ fontSize: typography.xs, padding: "2px 8px", background: cssVar.bgSectionAlt, color: cssVar.amberGlow, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: "99px" }}>système</span>}
+                        {role.is_system && <span style={{ fontSize: typography.xs, padding: "2px 8px", background: cssVar.bgSectionAlt, color: cssVar.amberGlow, border: `1px solid ${cssVar.borderSubtle}`, borderRadius: "var(--radius-full)" }}>système</span>}
                     </div>
                     <p style={{ margin: "2px 0 0", fontSize: typography.xs, color: cssVar.textMuted, fontFamily: "monospace" }}>{role.slug}</p>
                 </div>
@@ -495,7 +495,7 @@ function RoleCard({ role, onEdit, onDelete }: { role: RoleConfig; onEdit: (r: Ro
             </div>
             <div style={{ display: "flex", gap: spacing["2"], flexWrap: "wrap" }}>
                 {[`${role.permissions_count} permissions`, `${role.users_count} utilisateur${role.users_count !== 1 ? "s" : ""}`, role.dashboard_label].map(tag => (
-                    <span key={tag} style={{ fontSize: typography.xs, padding: "2px 10px", background: cssVar.bgSectionAlt, color: cssVar.textSecondary, borderRadius: "99px", border: `1px solid ${cssVar.borderSubtle}` }}>{tag}</span>
+                    <span key={tag} style={{ fontSize: typography.xs, padding: "2px 10px", background: cssVar.bgSectionAlt, color: cssVar.textSecondary, borderRadius: "var(--radius-full)", border: `1px solid ${cssVar.borderSubtle}` }}>{tag}</span>
                 ))}
             </div>
         </div>

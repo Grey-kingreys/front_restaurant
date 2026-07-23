@@ -171,7 +171,7 @@ export default function MenuPage() {
                                 }}>
                                     <ShoppingCart size={15} />
                                     Mon panier
-                                    <span style={{ background: "#0c0a09", color: "var(--amber-glow)", borderRadius: "9999px", padding: "0.1rem 0.4rem", fontSize: "0.65rem", fontWeight: 800 }}>
+                                    <span style={{ background: "#0c0a09", color: "var(--amber-glow)", borderRadius: "var(--radius-full)", padding: "0.1rem 0.4rem", fontSize: "0.65rem", fontWeight: 800 }}>
                                         {totalCart}
                                     </span>
                                 </Link>
@@ -250,7 +250,7 @@ export default function MenuPage() {
                                         padding: "0.5rem 2rem 0.5rem 2rem",
                                         borderRadius: radius.lg,
                                         border: `1px solid ${categorie ? "var(--border-amber)" : "var(--border-subtle)"}`,
-                                        background: categorie ? "rgba(245,158,11,0.08)" : "var(--bg-section-alt)",
+                                        background: "var(--bg-section-alt)",
                                         color: categorie ? "var(--amber-glow)" : "var(--text-secondary)",
                                         fontSize: typography.sm, fontWeight: 600,
                                         cursor: "pointer", outline: "none",

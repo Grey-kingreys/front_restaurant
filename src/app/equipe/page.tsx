@@ -60,7 +60,7 @@ function RoleBadge({ role }: { role: Role }) {
     return (
         <span style={{
             display: "inline-flex", alignItems: "center", gap: "0.3rem",
-            padding: "0.2rem 0.55rem", borderRadius: "9999px",
+            padding: "0.2rem 0.55rem", borderRadius: "var(--radius-full)",
             fontSize: "0.7rem", fontWeight: 700,
             color: rc.text, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)",
         }}>
@@ -74,11 +74,11 @@ function StatutBadge({ actif }: { actif: boolean }) {
     return (
         <span style={{
             display: "inline-flex", alignItems: "center", gap: "0.3rem",
-            padding: "0.2rem 0.55rem", borderRadius: "9999px",
+            padding: "0.2rem 0.55rem", borderRadius: "var(--radius-full)",
             fontSize: "0.7rem", fontWeight: 700,
             color: actif ? "#22c55e" : "#ef4444",
-            background: actif ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)",
-            border: `1px solid ${actif ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}`,
+            background: "var(--bg-section-alt)",
+            border: "1px solid var(--border-subtle)",
         }}>
             <span style={{ width: 5, height: 5, borderRadius: "50%", background: actif ? "#22c55e" : "#ef4444" }} />
             {actif ? "Actif" : "Inactif"}
@@ -542,12 +542,12 @@ export default function EquipePage() {
                 <>
                     <div onClick={closeModal} style={{ position: "fixed", inset: 0, zIndex: 90, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} />
                     <div style={{ position: "fixed", inset: 0, zIndex: 91, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-                        <div style={{ width: "100%", maxWidth: 460, background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1.25rem", padding: "1.5rem", animation: "modalIn 0.25s ease", maxHeight: "90vh", overflowY: "auto" }}>
+                        <div style={{ width: "100%", maxWidth: 460, background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-2xl)", padding: "1.5rem", animation: "modalIn 0.25s ease", maxHeight: "90vh", overflowY: "auto" }}>
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
                                 <h2 style={{ margin: 0, fontSize: typography.lg, fontWeight: 800, color: cssVar.textPrimary }}>
                                     {modal === "create" ? "Ajouter un membre" : modal === "edit" ? "Modifier le membre" : "Réinitialiser le mot de passe"}
                                 </h2>
-                                <button onClick={closeModal} style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "0.5rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", cursor: "pointer", color: cssVar.textMuted }}>
+                                <button onClick={closeModal} style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--radius-md)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", cursor: "pointer", color: cssVar.textMuted }}>
                                     <X size={15} />
                                 </button>
                             </div>
@@ -599,7 +599,7 @@ export default function EquipePage() {
                     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", marginBottom: "1.75rem" }}>
                         <div>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.3rem" }}>
-                                <div style={{ width: 40, height: 40, borderRadius: "0.875rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--amber-glow)" }}>
+                                <div style={{ width: 40, height: 40, borderRadius: "var(--radius-xl)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--amber-glow)" }}>
                                     <Users size={20} />
                                 </div>
                                 <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: cssVar.textPrimary }}>
@@ -707,7 +707,7 @@ export default function EquipePage() {
                                                     </div>
                                                 </td>
                                                 <td><RoleBadge role={u.role} /></td>
-                                                <td><span style={{ fontFamily: "monospace", fontSize: typography.xs, background: "var(--bg-section-alt)", padding: "0.15rem 0.4rem", borderRadius: "0.375rem", color: cssVar.textSecondary }}>{u.login}</span></td>
+                                                <td><span style={{ fontFamily: "monospace", fontSize: typography.xs, background: "var(--bg-section-alt)", padding: "0.15rem 0.4rem", borderRadius: "var(--radius-sm)", color: cssVar.textSecondary }}>{u.login}</span></td>
                                                 <td><span style={{ fontSize: typography.xs, color: cssVar.textMuted }}>{u.email ?? "—"}</span></td>
                                                 <td><StatutBadge actif={u.actif} /></td>
                                                 <td>
@@ -773,27 +773,27 @@ export default function EquipePage() {
                                             <span style={{ fontSize: typography.xs, color: cssVar.textMuted }}>{u.email ?? "Pas d'email"}</span>
                                         </div>
                                         {u.must_change_password && (
-                                            <span style={{ fontSize: "0.7rem", color: "#f59e0b", background: "var(--bg-section-alt)", padding: "0.2rem 0.5rem", borderRadius: "0.375rem", width: "fit-content" }}>⚠ MDP temporaire à changer</span>
+                                            <span style={{ fontSize: "0.7rem", color: "#f59e0b", background: "var(--bg-section-alt)", padding: "0.2rem 0.5rem", borderRadius: "var(--radius-sm)", width: "fit-content" }}>⚠ MDP temporaire à changer</span>
                                         )}
                                         <div style={{ display: "flex", gap: "0.4rem", borderTop: "1px solid var(--border-subtle)", paddingTop: "0.5rem" }}>
-                                            <button onClick={() => openEdit(u)} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "0.5rem", border: "1px solid var(--border-subtle)", background: "transparent", color: cssVar.textMuted, fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
+                                            <button onClick={() => openEdit(u)} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "var(--radius-md)", border: "1px solid var(--border-subtle)", background: "transparent", color: cssVar.textMuted, fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
                                                 <Pencil size={12} /> Modifier
                                             </button>
-                                            <button onClick={() => openReset(u)} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "0.5rem", border: "1px solid rgba(245,158,11,0.3)", background: "transparent", color: "#f59e0b", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
+                                            <button onClick={() => openReset(u)} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "var(--radius-md)", border: "1px solid rgba(245,158,11,0.3)", background: "transparent", color: "#f59e0b", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
                                                 <KeyRound size={12} /> MDP
                                             </button>
                                             {canDeactivate && u.id !== user.id && (
-                                                <button onClick={() => handleToggle(u)} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "0.5rem", border: `1px solid ${u.actif ? "rgba(239,68,68,0.3)" : "rgba(34,197,94,0.3)"}`, background: "transparent", color: u.actif ? "#ef4444" : "#22c55e", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
+                                                <button onClick={() => handleToggle(u)} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem", borderRadius: "var(--radius-md)", border: `1px solid ${u.actif ? "rgba(239,68,68,0.3)" : "rgba(34,197,94,0.3)"}`, background: "transparent", color: u.actif ? "#ef4444" : "#22c55e", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
                                                     {u.actif ? <><UserX size={12} /> Désactiver</> : <><UserCheck size={12} /> Activer</>}
                                                 </button>
                                             )}
                                             {isAdmin && ROLES_SIMULABLES.includes(u.role as Role) && u.actif && u.id !== user.id && (
-                                                <button onClick={() => handleSimuler(u)} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem 0.6rem", borderRadius: "0.5rem", border: "1px solid rgba(124,58,237,0.3)", background: "transparent", color: "#7c3aed", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
+                                                <button onClick={() => handleSimuler(u)} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem 0.6rem", borderRadius: "var(--radius-md)", border: "1px solid rgba(124,58,237,0.3)", background: "transparent", color: "#7c3aed", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
                                                     <Play size={12} /> Simuler
                                                 </button>
                                             )}
                                             {canDeactivate && u.actif && u.id !== user.id && (
-                                                <button onClick={() => openDelete(u)} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem 0.6rem", borderRadius: "0.5rem", border: "1px solid rgba(239,68,68,0.3)", background: "transparent", color: "#ef4444", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
+                                                <button onClick={() => openDelete(u)} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.45rem 0.6rem", borderRadius: "var(--radius-md)", border: "1px solid rgba(239,68,68,0.3)", background: "transparent", color: "#ef4444", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
                                                     <Trash2 size={12} />
                                                 </button>
                                             )}

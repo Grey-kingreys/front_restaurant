@@ -52,8 +52,8 @@ function PageLoader() {
 
 function StatCard({ title, value, icon, color }: { title: string; value: React.ReactNode; icon: React.ReactNode; color?: string }) {
     return (
-        <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1.125rem", padding: "1.125rem 1.25rem", display: "flex", alignItems: "center", gap: "0.875rem" }}>
-            <div style={{ width: 44, height: 44, borderRadius: "0.875rem", background: color ? `${color}18` : "var(--bg-section-alt)", border: `1px solid ${color ? `${color}30` : "var(--border-subtle)"}`, display: "flex", alignItems: "center", justifyContent: "center", color: color ?? "var(--amber-glow)", flexShrink: 0 }}>
+        <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-2xl)", padding: "1.125rem 1.25rem", display: "flex", alignItems: "center", gap: "0.875rem" }}>
+            <div style={{ width: 44, height: 44, borderRadius: "var(--radius-xl)", background: color ? `${color}18` : "var(--bg-section-alt)", display: "flex", alignItems: "center", justifyContent: "center", color: color ?? "var(--amber-glow)", flexShrink: 0 }}>
                 {icon}
             </div>
             <div>
@@ -235,12 +235,12 @@ export default function CaissePage() {
                 <>
                     <div onClick={closeModal} style={{ position: "fixed", inset: 0, zIndex: 90, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} />
                     <div style={{ position: "fixed", inset: 0, zIndex: 91, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-                        <div style={{ width: "100%", maxWidth: 420, background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1.25rem", padding: "1.5rem", animation: "modalIn 0.25s ease" }}>
+                        <div style={{ width: "100%", maxWidth: 420, background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-2xl)", padding: "1.5rem", animation: "modalIn 0.25s ease" }}>
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
                                 <h2 style={{ margin: 0, fontSize: typography.lg, fontWeight: 800, color: cssVar.textPrimary }}>
                                     {modal === "ouvrir" ? "Ouvrir la caisse" : modal === "fermer" ? "Fermer la caisse" : modal === "appro" ? "Demande d'approvisionnement" : modal === "depense" ? "Enregistrer une dépense" : "Valider la remise"}
                                 </h2>
-                                <button onClick={closeModal} style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "0.5rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", cursor: "pointer", color: cssVar.textMuted }}>
+                                <button onClick={closeModal} style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--radius-md)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", cursor: "pointer", color: cssVar.textMuted }}>
                                     <X size={15} />
                                 </button>
                             </div>
@@ -342,7 +342,7 @@ export default function CaissePage() {
                     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", marginBottom: "1.75rem" }}>
                         <div>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.3rem" }}>
-                                <div style={{ width: 40, height: 40, borderRadius: "0.875rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "#14b8a6" }}>
+                                <div style={{ width: 40, height: 40, borderRadius: "var(--radius-xl)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "#14b8a6" }}>
                                     <CreditCard size={20} />
                                 </div>
                                 <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: cssVar.textPrimary }}>Ma Caisse</h1>
@@ -454,11 +454,11 @@ export default function CaissePage() {
                                                 </div>
                                                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                                                     {r.valide ? (
-                                                        <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "#22c55e", background: "var(--bg-section-alt)", padding: "0.2rem 0.5rem", borderRadius: "9999px" }}>✓ Validée</span>
+                                                        <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "#22c55e", background: "var(--bg-section-alt)", padding: "0.2rem 0.5rem", borderRadius: "var(--radius-full)" }}>✓ Validée</span>
                                                     ) : (
                                                         <button
                                                             onClick={() => { setSelectedRemise(r); setFMontantPhysique(r.montant_virtuel); setModal("remise"); }}
-                                                            style={{ padding: "0.4rem 0.75rem", borderRadius: "0.5rem", border: "1px solid rgba(245,158,11,0.35)", background: "rgba(245,158,11,0.06)", color: "#f59e0b", fontSize: "0.75rem", fontWeight: 700, cursor: "pointer" }}
+                                                            style={{ padding: "0.4rem 0.75rem", borderRadius: "var(--radius-md)", border: "1px solid rgba(245,158,11,0.35)", background: "rgba(245,158,11,0.06)", color: "#f59e0b", fontSize: "0.75rem", fontWeight: 700, cursor: "pointer" }}
                                                         >
                                                             Valider
                                                         </button>
@@ -493,7 +493,7 @@ export default function CaissePage() {
                                                     </div>
                                                     <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.2rem" }}>
                                                         <span style={{ fontWeight: 800, fontSize: typography.sm, color: cssVar.textPrimary, whiteSpace: "nowrap" }}>{fmtMontant(d.montant)}</span>
-                                                        <span style={{ fontSize: "0.68rem", fontWeight: 700, color: s.color, background: `${s.color}1a`, padding: "0.1rem 0.45rem", borderRadius: "9999px" }}>{s.label}</span>
+                                                        <span style={{ fontSize: "0.68rem", fontWeight: 700, color: s.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", padding: "0.1rem 0.45rem", borderRadius: "var(--radius-full)" }}>{s.label}</span>
                                                     </div>
                                                 </div>
                                             );

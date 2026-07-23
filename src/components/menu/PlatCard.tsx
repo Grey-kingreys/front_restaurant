@@ -44,7 +44,7 @@ export function PlatCardStaff({ plat, canEdit, onToggle, onDelete, toggling }: S
         <div style={{
             background: "var(--bg-card)",
             border: `1px solid ${plat.disponible ? "var(--border-subtle)" : "rgba(239,68,68,0.18)"}`,
-            borderRadius: "1rem",
+            borderRadius: "var(--radius-xl)",
             overflow: "hidden",
             transition: "all 0.2s ease",
             opacity: plat.disponible ? 1 : 0.72,
@@ -92,7 +92,7 @@ export function PlatCardStaff({ plat, canEdit, onToggle, onDelete, toggling }: S
                     display: "flex", gap: "0.3rem", flexWrap: "wrap",
                 }}>
                     <span style={{
-                        padding: "0.2rem 0.5rem", borderRadius: "9999px",
+                        padding: "0.2rem 0.5rem", borderRadius: "var(--radius-full)",
                         fontSize: "0.65rem", fontWeight: 700,
                         background: "rgba(0,0,0,0.65)", color: "#fff",
                         backdropFilter: "blur(4px)",
@@ -101,7 +101,7 @@ export function PlatCardStaff({ plat, canEdit, onToggle, onDelete, toggling }: S
                     </span>
                     {plat.necessite_validation_cuisine && (
                         <span style={{
-                            padding: "0.2rem 0.5rem", borderRadius: "9999px",
+                            padding: "0.2rem 0.5rem", borderRadius: "var(--radius-full)",
                             fontSize: "0.65rem", fontWeight: 700,
                             background: "rgba(249,115,22,0.85)", color: "#fff",
                         }}>
@@ -115,10 +115,10 @@ export function PlatCardStaff({ plat, canEdit, onToggle, onDelete, toggling }: S
                     position: "absolute", top: "0.5rem", right: "0.5rem",
                 }}>
                     <span style={{
-                        padding: "0.2rem 0.5rem", borderRadius: "9999px",
+                        padding: "0.2rem 0.5rem", borderRadius: "var(--radius-full)",
                         fontSize: "0.65rem", fontWeight: 700,
-                        background: plat.disponible ? "rgba(34,197,94,0.85)" : "rgba(239,68,68,0.85)",
-                        color: "#fff",
+                        background: "var(--bg-card)", border: "1px solid var(--border-subtle)",
+                        color: plat.disponible ? "#22c55e" : "#ef4444",
                     }}>
                         {plat.disponible ? "● Dispo" : "● Indispo"}
                     </span>
@@ -271,7 +271,7 @@ export function PlatCardTable({ plat, onAddToCart, quantiteInCart = 0, adding }:
         <div style={{
             background: "var(--bg-card)",
             border: "1px solid var(--border-subtle)",
-            borderRadius: "1.125rem",
+            borderRadius: "var(--radius-2xl)",
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",
@@ -318,7 +318,7 @@ export function PlatCardTable({ plat, onAddToCart, quantiteInCart = 0, adding }:
                 {/* Bas gauche : catégorie seulement */}
                 <span style={{
                     position: "absolute", bottom: "0.4rem", left: "0.4rem",
-                    padding: "0.15rem 0.45rem", borderRadius: "9999px",
+                    padding: "0.15rem 0.45rem", borderRadius: "var(--radius-full)",
                     fontSize: "0.62rem", fontWeight: 700,
                     display: "flex", alignItems: "center", gap: "0.2rem",
                     background: "rgba(0,0,0,0.6)", color: "#fff",
@@ -345,7 +345,7 @@ export function PlatCardTable({ plat, onAddToCart, quantiteInCart = 0, adding }:
                         </div>
                     )}
                     <span style={{
-                        padding: "0.18rem 0.45rem", borderRadius: "9999px",
+                        padding: "0.18rem 0.45rem", borderRadius: "var(--radius-full)",
                         fontSize: "0.6rem", fontWeight: 700,
                         display: "flex", alignItems: "center", gap: "0.2rem",
                         backdropFilter: "blur(4px)",

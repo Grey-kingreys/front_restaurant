@@ -193,19 +193,19 @@ function ResetContent() {
             <div style={{ width: "100%", maxWidth: 420, position: "relative", zIndex: 1 }}>
                 {/* Logo */}
                 <div style={{ textAlign: "center", marginBottom: spacing["8"] }}>
-                    <Logo href="/" size={44} />
+                    <Logo href="/" size={44} priority />
                 </div>
 
                 <div style={{ ...cardBase, padding: spacing["8"] }}>
-                    <div style={{ ...iconContainer(48), borderRadius: radius.xl, marginBottom: spacing["4"] }}>
+                    <div style={{ ...iconContainer(48), borderRadius: radius.xl, margin: `0 auto ${spacing["4"]}` }}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: 24, height: 24 }}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 0 1 21.75 8.25Z" />
                         </svg>
                     </div>
-                    <h2 style={{ fontWeight: typography.bold, fontSize: typography["2xl"], color: cssVar.textPrimary, marginBottom: spacing["1"] }}>
+                    <h2 style={{ fontWeight: typography.bold, fontSize: typography["2xl"], color: cssVar.textPrimary, marginBottom: spacing["1"], textAlign: "center" }}>
                         {token ? "Nouveau mot de passe" : "Mot de passe oublié"}
                     </h2>
-                    <p style={{ fontSize: typography.sm, color: cssVar.textMuted, marginBottom: spacing["6"] }}>
+                    <p style={{ fontSize: typography.sm, color: cssVar.textMuted, marginBottom: spacing["6"], textAlign: "center" }}>
                         {token
                             ? "Choisissez un nouveau mot de passe sécurisé (8 caractères minimum)."
                             : "Saisissez votre email pour recevoir un lien de réinitialisation."}

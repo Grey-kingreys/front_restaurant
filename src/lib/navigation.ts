@@ -24,12 +24,6 @@ const NAV_SUPER_ADMIN: NavSection[] = [
             { label: "Statistiques", href: "/statistiques", icon: "chart" },
         ],
     },
-    {
-        title: "Administration",
-        items: [
-            { label: "Paramètres", href: "#", icon: "settings" },
-        ],
-    },
 ];
 
 const NAV_TABLE: NavSection[] = [
