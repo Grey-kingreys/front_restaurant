@@ -9,6 +9,7 @@ import { getMe, updateMe } from "@/lib/api/auth";
 import { ROLE_LABELS, ROLE_COLORS } from "@/lib/navigation";
 import type { User, Role } from "@/types";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
+import AdresseBook from "@/components/client/AdresseBook";
 import {
     cssVar, typography, radius, spacing, palette,
     roleBadge, statusBadge, statusDot, avatarBase,
@@ -193,21 +194,6 @@ export default function ProfilPage() {
                             </div>
                         )}
 
-                        {role !== "Rtable" && (
-                        <div style={{ marginTop: spacing["3"], display: "flex", gap: spacing["2"], flexWrap: "wrap" }}>
-                            <Link href="/auth/change-password" style={{
-                                display: "inline-flex", alignItems: "center", gap: spacing["2"],
-                                padding: `${spacing["2"]} ${spacing["4"]}`, borderRadius: radius.lg,
-                                background: cssVar.gradientBtn, color: palette.btnText,
-                                fontWeight: typography.bold, fontSize: typography.sm, textDecoration: "none",
-                            }}>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: 14, height: 14 }}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 0 1 21.75 8.25Z" />
-                                </svg>
-                                Changer le mot de passe
-                            </Link>
-                        </div>
-                        )}
                     </div>
 
                     {/* Cards infos */}
@@ -248,11 +234,21 @@ export default function ProfilPage() {
                                         <p style={{ margin: `${spacing["2"]} 0 0`, fontSize: typography.xs, color: palette.green[500] }}>{saveMsg.text}</p>
                                     )}
                                     {role !== "Rtable" && (
-                                        <div style={{ paddingTop: spacing["3"] }}>
+                                        <div style={{ display: "flex", flexWrap: "wrap", gap: spacing["2"], paddingTop: spacing["4"], paddingBottom: spacing["4"] }}>
                                             <button onClick={startEdit}
-                                                style={{ display: "inline-flex", alignItems: "center", gap: spacing["2"], padding: `${spacing["2"]} ${spacing["4"]}`, borderRadius: radius.lg, border: `1px solid ${cssVar.borderSubtle}`, background: cssVar.bgSectionAlt, color: cssVar.textPrimary, fontWeight: typography.semibold, fontSize: typography.sm, cursor: "pointer" }}>
+                                                style={{ flex: "1 1 200px", minHeight: "44px", boxSizing: "border-box", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: spacing["2"], padding: `${spacing["2"]} ${spacing["4"]}`, borderRadius: radius.lg, border: "none", background: cssVar.gradientBtn, color: palette.btnText, fontWeight: typography.bold, fontSize: typography.sm, cursor: "pointer" }}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: 14, height: 14 }}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125" />
+                                                </svg>
                                                 Modifier mes informations
                                             </button>
+                                            <Link href="/auth/change-password"
+                                                style={{ flex: "1 1 200px", minHeight: "44px", boxSizing: "border-box", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: spacing["2"], padding: `${spacing["2"]} ${spacing["4"]}`, borderRadius: radius.lg, background: "transparent", border: `1px solid ${cssVar.borderAmber}`, color: cssVar.amberGlow, fontWeight: typography.semibold, fontSize: typography.sm, textDecoration: "none" }}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: 14, height: 14 }}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 0 1 21.75 8.25Z" />
+                                                </svg>
+                                                Changer le mot de passe
+                                            </Link>
                                         </div>
                                     )}
                                 </>
@@ -295,6 +291,13 @@ export default function ProfilPage() {
                         </Card>
 
                     </div>
+
+                    {/* Carnet d'adresses de livraison — clients uniquement */}
+                    {role === "Rclient" && (
+                        <div style={{ marginTop: spacing["4"] }}>
+                            <AdresseBook />
+                        </div>
+                    )}
 
                     {/* Note — comptes table uniquement (non éditables) */}
                     {role === "Rtable" && (

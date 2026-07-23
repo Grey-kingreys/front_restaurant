@@ -9,6 +9,8 @@ import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { commander, MODES_PAIEMENT, type TypeCommande, type ModePaiement } from "@/lib/api/public";
 import { getRestaurantPublic, type RestaurantPublic } from "@/lib/api/public";
+import { listAdresses, createAdresse } from "@/lib/api/adresses";
+import type { AdresseClient } from "@/types";
 import MapPicker from "@/components/map/MapPicker";
 
 const PAYMENT_ICONS: Record<string, LucideIcon> = {
@@ -38,6 +40,26 @@ export default function CheckoutPage() {
     const [submitting, setSubmitting] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    // Carnet d'adresses (clients connectés) : sélection d'une adresse enregistrée
+    // ou saisie d'une nouvelle, avec option d'enregistrement dans le carnet.
+    const [savedAdresses, setSavedAdresses] = useState<AdresseClient[]>([]);
+    const [adresseChoice, setAdresseChoice] = useState<number | "new">("new");
+    const [saveToCarnet, setSaveToCarnet] = useState(true);
+    const [carnetLibelle, setCarnetLibelle] = useState("");
+
+    const applyAdresse = (a: AdresseClient) => {
+        setAdresseChoice(a.id);
+        setAdresse(a.description);
+        setCoords(a.latitude != null && a.longitude != null ? { lat: Number(a.latitude), lng: Number(a.longitude) } : null);
+        setTelephone((t) => t || a.telephone || "");
+        setErrors((e) => ({ ...e, adresse: "" }));
+    };
+    const selectNewAdresse = () => {
+        setAdresseChoice("new");
+        setAdresse("");
+        setCoords(null);
+    };
+
     useEffect(() => {
         getRestaurantPublic(slug)
             .then((res) => {
@@ -58,6 +80,21 @@ export default function CheckoutPage() {
     useEffect(() => {
         if (user?.telephone) setTelephone(user.telephone);
     }, [user]);
+
+    // Charge le carnet d'adresses et pré-sélectionne l'adresse par défaut.
+    useEffect(() => {
+        if (!isAuthenticated || user?.role !== "Rclient") return;
+        listAdresses()
+            .then((res) => {
+                if (res.success && res.data && res.data.length > 0) {
+                    setSavedAdresses(res.data);
+                    const def = res.data.find((a) => a.is_default) ?? res.data[0];
+                    applyAdresse(def);
+                }
+            })
+            .catch(() => {});
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isAuthenticated, user]);
 
     const fraisLivraison = typeCommande === "livraison" && resto?.frais_livraison ? Number(resto.frais_livraison) : 0;
     const totalAvecFrais = total + fraisLivraison;
@@ -90,6 +127,19 @@ export default function CheckoutPage() {
                 items: items.map((i) => ({ plat_id: i.platId, quantite: i.quantite })),
             });
             if (res.success && res.data) {
+                // Enregistre la nouvelle adresse dans le carnet si le client l'a demandé
+                // (best-effort : n'empêche pas la confirmation de la commande en cas d'échec).
+                if (typeCommande === "livraison" && adresseChoice === "new" && saveToCarnet && adresse.trim()) {
+                    try {
+                        await createAdresse({
+                            libelle: carnetLibelle.trim() || "Mon adresse",
+                            description: adresse.trim(),
+                            telephone: telephone.trim() || null,
+                            latitude: coords?.lat ?? null,
+                            longitude: coords?.lng ?? null,
+                        });
+                    } catch { /* ignore */ }
+                }
                 clearCart();
                 router.push(`/restaurant/${slug}/confirmation/${res.data.cle_suivi}`);
             } else {
@@ -107,7 +157,7 @@ export default function CheckoutPage() {
         return (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "60vh", gap: "1rem" }}>
                 <p style={{ color: "var(--text-muted)", fontSize: "1rem" }}>Votre panier est vide.</p>
-                <button onClick={() => router.push(`/restaurant/${slug}`)} style={{ padding: "0.625rem 1.25rem", borderRadius: "0.625rem", border: "1px solid var(--border-subtle)", background: "none", color: "var(--text-secondary)", cursor: "pointer", fontWeight: 600 }}>
+                <button onClick={() => router.push(`/restaurant/${slug}`)} style={{ padding: "0.625rem 1.25rem", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)", background: "none", color: "var(--text-secondary)", cursor: "pointer", fontWeight: 600 }}>
                     ← Retour au menu
                 </button>
             </div>
@@ -115,7 +165,7 @@ export default function CheckoutPage() {
     }
 
     const inputStyle = (hasError?: boolean) => ({
-        width: "100%", padding: "0.75rem 1rem", borderRadius: "0.75rem",
+        width: "100%", padding: "0.75rem 1rem", borderRadius: "var(--radius-lg)",
         border: `1px solid ${hasError ? "rgba(239,68,68,0.6)" : "var(--border-subtle)"}`,
         background: "var(--bg-card)", color: "var(--text-primary)", fontSize: "0.9rem",
         boxSizing: "border-box" as const, outline: "none",
@@ -145,7 +195,7 @@ export default function CheckoutPage() {
                         <div style={{ display: "flex", gap: "0.625rem", marginBottom: "1.5rem" }}>
                             {modes.map((mode) => (
                                 <button key={mode} onClick={() => setTypeCommande(mode)}
-                                    style={{ flex: 1, padding: "0.75rem", borderRadius: "0.75rem", border: `2px solid ${typeCommande === mode ? "#f59e0b" : "var(--border-subtle)"}`, background: typeCommande === mode ? "rgba(245,158,11,0.1)" : "var(--bg-card)", color: typeCommande === mode ? "#f59e0b" : "var(--text-muted)", fontWeight: 700, fontSize: "0.85rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>
+                                    style={{ flex: 1, padding: "0.75rem", borderRadius: "var(--radius-lg)", border: `2px solid ${typeCommande === mode ? "#f59e0b" : "var(--border-subtle)"}`, background: typeCommande === mode ? "var(--bg-section-alt)" : "var(--bg-card)", color: typeCommande === mode ? "#f59e0b" : "var(--text-muted)", fontWeight: 700, fontSize: "0.85rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>
                                     {mode === "livraison" ? <Truck size={15} /> : <ShoppingBag size={15} />}
                                     {mode === "livraison" ? "Livraison" : "À emporter"}
                                 </button>
@@ -159,7 +209,7 @@ export default function CheckoutPage() {
                     <h2 style={{ margin: "0 0 0.75rem", fontSize: "0.85rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Articles</h2>
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.625rem" }}>
                         {items.map((item) => (
-                            <div key={item.platId} style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.75rem", borderRadius: "0.875rem", background: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}>
+                            <div key={item.platId} style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.75rem", borderRadius: "var(--radius-xl)", background: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}>
                                 <div style={{ flex: 1, minWidth: 0 }}>
                                     <div style={{ fontWeight: 600, color: "var(--text-primary)", fontSize: "0.88rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.nom}</div>
                                     <div style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginTop: "0.15rem" }}>{item.prix_unitaire.toLocaleString("fr-FR")} GNF × {item.quantite}</div>
@@ -197,27 +247,76 @@ export default function CheckoutPage() {
                         </div>
                         {typeCommande === "livraison" && (
                             <>
-                            <div>
-                                <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.4rem" }}>
-                                    <MapPin size={13} style={{ color: "var(--text-muted)" }} />
-                                    <label style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Adresse de livraison</label>
+                            {/* Adresses enregistrées : sélection rapide */}
+                            {savedAdresses.length > 0 && (
+                                <div>
+                                    <label style={{ fontSize: "0.8rem", color: "var(--text-muted)", display: "block", marginBottom: "0.5rem" }}>Livrer à</label>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                                        {savedAdresses.map((a) => {
+                                            const active = adresseChoice === a.id;
+                                            return (
+                                                <button key={a.id} type="button" onClick={() => applyAdresse(a)}
+                                                    style={{ textAlign: "left", padding: "0.7rem 0.85rem", borderRadius: "var(--radius-lg)", border: `2px solid ${active ? "#f59e0b" : "var(--border-subtle)"}`, background: active ? "var(--bg-section-alt)" : "var(--bg-card)", cursor: "pointer", display: "flex", gap: "0.6rem", alignItems: "flex-start" }}>
+                                                    <MapPin size={15} style={{ color: active ? "#f59e0b" : "var(--text-muted)", marginTop: 2, flexShrink: 0 }} />
+                                                    <span style={{ minWidth: 0 }}>
+                                                        <span style={{ display: "flex", gap: "0.4rem", alignItems: "center", flexWrap: "wrap" }}>
+                                                            <span style={{ fontWeight: 700, fontSize: "0.85rem", color: "var(--text-primary)" }}>{a.libelle}</span>
+                                                            {a.is_default && <span style={{ fontSize: "0.65rem", color: "#f59e0b" }}>★ défaut</span>}
+                                                        </span>
+                                                        <span style={{ display: "block", fontSize: "0.76rem", color: "var(--text-muted)", marginTop: 2, lineHeight: 1.4 }}>{a.description}</span>
+                                                    </span>
+                                                </button>
+                                            );
+                                        })}
+                                        <button type="button" onClick={selectNewAdresse}
+                                            style={{ textAlign: "left", padding: "0.7rem 0.85rem", borderRadius: "var(--radius-lg)", border: `2px dashed ${adresseChoice === "new" ? "#f59e0b" : "var(--border-subtle)"}`, background: "transparent", cursor: "pointer", display: "flex", gap: "0.6rem", alignItems: "center", color: adresseChoice === "new" ? "#f59e0b" : "var(--text-muted)", fontWeight: 600, fontSize: "0.82rem" }}>
+                                            <Plus size={15} /> Utiliser une nouvelle adresse
+                                        </button>
+                                    </div>
                                 </div>
-                                <textarea value={adresse} onChange={(e) => setAdresse(e.target.value)} placeholder="Quartier, rue, repère…" rows={3}
-                                    style={{ ...inputStyle(!!errors.adresse), resize: "none", fontFamily: "inherit" }} />
-                                {errors.adresse && <p style={{ margin: "0.25rem 0 0", fontSize: "0.75rem", color: "#ef4444" }}>{errors.adresse}</p>}
-                            </div>
-                            <div>
-                                <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.4rem" }}>
-                                    <MapPin size={13} style={{ color: "var(--text-muted)" }} />
-                                    <label style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Votre position sur la carte (facultatif)</label>
+                            )}
+
+                            {/* Saisie d'une nouvelle adresse (ou aucun carnet) */}
+                            {(adresseChoice === "new" || savedAdresses.length === 0) && (
+                                <>
+                                <div>
+                                    <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.4rem" }}>
+                                        <MapPin size={13} style={{ color: "var(--text-muted)" }} />
+                                        <label style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Adresse de livraison</label>
+                                    </div>
+                                    <textarea value={adresse} onChange={(e) => setAdresse(e.target.value)} placeholder="Quartier, rue, repère…" rows={3}
+                                        style={{ ...inputStyle(!!errors.adresse), resize: "none", fontFamily: "inherit" }} />
+                                    {errors.adresse && <p style={{ margin: "0.25rem 0 0", fontSize: "0.75rem", color: "#ef4444" }}>{errors.adresse}</p>}
                                 </div>
-                                <MapPicker lat={coords?.lat ?? null} lng={coords?.lng ?? null} onChange={(la, ln) => setCoords({ lat: la, lng: ln })} height={220} />
-                                <p style={{ margin: "0.4rem 0 0", fontSize: "0.75rem", color: "var(--text-muted)" }}>
-                                    {coords
-                                        ? `Position choisie : ${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}`
-                                        : "Touchez la carte pour placer votre position — ça aide le livreur à vous trouver."}
-                                </p>
-                            </div>
+                                <div>
+                                    <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.4rem" }}>
+                                        <MapPin size={13} style={{ color: "var(--text-muted)" }} />
+                                        <label style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Votre position sur la carte (facultatif)</label>
+                                    </div>
+                                    <MapPicker lat={coords?.lat ?? null} lng={coords?.lng ?? null} onChange={(la, ln) => setCoords({ lat: la, lng: ln })} height={220} showLocateButton
+                                        caption="Cliquez sur la carte ou déplacez le marqueur pour situer précisément votre adresse de livraison." />
+                                    <p style={{ margin: "0.4rem 0 0", fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                                        {coords
+                                            ? `Position choisie : ${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}`
+                                            : "Touchez la carte pour placer votre position — ça aide le livreur à vous trouver."}
+                                    </p>
+                                </div>
+
+                                {/* Enregistrer dans le carnet (clients connectés) */}
+                                {isAuthenticated && user?.role === "Rclient" && adresse.trim() && (
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                                        <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", color: "var(--text-secondary)", cursor: "pointer" }}>
+                                            <input type="checkbox" checked={saveToCarnet} onChange={(e) => setSaveToCarnet(e.target.checked)} style={{ accentColor: "#f59e0b", width: 15, height: 15 }} />
+                                            Enregistrer cette adresse dans mon carnet
+                                        </label>
+                                        {saveToCarnet && (
+                                            <input value={carnetLibelle} onChange={(e) => setCarnetLibelle(e.target.value)} placeholder="Nom de l'adresse (ex. Maison)"
+                                                style={{ ...inputStyle(false), maxWidth: 260 }} />
+                                        )}
+                                    </div>
+                                )}
+                                </>
+                            )}
                             </>
                         )}
                     </div>
@@ -231,7 +330,7 @@ export default function CheckoutPage() {
                         const Icon = PAYMENT_ICONS[selected.icon];
                         return (
                             <div style={{
-                                display: "flex", alignItems: "center", gap: "0.875rem", padding: "0 1rem", borderRadius: "0.875rem",
+                                display: "flex", alignItems: "center", gap: "0.875rem", padding: "0 1rem", borderRadius: "var(--radius-xl)",
                                 border: "2px solid var(--border-subtle)", background: "var(--bg-section-alt)",
                             }}>
                                 <Icon size={20} style={{ flexShrink: 0, color: "#f59e0b" }} />
@@ -259,7 +358,7 @@ export default function CheckoutPage() {
                 </section>
 
                 {/* Récapitulatif montants */}
-                <section style={{ padding: "1rem", borderRadius: "0.875rem", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", marginBottom: "1rem" }}>
+                <section style={{ padding: "1rem", borderRadius: "var(--radius-xl)", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", marginBottom: "1rem" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem", color: "var(--text-muted)", fontSize: "0.85rem" }}>
                         <span>Sous-total</span>
                         <span>{total.toLocaleString("fr-FR")} GNF</span>
@@ -276,23 +375,23 @@ export default function CheckoutPage() {
                     </div>
                 </section>
 
-                {errors.submit && <p style={{ color: "#ef4444", fontSize: "0.82rem", marginBottom: "0.75rem", padding: "0.75rem", borderRadius: "0.625rem", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)" }}>{errors.submit}</p>}
+                {errors.submit && <p style={{ color: "#ef4444", fontSize: "0.82rem", marginBottom: "0.75rem", padding: "0.75rem", borderRadius: "var(--radius-lg)", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)" }}>{errors.submit}</p>}
 
                 {/* Bouton commander / connexion */}
                 {!isAuthenticated || user?.role !== "Rclient" ? (
-                    <div style={{ background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", borderRadius: "0.875rem", padding: "1rem", textAlign: "center" }}>
+                    <div style={{ background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-xl)", padding: "1rem", textAlign: "center" }}>
                         <p style={{ margin: "0 0 0.75rem", color: "var(--text-secondary)", fontSize: "0.85rem" }}>Connectez-vous pour finaliser votre commande.</p>
                         <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}>
-                            <button onClick={() => router.push(`/auth/login?next=/restaurant/${slug}/checkout?mode=${typeCommande}`)} style={{ padding: "0.625rem 1.25rem", borderRadius: "0.625rem", border: "none", background: "#f59e0b", color: "#0c0a09", fontWeight: 700, cursor: "pointer", fontSize: "0.85rem" }}>
+                            <button onClick={() => router.push(`/auth/login?next=/restaurant/${slug}/checkout?mode=${typeCommande}`)} style={{ padding: "0.625rem 1.25rem", borderRadius: "var(--radius-lg)", border: "none", background: "#f59e0b", color: "#0c0a09", fontWeight: 700, cursor: "pointer", fontSize: "0.85rem" }}>
                                 Se connecter
                             </button>
-                            <button onClick={() => router.push(`/auth/client/register?next=/restaurant/${slug}/checkout?mode=${typeCommande}`)} style={{ padding: "0.625rem 1.25rem", borderRadius: "0.625rem", border: "1px solid var(--border-subtle)", background: "none", color: "var(--text-secondary)", fontWeight: 600, cursor: "pointer", fontSize: "0.85rem" }}>
+                            <button onClick={() => router.push(`/auth/client/register?next=/restaurant/${slug}/checkout?mode=${typeCommande}`)} style={{ padding: "0.625rem 1.25rem", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)", background: "none", color: "var(--text-secondary)", fontWeight: 600, cursor: "pointer", fontSize: "0.85rem" }}>
                                 Créer un compte
                             </button>
                         </div>
                     </div>
                 ) : (
-                    <button onClick={handleSubmit} disabled={submitting} style={{ width: "100%", padding: "1rem", borderRadius: "0.875rem", border: "none", background: submitting ? "rgba(245,158,11,0.5)" : "linear-gradient(135deg,#f59e0b,#d97706)", color: "#0c0a09", fontWeight: 800, fontSize: "1rem", cursor: submitting ? "not-allowed" : "pointer" }}>
+                    <button onClick={handleSubmit} disabled={submitting} style={{ width: "100%", padding: "1rem", borderRadius: "var(--radius-xl)", border: "none", background: submitting ? "rgba(245,158,11,0.5)" : "linear-gradient(135deg,#f59e0b,#d97706)", color: "#0c0a09", fontWeight: 800, fontSize: "1rem", cursor: submitting ? "not-allowed" : "pointer" }}>
                         {submitting ? "Envoi en cours…" : `Confirmer la commande • ${totalAvecFrais.toLocaleString("fr-FR")} GNF`}
                     </button>
                 )}
