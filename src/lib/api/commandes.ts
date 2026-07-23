@@ -9,7 +9,8 @@ export type StatutCommande =
     | "prete"
     | "en_livraison"
     | "servie"
-    | "payee";
+    | "payee"
+    | "annulee";
 
 export interface CommandeItem {
     id: number;
@@ -53,6 +54,10 @@ export interface Commande {
     peut_passer_en_livraison?: boolean;
     peut_etre_servie?: boolean;
     peut_etre_payee?: boolean;
+    peut_annuler_staff?: boolean;
+    annulee_le?: string | null;
+    annulee_par_login?: string | null;
+    motif_annulation?: string | null;
     necessite_passage_cuisine?: boolean;
     date_paiement: string | null;
     date_commande: string;
@@ -103,6 +108,18 @@ export async function removePanierItem(id: number): Promise<ApiResponse> {
  */
 export async function validerPanier(): Promise<ApiResponse<Commande>> {
     return apiRequest("/commandes/valider/", { method: "POST" });
+}
+
+// ── Prise de commande par le serveur (pour une table) ───────────────────────
+
+export async function creerCommandeServeur(payload: {
+    table_id: number;
+    items: { plat_id: number; quantite: number }[];
+}): Promise<ApiResponse<Commande>> {
+    return apiRequest("/commandes/creer/", {
+        method: "POST",
+        body: JSON.stringify(payload),
+    });
 }
 
 // ── Commandes ──────────────────────────────────────────────────────────────
@@ -193,6 +210,17 @@ export async function marquerServie(id: number): Promise<ApiResponse<Commande>> 
  */
 export async function validerPaiement(id: number): Promise<ApiResponse<Commande>> {
     return apiRequest(`/commandes/${id}/payee/`, { method: "POST" });
+}
+
+/**
+ * Annuler une commande (staff avec manage_commandes) → statut ANNULÉE.
+ * Autorisé jusqu'à « en livraison » inclus. Motif obligatoire.
+ */
+export async function annulerCommande(id: number, motif: string): Promise<ApiResponse<Commande>> {
+    return apiRequest(`/commandes/${id}/annuler/`, {
+        method: "POST",
+        body: JSON.stringify({ motif }),
+    });
 }
 
 /**

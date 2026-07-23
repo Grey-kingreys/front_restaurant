@@ -103,6 +103,8 @@ export interface MaCommande {
     mode_paiement: ModePaiement;
     montant_total: string;
     nb_items: number;
+    annulable: boolean;
+    motif_annulation: string | null;
     date_commande: string;
 }
 
@@ -185,6 +187,30 @@ export async function getSuiviCommande(clesuivi: string): Promise<ApiResponse<Su
     return apiRequest(`/public/commandes/${clesuivi}/`, { skipAuth: true });
 }
 
+/** URL de téléchargement du reçu PDF (endpoint public par clé de suivi). */
+export function recuPdfUrl(cleSuivi: string): string {
+    const base = (process.env.NEXT_PUBLIC_API_URL || "/api").replace(/\/+$/, "");
+    return `${base}/public/commandes/${cleSuivi}/recu/`;
+}
+
+/** (Re)envoie le lien du reçu par SMS (Nimba) au numéro de la commande. */
+export async function renvoyerRecuSms(cleSuivi: string): Promise<ApiResponse> {
+    return apiRequest(`/public/commandes/${cleSuivi}/recu/sms/`, {
+        method: "POST",
+        skipAuth: true,
+    });
+}
+
+export async function annulerCommandeClient(
+    id: number,
+    motif?: string
+): Promise<ApiResponse<{ commande_id: number; statut: string; statut_label: string }>> {
+    return apiRequest(`/public/mes-commandes/${id}/annuler/`, {
+        method: "POST",
+        body: JSON.stringify({ motif: motif ?? "" }),
+    });
+}
+
 export async function getMesCommandes(): Promise<ApiResponse<MesCommandesData>> {
     return apiRequest("/public/mes-commandes/");
 }
@@ -212,6 +238,18 @@ export async function getMesReservations(): Promise<ApiResponse<{ reservations: 
 
 export async function annulerReservation(id: number): Promise<ApiResponse<MaReservation>> {
     return apiRequest(`/public/reservations/${id}/annuler/`, { method: "POST" });
+}
+
+// ── Contact (formulaire vitrine) ─────────────────────────────────────────────
+
+export async function envoyerContact(
+    payload: { nom: string; email: string; message: string }
+): Promise<ApiResponse<null>> {
+    return apiRequest("/public/contact/", {
+        method: "POST",
+        body: JSON.stringify(payload),
+        skipAuth: true,
+    });
 }
 
 export async function registerClient(payload: ClientRegisterPayload): Promise<ApiResponse<ClientAuthData>> {

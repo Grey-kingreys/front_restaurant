@@ -13,6 +13,7 @@ import {
     marquerEnLivraison,
     marquerServie,
     validerPaiement,
+    annulerCommande,
     downloadRecu,
     type Commande,
     type StatutCommande,
@@ -34,6 +35,7 @@ import {
     ArrowRight,
     Truck,
     MapPin,
+    Plus,
 } from "lucide-react";
 
 const STATUT_CONFIG: Record<StatutCommande, { label: string; color: string; bg: string; border: string }> = {
@@ -42,6 +44,7 @@ const STATUT_CONFIG: Record<StatutCommande, { label: string; color: string; bg: 
     en_livraison: { label: "En livraison",  color: "#8b5cf6", bg: "rgba(139,92,246,0.1)",  border: "rgba(139,92,246,0.25)" },
     servie:       { label: "Servie",        color: "#a855f7", bg: "rgba(168,85,247,0.1)",  border: "rgba(168,85,247,0.25)" },
     payee:        { label: "Terminée",      color: "#22c55e", bg: "rgba(34,197,94,0.1)",   border: "rgba(34,197,94,0.25)" },
+    annulee:      { label: "Annulée",       color: "#6b7280", bg: "rgba(107,114,128,0.1)", border: "rgba(107,114,128,0.25)" },
 };
 
 // Règles de transition (miroir du backend) — évitent de sauter une étape.
@@ -69,7 +72,7 @@ function TypeBadge({ type, label }: { type?: string; label?: string }) {
     if (!type) return null;
     const c = TYPE_CONFIG[type] ?? { label: label ?? type, color: "#9ca3af", bg: "rgba(156,163,175,0.1)", border: "rgba(156,163,175,0.25)" };
     return (
-        <span style={{ alignSelf: "flex-start", display: "inline-block", padding: "1px 7px", borderRadius: "9999px", fontSize: "0.66rem", fontWeight: 700, color: c.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
+        <span style={{ alignSelf: "flex-start", display: "inline-block", padding: "1px 7px", borderRadius: "var(--radius-full)", fontSize: "0.66rem", fontWeight: 700, color: c.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
             {label ?? c.label}
         </span>
     );
@@ -82,6 +85,7 @@ const FILTER_TABS: { value: StatutCommande | ""; label: string }[] = [
     { value: "en_livraison", label: "En livraison" },
     { value: "servie", label: "Servies" },
     { value: "payee", label: "Payées" },
+    { value: "annulee", label: "Annulées" },
 ];
 
 export default function CommandesPage() {
@@ -198,6 +202,25 @@ export default function CommandesPage() {
         }
     };
 
+    const handleCancelFromDrawer = async (id: number, motif: string) => {
+        setActionLoading(id);
+        try {
+            const res = await annulerCommande(id, motif);
+            if (res.success && res.data) {
+                setDrawerCmd(res.data);
+                setCommandes((prev) => prev.map((c) => c.id === id ? { ...c, statut: res.data!.statut } : c));
+                showToast(`Commande #${id} annulée.`);
+                fetchCommandes();
+            } else {
+                showToast(res.message || "Annulation impossible.", "error");
+            }
+        } catch (e: unknown) {
+            showToast((e as { message?: string })?.message ?? "Erreur.", "error");
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
     if (isLoading || !user) return <PageLoader />;
     if (!hasPermission("view_commandes") && !hasPermission("manage_commandes")) return null;
 
@@ -259,17 +282,40 @@ export default function CommandesPage() {
                                 <ChevronRight size={10} style={{ color: "var(--text-muted)" }} />
                                 <span style={{ fontSize: typography.xs, color: cssVar.textSecondary }}>Commandes</span>
                             </nav>
-                            <h1 className="rp-h1" style={{ margin: 0, fontWeight: typography.bold, fontFamily: typography.fontSerif, color: cssVar.textPrimary }}>
-                                Commandes
-                            </h1>
+                            <div style={{ display: "flex", alignItems: "center", gap: spacing["3"] }}>
+                                <h1 className="rp-h1" style={{ margin: 0, fontWeight: typography.bold, fontFamily: typography.fontSerif, color: cssVar.textPrimary }}>
+                                    Commandes
+                                </h1>
+                                <span
+                                    aria-label={`${commandes.length} commande${commandes.length > 1 ? "s" : ""}`}
+                                    style={{
+                                        display: "inline-flex", alignItems: "center", justifyContent: "center",
+                                        minWidth: 26, height: 24, padding: "0 0.5rem",
+                                        borderRadius: radius.full,
+                                        background: cssVar.bgSectionAlt, border: `1px solid ${cssVar.borderSubtle}`,
+                                        color: cssVar.textSecondary, fontSize: typography.sm, fontWeight: 700,
+                                        fontVariantNumeric: "tabular-nums", lineHeight: 1,
+                                    }}
+                                >
+                                    {commandes.length}
+                                </span>
+                            </div>
                             <p style={{ margin: "0.2rem 0 0", fontSize: typography.sm, color: cssVar.textMuted }}>
                                 {commandes.length} commande{commandes.length > 1 ? "s" : ""} {statutFilter ? `· ${STATUT_CONFIG[statutFilter]?.label}` : "au total"}
                             </p>
                         </div>
-                        <button onClick={fetchCommandes} style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.5rem 1rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "transparent", color: cssVar.textSecondary, cursor: "pointer", fontSize: typography.sm, fontWeight: 600 }}>
-                            <RefreshCw size={14} />
-                            Actualiser
-                        </button>
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                            {isServeur && (
+                                <Link href="/commandes/nouvelle" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.5rem 1rem", borderRadius: radius.lg, border: "none", background: "var(--gradient-btn)", color: "#1c1917", cursor: "pointer", fontSize: typography.sm, fontWeight: 700, textDecoration: "none", whiteSpace: "nowrap" }}>
+                                    <Plus size={15} />
+                                    Nouvelle commande
+                                </Link>
+                            )}
+                            <button onClick={fetchCommandes} style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.5rem 1rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "transparent", color: cssVar.textSecondary, cursor: "pointer", fontSize: typography.sm, fontWeight: 600 }}>
+                                <RefreshCw size={14} />
+                                Actualiser
+                            </button>
+                        </div>
                     </div>
 
                     {/* Filtres statut */}
@@ -324,7 +370,7 @@ export default function CommandesPage() {
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.6rem", borderRadius: "9999px", fontSize: "0.72rem", fontWeight: 700, color: sc.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
+                                                        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.6rem", borderRadius: "var(--radius-full)", fontSize: "0.72rem", fontWeight: 700, color: sc.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
                                                             <StatutIcon statut={cmd.statut} />
                                                             {sc.label}
                                                         </span>
@@ -435,6 +481,7 @@ export default function CommandesPage() {
                     isCuisinier={isCuisinier}
                     actionLoading={actionLoading}
                     onAction={handleActionFromDrawer}
+                    onCancel={handleCancelFromDrawer}
                     onDownload={handleDownload}
                 />
             )}
@@ -485,7 +532,7 @@ function CommandeCard({ cmd, isServeur, isCuisinier, actionLoading, onAction, on
         <div className="cmd-card-click" style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: radius.xl, padding: "1rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <span style={{ fontWeight: 700, color: cssVar.amberGlow, fontFamily: "monospace" }}>#{cmd.id}</span>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.6rem", borderRadius: "9999px", fontSize: "0.72rem", fontWeight: 700, color: sc.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.6rem", borderRadius: "var(--radius-full)", fontSize: "0.72rem", fontWeight: 700, color: sc.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
                     <StatutIcon statut={cmd.statut} />
                     {sc.label}
                 </span>
@@ -517,7 +564,7 @@ function CommandeCard({ cmd, isServeur, isCuisinier, actionLoading, onAction, on
                         <ActionButton onClick={() => onDownload(cmd.id)} loading={false} color={cssVar.textMuted} icon={<FileDown size={12} />} label="Reçu PDF" />
                     )}
                 </div>
-                <button onClick={() => onOpen(cmd.id)} style={{ background:"none", border:"1px solid var(--border-subtle)", borderRadius:"0.5rem", padding:"0.4rem 0.6rem", cursor:"pointer", color:"var(--text-muted)", display:"flex", alignItems:"center", gap:"0.25rem", fontSize:"0.75rem", fontWeight:600 }}>
+                <button onClick={() => onOpen(cmd.id)} style={{ background:"none", border:"1px solid var(--border-subtle)", borderRadius: "var(--radius-md)", padding:"0.4rem 0.6rem", cursor:"pointer", color:"var(--text-muted)", display:"flex", alignItems:"center", gap:"0.25rem", fontSize:"0.75rem", fontWeight:600 }}>
                     Détails <ArrowRight size={12} />
                 </button>
             </div>
@@ -571,7 +618,7 @@ function PageLoader() {
 
 // ── Drawer détail commande ──────────────────────────────────────────────────
 
-function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionLoading, onAction, onDownload }: {
+function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionLoading, onAction, onCancel, onDownload }: {
     cmd: Commande | null;
     loading: boolean;
     onClose: () => void;
@@ -579,10 +626,16 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
     isCuisinier: boolean;
     actionLoading: number | null;
     onAction: (id: number, action: "prete" | "en_livraison" | "servie" | "payee") => void;
+    onCancel: (id: number, motif: string) => void;
     onDownload: (id: number) => void;
 }) {
     const sc = cmd ? STATUT_CONFIG[cmd.statut] : null;
     const isActLoading = cmd ? actionLoading === cmd.id : false;
+    const [confirmCancel, setConfirmCancel] = useState(false);
+    const [motif, setMotif] = useState("");
+
+    // Réinitialise le mini-formulaire d'annulation quand on change de commande
+    useEffect(() => { setConfirmCancel(false); setMotif(""); }, [cmd?.id]);
 
     const fmt = (iso: string | null) =>
         iso ? new Date(iso).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }) : null;
@@ -613,14 +666,14 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
                             {cmd ? `Commande #${cmd.id}` : "Chargement…"}
                         </span>
                         {sc && (
-                            <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", padding: "0.15rem 0.55rem", borderRadius: "9999px", fontSize: "0.72rem", fontWeight: 700, color: sc.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", padding: "0.15rem 0.55rem", borderRadius: "var(--radius-full)", fontSize: "0.72rem", fontWeight: 700, color: sc.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
                                 <StatutIcon statut={cmd!.statut} />
                                 {sc.label}
                             </span>
                         )}
                         {cmd?.type_commande && <TypeBadge type={cmd.type_commande} label={cmd.type_commande_display} />}
                     </div>
-                    <button onClick={onClose} style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "0.5rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", cursor: "pointer", color: cssVar.textMuted }}>
+                    <button onClick={onClose} style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--radius-md)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", cursor: "pointer", color: cssVar.textMuted }}>
                         <X size={15} />
                     </button>
                 </div>
@@ -659,6 +712,21 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
                                 ))}
                             </div>
                         </div>
+
+                        {/* Bandeau annulation */}
+                        {cmd.statut === "annulee" && (
+                            <div className="drawer-section" style={{ borderColor: "rgba(239,68,68,0.3)" }}>
+                                <p className="drawer-section-title" style={{ color: "#ef4444" }}>Commande annulée</p>
+                                <p style={{ margin: 0, fontSize: typography.sm, color: cssVar.textSecondary }}>
+                                    {cmd.motif_annulation ? `Motif : ${cmd.motif_annulation}` : "Aucun motif renseigné."}
+                                </p>
+                                {(cmd.annulee_par_login || cmd.annulee_le) && (
+                                    <p style={{ margin: "4px 0 0", fontSize: "0.7rem", color: cssVar.textMuted }}>
+                                        {cmd.annulee_par_login ? `Par ${cmd.annulee_par_login}` : ""}{cmd.annulee_le ? ` · ${fmt(cmd.annulee_le)}` : ""}
+                                    </p>
+                                )}
+                            </div>
+                        )}
 
                         {/* Position de livraison (client géolocalisé) */}
                         {cmd.type_commande === "livraison" && cmd.client_latitude && cmd.client_longitude && (
@@ -711,7 +779,7 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
 
                         {/* Timeline workflow */}
                         <div className="drawer-section">
-                            <p className="drawer-section-title">Workflow{!avecCuisine && <span style={{ marginLeft: "0.4rem", fontSize: "0.65rem", fontWeight: 600, color: "#22c55e", background: "var(--bg-section-alt)", padding: "0.1rem 0.4rem", borderRadius: "9999px" }}>Sans étape cuisine</span>}</p>
+                            <p className="drawer-section-title">Workflow{!avecCuisine && <span style={{ marginLeft: "0.4rem", fontSize: "0.65rem", fontWeight: 600, color: "#22c55e", background: "var(--bg-section-alt)", padding: "0.1rem 0.4rem", borderRadius: "var(--radius-full)" }}>Sans étape cuisine</span>}</p>
                             {TIMELINE.map((step, i) => {
                                 const done = i <= currentIdx;
                                 const isCurrent = i === currentIdx;
@@ -764,6 +832,32 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
                                     <FileDown size={15} />
                                     Télécharger le reçu PDF
                                 </button>
+                            )}
+
+                            {/* Annulation (staff) — possible jusqu'à « en livraison » inclus */}
+                            {isServeur && cmd.peut_annuler_staff && (
+                                confirmCancel ? (
+                                    <div style={{ border: "1px solid var(--border-subtle)", borderRadius: radius.lg, padding: "0.75rem", background: "var(--bg-section-alt)", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                                        <span style={{ fontSize: typography.sm, fontWeight: 700, color: cssVar.textPrimary }}>Annuler la commande #{cmd.id} ?</span>
+                                        <textarea value={motif} onChange={(e) => setMotif(e.target.value)} placeholder="Motif de l'annulation (obligatoire)" rows={2}
+                                            style={{ width: "100%", boxSizing: "border-box", padding: "0.5rem 0.7rem", borderRadius: radius.md, border: "1px solid var(--border-subtle)", background: "var(--bg-card)", color: cssVar.textPrimary, fontSize: typography.sm, resize: "vertical", fontFamily: "inherit", outline: "none" }} />
+                                        <div style={{ display: "flex", gap: "0.5rem" }}>
+                                            <button onClick={() => onCancel(cmd.id, motif)} disabled={isActLoading || !motif.trim()}
+                                                style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem", padding: "0.6rem", borderRadius: radius.lg, border: "none", background: (!motif.trim() || isActLoading) ? "rgba(239,68,68,0.4)" : "#ef4444", color: "#fff", fontWeight: 700, fontSize: typography.sm, cursor: (!motif.trim() || isActLoading) ? "not-allowed" : "pointer" }}>
+                                                {isActLoading ? "Annulation…" : "Confirmer l'annulation"}
+                                            </button>
+                                            <button onClick={() => { setConfirmCancel(false); setMotif(""); }} disabled={isActLoading}
+                                                style={{ padding: "0.6rem 0.9rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "transparent", color: cssVar.textMuted, fontWeight: 600, fontSize: typography.sm, cursor: "pointer" }}>
+                                                Retour
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <button onClick={() => setConfirmCancel(true)}
+                                        style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", padding: "0.7rem", borderRadius: radius.lg, border: "1px solid rgba(239,68,68,0.4)", background: "transparent", color: "#ef4444", fontWeight: 700, fontSize: typography.sm, cursor: "pointer" }}>
+                                        <X size={15} /> Annuler la commande
+                                    </button>
+                                )
                             )}
                         </div>
 
