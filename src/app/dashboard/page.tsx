@@ -557,7 +557,7 @@ export default function DashboardPage() {
     if (authLoading || !user || user.role === "Rclient") return (
         <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: cssVar.bgDark }}>
             <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-            <div style={{ width: 36, height: 36, borderRadius: "50%", border: `3px solid ${cssVar.borderAmber}`, borderTopColor: cssVar.amberGlow, animation: "spin .75s linear infinite" }} />
+            <div style={{ width: 36, height: 36, borderRadius: "50%", border: `3px solid ${cssVar.borderSubtle}`, borderTopColor: cssVar.amberGlow, animation: "spin .75s linear infinite" }} />
         </div>
     );
 
@@ -573,7 +573,6 @@ export default function DashboardPage() {
             @keyframes pulse{0%,100%{opacity:.6}50%{opacity:.3}}
             @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}
         `}</style>
-            <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "40vh", pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(245,158,11,0.07) 0%, transparent 80%)" }} />
 
             <div style={{ minHeight: "100vh", background: cssVar.bgDark }}>
                 <div style={{ maxWidth: 1100, margin: "0 auto", padding: "2rem 1.5rem", position: "relative", zIndex: 1 }}>
@@ -587,7 +586,7 @@ export default function DashboardPage() {
                             </h1>
                             <p style={{ margin: "0.2rem 0 0.5rem", fontSize: typography.sm, color: cssVar.textMuted }}>{WELCOME[role]}</p>
                             <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-                                <span style={roleBadge(rc.bg, rc.text, rc.border)}>
+                                <span style={roleBadge(rc.text)}>
                                     <span style={{ width: 6, height: 6, borderRadius: "50%", background: rc.text, display: "inline-block" }} />
                                     {ROLE_LABELS[role]}
                                 </span>

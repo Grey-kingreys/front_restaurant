@@ -18,7 +18,7 @@ import { Wallet, Check, X, RefreshCw, Clock } from "lucide-react";
 function PageLoader() {
     return (
         <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-dark)" }}>
-            <div style={{ width: 34, height: 34, borderRadius: "50%", border: "3px solid var(--border-amber)", borderTopColor: "var(--amber-glow)", animation: "spin .75s linear infinite" }} />
+            <div style={{ width: 34, height: 34, borderRadius: "50%", border: "3px solid var(--border-subtle)", borderTopColor: "var(--amber-glow)", animation: "spin .75s linear infinite" }} />
             <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
         </div>
     );
@@ -105,8 +105,6 @@ export default function ApprovisionnementsPage() {
                 .dem-btn:disabled { opacity:0.55; cursor:not-allowed; }
             `}</style>
 
-            <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "35vh", pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 70% 35% at 50% -5%, rgba(245,158,11,0.05) 0%, transparent 70%)" }} />
-
             {toast && (
                 <div style={{ position: "fixed", bottom: "1.5rem", right: "1.5rem", zIndex: 200, padding: "0.75rem 1.25rem", borderRadius: radius.xl, background: toast.type === "success" ? "rgba(34,197,94,0.96)" : "rgba(239,68,68,0.96)", color: "#fff", fontWeight: 600, fontSize: "0.85rem", animation: "toastIn 0.3s ease", display: "flex", alignItems: "center", gap: "0.5rem" }}>
                     {toast.type === "success" ? <Check size={16} /> : <X size={16} />}
@@ -120,7 +118,7 @@ export default function ApprovisionnementsPage() {
                     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", marginBottom: "1.5rem" }}>
                         <div>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.3rem" }}>
-                                <div style={{ width: 40, height: 40, borderRadius: "0.875rem", background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.2)", display: "flex", alignItems: "center", justifyContent: "center", color: "#f59e0b" }}>
+                                <div style={{ width: 40, height: 40, borderRadius: "var(--radius-xl)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "#f59e0b" }}>
                                     <Wallet size={20} />
                                 </div>
                                 <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: cssVar.textPrimary }}>Approvisionnements</h1>
@@ -165,7 +163,7 @@ export default function ApprovisionnementsPage() {
                                                     {d.comptable_nom ?? d.demande_par_login ?? "—"} · {fmt(d.created_at)}
                                                 </p>
                                             </div>
-                                            <span style={{ fontSize: "0.7rem", fontWeight: 700, color: s.color, background: `${s.color}1a`, border: `1px solid ${s.color}40`, padding: "0.2rem 0.6rem", borderRadius: "9999px", whiteSpace: "nowrap" }}>{s.label}</span>
+                                            <span style={{ fontSize: "0.7rem", fontWeight: 700, color: s.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", padding: "0.2rem 0.6rem", borderRadius: "var(--radius-full)", whiteSpace: "nowrap" }}>{s.label}</span>
                                         </div>
                                         <p style={{ margin: "0 0 0.5rem", fontSize: typography.sm, color: cssVar.textSecondary }}>{d.motif}</p>
                                         {d.statut === "refusee" && d.motif_refus && (

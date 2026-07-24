@@ -220,7 +220,7 @@ export default function CaisseGeneralePage() {
                     </div>
 
                     {/* Note explicative */}
-                    <div style={{ marginTop: spacing["4"], padding: "0.75rem 1rem", borderRadius: radius.lg, background: "rgba(245,158,11,.06)", border: "1px solid rgba(245,158,11,.15)", fontSize: typography.xs, color: cssVar.textMuted, lineHeight: 1.6 }}>
+                    <div style={{ marginTop: spacing["4"], padding: "0.75rem 1rem", borderRadius: radius.lg, background: cssVar.bgSectionAlt, border: `1px solid ${cssVar.borderSubtle}`, fontSize: typography.xs, color: cssVar.textMuted, lineHeight: 1.6 }}>
                         Le solde est alimenté automatiquement à chaque fermeture de Caisse Globale et de Caisse Comptable. Il ne peut pas être modifié manuellement depuis cette interface.
                     </div>
                 </>

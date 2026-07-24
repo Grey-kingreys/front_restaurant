@@ -225,7 +225,7 @@ export default function GeoMap({ points, userLocation, height = 360, activeId }:
 
     if (!mapboxAvailable()) {
         return (
-            <div style={{ height, borderRadius: "0.9rem", border: "1px dashed var(--border-subtle)", background: "var(--bg-section-alt)", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", color: "var(--text-muted)", fontSize: "0.82rem", padding: "1rem" }}>
+            <div style={{ height, borderRadius: "var(--radius-xl)", border: "1px dashed var(--border-subtle)", background: "var(--bg-section-alt)", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", color: "var(--text-muted)", fontSize: "0.82rem", padding: "1rem" }}>
                 <div>
                     <MapPin size={22} style={{ opacity: 0.5, marginBottom: 6 }} />
                     <p style={{ margin: 0 }}>Carte indisponible — token Mapbox manquant.</p>
@@ -235,7 +235,7 @@ export default function GeoMap({ points, userLocation, height = 360, activeId }:
     }
 
     return (
-        <div style={{ position: "relative", height, borderRadius: "0.9rem", overflow: "hidden", border: "1px solid var(--border-subtle)" }}>
+        <div style={{ position: "relative", height, borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--border-subtle)" }}>
             <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
             <MapControls styleMode={styleMode} onStyleChange={handleStyleChange} is3D={is3D} onToggle3D={handleToggle3D} />
             {routeInfo && (

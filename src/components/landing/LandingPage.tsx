@@ -5,6 +5,8 @@ import Navbar from "./Navbar";
 import HeroSection from "./HeroSection";
 import FeaturesSection from "./FeaturesSection";
 import WorkflowSection from "./WorkflowSection";
+import PricingSection from "./PricingSection";
+import PartnersSection from "./PartnersSection";
 import CTASection from "./CTASection";
 import Footer from "./Footer";
 
@@ -45,6 +47,8 @@ export default function LandingPage() {
       <HeroSection />
       <FeaturesSection />
       <WorkflowSection />
+      <PricingSection />
+      <PartnersSection />
       <CTASection />
       <Footer />
     </div>

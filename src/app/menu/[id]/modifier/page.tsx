@@ -52,8 +52,6 @@ export default function ModifierPlatPage() {
         @media(min-width:1024px) { .modifier-root { padding: 2rem 2rem 3rem; } }
       `}</style>
 
-            <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "40vh", pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 70% 40% at 50% -5%, rgba(245,158,11,0.07) 0%, transparent 70%)" }} />
-
             <div className="modifier-root">
                 <div className="modifier-inner">
 
@@ -69,9 +67,9 @@ export default function ModifierPlatPage() {
                     </nav>
 
                     {/* Header */}
-                    <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-amber)", borderRadius: radius["2xl"], padding: `${spacing["5"]} ${spacing["5"]}`, marginBottom: spacing["4"], boxShadow: cssVar.shadowCard }}>
+                    <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: radius["2xl"], padding: `${spacing["5"]} ${spacing["5"]}`, marginBottom: spacing["4"], boxShadow: cssVar.shadowCard }}>
                         <div style={{ display: "flex", alignItems: "center", gap: spacing["3"] }}>
-                            <div style={{ width: 44, height: 44, borderRadius: radius.xl, background: "var(--icon-bg)", border: "1px solid var(--icon-border)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--icon-primary)", flexShrink: 0 }}>
+                            <div style={{ width: 44, height: 44, borderRadius: radius.xl, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--icon-primary)", flexShrink: 0 }}>
                                 <PencilSquareIcon size={20} />
                             </div>
                             <div style={{ flex: 1, minWidth: 0 }}>

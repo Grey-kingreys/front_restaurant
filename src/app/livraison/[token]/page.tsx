@@ -88,7 +88,7 @@ export default function LivraisonPubliquePage() {
             `}</style>
 
             {toast && (
-                <div style={{ position: "fixed", bottom: "1.25rem", left: "50%", transform: "translateX(-50%)", zIndex: 200, padding: "0.75rem 1.25rem", borderRadius: "0.9rem", background: toast.type === "success" ? "rgba(34,197,94,0.96)" : "rgba(239,68,68,0.96)", color: "#fff", fontWeight: 600, fontSize: "0.85rem", animation: "toastIn 0.3s ease" }}>
+                <div style={{ position: "fixed", bottom: "1.25rem", left: "50%", transform: "translateX(-50%)", zIndex: 200, padding: "0.75rem 1.25rem", borderRadius: "var(--radius-xl)", background: toast.type === "success" ? "rgba(34,197,94,0.96)" : "rgba(239,68,68,0.96)", color: "#fff", fontWeight: 600, fontSize: "0.85rem", animation: "toastIn 0.3s ease" }}>
                     {toast.msg}
                 </div>
             )}
@@ -102,14 +102,14 @@ export default function LivraisonPubliquePage() {
                             <Truck size={26} style={{ color: "#8b5cf6" }} />
                         </div>
                         <h1 style={{ margin: "0 0 0.2rem", fontSize: "1.25rem", fontWeight: 800, color: "var(--text-primary)" }}>Livraison #{data.commande_id}</h1>
-                        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.7rem", borderRadius: "9999px", fontSize: "0.72rem", fontWeight: 700, color: st.color, background: `${st.color}1a`, border: `1px solid ${st.color}40` }}>
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.2rem 0.7rem", borderRadius: "var(--radius-full)", fontSize: "0.72rem", fontWeight: 700, color: st.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
                             <span style={{ width: 5, height: 5, borderRadius: "50%", background: st.color }} />
                             {st.label}
                         </span>
                     </div>
 
                     {/* Carte destination */}
-                    <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1rem", padding: "1.1rem 1.25rem", marginBottom: "1rem" }}>
+                    <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-xl)", padding: "1.1rem 1.25rem", marginBottom: "1rem" }}>
                         <p style={{ margin: "0 0 0.75rem", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--text-muted)" }}>Destination</p>
                         <p style={{ margin: "0 0 0.5rem", fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)" }}>{data.client_nom ?? "Client"}</p>
                         {data.adresse_livraison && (
@@ -120,13 +120,13 @@ export default function LivraisonPubliquePage() {
                         )}
                         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
                             {data.client_telephone && (
-                                <a href={`tel:${data.client_telephone}`} style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.5rem 0.85rem", borderRadius: "0.7rem", border: "1px solid var(--border-subtle)", color: "var(--text-primary)", textDecoration: "none", fontSize: "0.82rem", fontWeight: 600 }}>
+                                <a href={`tel:${data.client_telephone}`} style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.5rem 0.85rem", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)", color: "var(--text-primary)", textDecoration: "none", fontSize: "0.82rem", fontWeight: 600 }}>
                                     <Phone size={15} /> Appeler
                                 </a>
                             )}
                             {hasCoords && (
                                 <a href={`https://www.google.com/maps?q=${data.latitude},${data.longitude}`} target="_blank" rel="noopener noreferrer"
-                                    style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.5rem 0.85rem", borderRadius: "0.7rem", border: "1px solid rgba(139,92,246,0.35)", background: "rgba(139,92,246,0.08)", color: "#8b5cf6", textDecoration: "none", fontSize: "0.82rem", fontWeight: 600 }}>
+                                    style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.5rem 0.85rem", borderRadius: "var(--radius-lg)", border: "1px solid rgba(139,92,246,0.35)", background: "rgba(139,92,246,0.08)", color: "#8b5cf6", textDecoration: "none", fontSize: "0.82rem", fontWeight: 600 }}>
                                     <MapPin size={15} /> Itinéraire
                                 </a>
                             )}
@@ -134,7 +134,7 @@ export default function LivraisonPubliquePage() {
                     </div>
 
                     {/* Restaurant */}
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1rem", padding: "0.85rem 1.25rem", marginBottom: "1rem", fontSize: "0.88rem", color: "var(--text-secondary)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-xl)", padding: "0.85rem 1.25rem", marginBottom: "1rem", fontSize: "0.88rem", color: "var(--text-secondary)" }}>
                         <Store size={16} style={{ color: "var(--text-muted)", flexShrink: 0 }} />
                         <span style={{ flex: 1 }}>{data.restaurant}</span>
                         {data.restaurant_telephone && (
@@ -145,7 +145,7 @@ export default function LivraisonPubliquePage() {
                     </div>
 
                     {/* Articles + total */}
-                    <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1rem", overflow: "hidden", marginBottom: "1.5rem" }}>
+                    <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-xl)", overflow: "hidden", marginBottom: "1.5rem" }}>
                         {data.items.map((it, i) => (
                             <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "0.7rem 1.25rem", borderBottom: "1px solid var(--border-subtle)", fontSize: "0.88rem" }}>
                                 <span style={{ color: "var(--text-secondary)" }}>{it.quantite}× {it.nom}</span>
@@ -179,12 +179,12 @@ export default function LivraisonPubliquePage() {
                             </button>
                         )}
                         {done && (
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", padding: "1rem", borderRadius: "0.9rem", background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.25)", color: "#22c55e", fontWeight: 700, fontSize: "0.9rem" }}>
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", padding: "1rem", borderRadius: "var(--radius-xl)", background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.25)", color: "#22c55e", fontWeight: 700, fontSize: "0.9rem" }}>
                                 <CheckCircle2 size={18} /> Livraison terminée — merci !
                             </div>
                         )}
                         {!a.peut_passer_en_livraison && !a.peut_etre_servie && !a.peut_encaisser && !done && (
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", padding: "1rem", borderRadius: "0.9rem", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", color: "var(--text-muted)", fontSize: "0.85rem" }}>
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", padding: "1rem", borderRadius: "var(--radius-xl)", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", color: "var(--text-muted)", fontSize: "0.85rem" }}>
                                 <Package size={16} /> En attente de préparation…
                             </div>
                         )}

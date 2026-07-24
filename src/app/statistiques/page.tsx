@@ -23,8 +23,8 @@ function PageLoader() {
 
 function StatCard({ label, value, color, icon }: { label: string; value: number; color: string; icon: React.ReactNode }) {
     return (
-        <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "0.875rem", padding: "1.125rem 1.25rem", display: "flex", alignItems: "center", gap: "0.875rem" }}>
-            <div style={{ width: 40, height: 40, borderRadius: "0.75rem", background: `${color}18`, border: `1px solid ${color}30`, display: "flex", alignItems: "center", justifyContent: "center", color, flexShrink: 0 }}>
+        <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-xl)", padding: "1.125rem 1.25rem", display: "flex", alignItems: "center", gap: "0.875rem" }}>
+            <div style={{ width: 40, height: 40, borderRadius: "var(--radius-lg)", background: `${color}18`, border: `1px solid ${color}30`, display: "flex", alignItems: "center", justifyContent: "center", color, flexShrink: 0 }}>
                 {icon}
             </div>
             <div>
@@ -82,15 +82,13 @@ export default function StatistiquesPage() {
                 .rp-table-desktop tr:last-child td { border-bottom: none; }
             `}</style>
 
-            <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "35vh", pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 70% 35% at 50% -5%, rgba(245,158,11,0.05) 0%, transparent 70%)" }} />
-
             <div style={{ minHeight: "100vh", background: "var(--bg-dark)" }} className="rp-page-pad">
                 <div style={{ maxWidth: 1000, margin: "0 auto" }}>
 
                     {/* Header */}
                     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", marginBottom: "1.75rem" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                            <div style={{ width: 40, height: 40, borderRadius: "0.875rem", background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.2)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--amber-glow)" }}>
+                            <div style={{ width: 40, height: 40, borderRadius: "var(--radius-xl)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--amber-glow)" }}>
                                 <BarChart2 size={20} />
                             </div>
                             <div>
@@ -147,14 +145,14 @@ export default function StatistiquesPage() {
                                                 <tr key={r.restaurant_id} className="stat-row" style={{ transition: "background 0.12s" }}>
                                                     <td>
                                                         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                                            <div style={{ width: 28, height: 28, borderRadius: "0.5rem", background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--amber-glow)", flexShrink: 0 }}>
+                                                            <div style={{ width: 28, height: 28, borderRadius: "var(--radius-md)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--amber-glow)", flexShrink: 0 }}>
                                                                 <Building2 size={13} />
                                                             </div>
                                                             <span style={{ fontWeight: 600, color: cssVar.textPrimary }}>{r.restaurant_nom}</span>
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.15rem 0.5rem", borderRadius: "9999px", fontSize: "0.7rem", fontWeight: 700, color: r.is_active ? "#22c55e" : "#ef4444", background: r.is_active ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)", border: `1px solid ${r.is_active ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}` }}>
+                                                        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.15rem 0.5rem", borderRadius: "var(--radius-full)", fontSize: "0.7rem", fontWeight: 700, color: r.is_active ? "#22c55e" : "#ef4444", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)" }}>
                                                             <span style={{ width: 4, height: 4, borderRadius: "50%", background: r.is_active ? "#22c55e" : "#ef4444" }} />
                                                             {r.is_active ? "Actif" : "Suspendu"}
                                                         </span>

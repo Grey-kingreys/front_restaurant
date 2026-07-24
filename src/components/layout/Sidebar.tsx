@@ -105,7 +105,7 @@ function SidebarInner({
                 fontSize: typography.base, fontWeight: active ? typography.semibold : typography.medium,
                 color: active ? cssVar.amberGlow : cssVar.textSecondary,
                 textDecoration: "none",
-                background: active ? "rgba(245,158,11,0.08)" : "transparent",
+                background: active ? cssVar.bgSectionAlt : "transparent",
                 borderLeft: `2px solid ${active ? cssVar.amberGlow : "transparent"}`,
                 transition: "all 0.15s ease",
             }}
@@ -217,7 +217,7 @@ function SidebarInner({
                             <ChevronRight size={14} color={cssVar.textMuted} />
                         </Link>
                         <div style={{ marginTop: spacing["1"], paddingLeft: "0.2rem" }}>
-                            <span style={roleBadge(rc.bg, rc.text, rc.border)}>
+                            <span style={roleBadge(rc.text)}>
                                 <span style={{ width: 5, height: 5, borderRadius: "50%", background: rc.text }} />
                                 {ROLE_LABELS[role]}
                             </span>
@@ -343,7 +343,7 @@ export default function Sidebar({ mobileOpen, onMobileClose, isCollapsed, toggle
     const base: React.CSSProperties = {
         width: isCollapsed ? "4.5rem" : SIDEBAR_W,
         background: cssVar.bgCard,
-        borderRight: `1px solid ${cssVar.borderAmber}`,
+        borderRight: `1px solid ${cssVar.borderSubtle}`,
         height: "100%",
         display: "flex",
         flexDirection: "column",
