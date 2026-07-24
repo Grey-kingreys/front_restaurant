@@ -27,6 +27,7 @@ const STATUT_CONFIG: Record<StatutCommande, { label: string; color: string; bg: 
     en_livraison: { label: "En livraison", color: "#8b5cf6", bg: "rgba(139,92,246,0.1)",  border: "rgba(139,92,246,0.25)" },
     servie:       { label: "Servie",       color: "#a855f7", bg: "rgba(168,85,247,0.1)",  border: "rgba(168,85,247,0.25)" },
     payee:        { label: "Terminée",     color: "#22c55e", bg: "rgba(34,197,94,0.1)",   border: "rgba(34,197,94,0.25)" },
+    annulee:      { label: "Annulée",      color: "#6b7280", bg: "rgba(107,114,128,0.1)", border: "rgba(107,114,128,0.25)" },
 };
 
 const WORKFLOW_ALL: { statut: StatutCommande; label: string; desc: string; icon: React.ReactNode }[] = [
@@ -124,7 +125,7 @@ export default function MesCommandesPage() {
                 }
                 .overlay-panel {
                     position:fixed; left:0; right:0; bottom:0; z-index:61;
-                    background:var(--bg-card); border-top:1px solid var(--border-amber);
+                    background:var(--bg-card); border-top:1px solid var(--border-subtle);
                     border-radius:1.5rem 1.5rem 0 0;
                     max-height:85vh; overflow-y:auto;
                     animation:slideUp 0.3s cubic-bezier(0.4,0,0.2,1);
@@ -221,9 +222,9 @@ export default function MesCommandesPage() {
                                     <div style={{ flexShrink: 0, textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.3rem" }}>
                                         <span style={{
                                             display: "inline-flex", alignItems: "center", gap: "0.25rem",
-                                            padding: "0.2rem 0.6rem", borderRadius: "999px",
+                                            padding: "0.2rem 0.6rem", borderRadius: "var(--radius-full)",
                                             fontSize: typography.xs, fontWeight: 700,
-                                            color: sc.color, background: sc.bg, border: `1px solid ${sc.border}`,
+                                            color: sc.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)",
                                         }}>
                                             {sc.label}
                                         </span>
@@ -327,7 +328,7 @@ export default function MesCommandesPage() {
                                             <div style={{ fontWeight: isActive ? 800 : 600, fontSize: typography.sm, color: isActive ? "var(--text-primary)" : isDone ? "var(--text-secondary)" : "var(--text-muted)" }}>
                                                 {step.label}
                                                 {isActive && (
-                                                    <span style={{ marginLeft: "0.4rem", fontSize: typography.xs, fontWeight: 700, color: step.statut === "payee" ? "#22c55e" : "var(--amber-glow)", background: step.statut === "payee" ? "rgba(34,197,94,0.1)" : "rgba(245,158,11,0.1)", padding: "0.1rem 0.4rem", borderRadius: "999px" }}>
+                                                    <span style={{ marginLeft: "0.4rem", fontSize: typography.xs, fontWeight: 700, color: step.statut === "payee" ? "#22c55e" : "var(--amber-glow)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", padding: "0.1rem 0.4rem", borderRadius: "var(--radius-full)" }}>
                                                         {step.statut === "payee" ? "Payée" : "En cours"}
                                                     </span>
                                                 )}

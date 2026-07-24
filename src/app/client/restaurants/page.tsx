@@ -72,18 +72,18 @@ export default function ClientRestaurantsPage() {
                 <div style={{ position: "relative", flex: 1, minWidth: 220, maxWidth: 420 }}>
                     <Search size={15} style={{ position: "absolute", left: "0.75rem", top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)", pointerEvents: "none" }} />
                     <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Rechercher un restaurant…"
-                        style={{ width: "100%", padding: "0.65rem 0.85rem 0.65rem 2.2rem", borderRadius: "0.75rem", border: "1px solid var(--border-subtle)", background: "var(--bg-card)", color: "var(--text-primary)", fontSize: "0.9rem", boxSizing: "border-box", outline: "none" }} />
+                        style={{ width: "100%", padding: "0.65rem 0.85rem 0.65rem 2.2rem", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)", background: "var(--bg-card)", color: "var(--text-primary)", fontSize: "0.9rem", boxSizing: "border-box", outline: "none" }} />
                 </div>
 
                 <button onClick={request} disabled={status === "loading"}
-                    style={{ display: "flex", alignItems: "center", gap: "0.4rem", padding: "0.6rem 0.9rem", borderRadius: "0.75rem", border: `1px solid ${location ? "rgba(59,130,246,0.4)" : "var(--border-subtle)"}`, background: location ? "rgba(59,130,246,0.08)" : "var(--bg-card)", color: location ? "#3b82f6" : "var(--text-primary)", fontSize: "0.82rem", fontWeight: 700, cursor: "pointer" }}>
+                    style={{ display: "flex", alignItems: "center", gap: "0.4rem", padding: "0.6rem 0.9rem", borderRadius: "var(--radius-lg)", border: `1px solid ${location ? "rgba(59,130,246,0.4)" : "var(--border-subtle)"}`, background: location ? "rgba(59,130,246,0.08)" : "var(--bg-card)", color: location ? "#3b82f6" : "var(--text-primary)", fontSize: "0.82rem", fontWeight: 700, cursor: "pointer" }}>
                     <LocateFixed size={14} />{status === "loading" ? "Localisation…" : location ? "Trié par distance" : "Près de moi"}
                 </button>
 
-                <div style={{ display: "flex", borderRadius: "0.75rem", border: "1px solid var(--border-subtle)", overflow: "hidden" }}>
+                <div style={{ display: "flex", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)", overflow: "hidden" }}>
                     {(["list", "map"] as const).map((v) => (
                         <button key={v} onClick={() => setView(v)}
-                            style={{ display: "flex", alignItems: "center", gap: "0.35rem", padding: "0.6rem 0.85rem", border: "none", background: view === v ? "rgba(245,158,11,0.12)" : "var(--bg-card)", color: view === v ? "#f59e0b" : "var(--text-muted)", fontSize: "0.82rem", fontWeight: 700, cursor: "pointer" }}>
+                            style={{ display: "flex", alignItems: "center", gap: "0.35rem", padding: "0.6rem 0.85rem", border: "none", background: view === v ? "var(--bg-section-alt)" : "var(--bg-card)", color: view === v ? "#f59e0b" : "var(--text-muted)", fontSize: "0.82rem", fontWeight: 700, cursor: "pointer" }}>
                             {v === "list" ? <List size={14} /> : <MapIcon size={14} />}{v === "list" ? "Liste" : "Carte"}
                         </button>
                     ))}
@@ -118,10 +118,10 @@ export default function ClientRestaurantsPage() {
                     {filtered.map((r) => {
                         const d = dist(r);
                         return (
-                        <Link key={r.id} href={`/restaurant/${r.slug}`} style={{ textDecoration: "none", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "1rem", overflow: "hidden", transition: "transform .15s, box-shadow .15s" }}
+                        <Link key={r.id} href={`/restaurant/${r.slug}`} style={{ textDecoration: "none", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-xl)", overflow: "hidden", transition: "transform .15s, box-shadow .15s" }}
                             onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 28px rgba(0,0,0,0.25)"; }}
                             onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "none"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}>
-                            <div style={{ height: 110, background: "linear-gradient(135deg, rgba(245,158,11,0.18), rgba(217,119,6,0.06))", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <div style={{ height: 110, background: "var(--bg-section-alt)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                 <ChefHat size={36} style={{ color: "#f59e0b", opacity: 0.7 }} />
                             </div>
                             <div style={{ padding: "1rem" }}>
@@ -131,8 +131,8 @@ export default function ClientRestaurantsPage() {
                                 </div>
                                 {r.adresse && <p style={{ margin: "0 0 0.75rem", display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.78rem", color: "var(--text-muted)" }}><MapPin size={12} />{r.adresse}</p>}
                                 <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
-                                    {r.accept_livraison && <span style={{ display: "flex", alignItems: "center", gap: "0.25rem", padding: "3px 9px", borderRadius: "99px", background: "rgba(139,92,246,0.12)", border: "1px solid rgba(139,92,246,0.25)", color: "#8b5cf6", fontSize: "0.7rem", fontWeight: 700 }}><Truck size={11} />Livraison</span>}
-                                    {r.accept_emporter && <span style={{ display: "flex", alignItems: "center", gap: "0.25rem", padding: "3px 9px", borderRadius: "99px", background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.25)", color: "#f59e0b", fontSize: "0.7rem", fontWeight: 700 }}><ShoppingBag size={11} />À emporter</span>}
+                                    {r.accept_livraison && <span style={{ display: "flex", alignItems: "center", gap: "0.25rem", padding: "3px 9px", borderRadius: "var(--radius-full)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color: "#8b5cf6", fontSize: "0.7rem", fontWeight: 700 }}><Truck size={11} />Livraison</span>}
+                                    {r.accept_emporter && <span style={{ display: "flex", alignItems: "center", gap: "0.25rem", padding: "3px 9px", borderRadius: "var(--radius-full)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color: "#f59e0b", fontSize: "0.7rem", fontWeight: 700 }}><ShoppingBag size={11} />À emporter</span>}
                                 </div>
                             </div>
                         </Link>

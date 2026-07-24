@@ -72,7 +72,7 @@ export default function HistoriqueCaissesPage() {
                     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", marginBottom: "1.5rem" }}>
                         <div>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.3rem" }}>
-                                <div style={{ width: 40, height: 40, borderRadius: "0.875rem", background: "rgba(20,184,166,0.1)", border: "1px solid rgba(20,184,166,0.2)", display: "flex", alignItems: "center", justifyContent: "center", color: "#14b8a6" }}>
+                                <div style={{ width: 40, height: 40, borderRadius: "var(--radius-xl)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "#14b8a6" }}>
                                     <History size={20} />
                                 </div>
                                 <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: cssVar.textPrimary }}>Historique des caisses</h1>
@@ -102,7 +102,7 @@ export default function HistoriqueCaissesPage() {
                                 const ecart = c.montant_physique_fermeture != null ? Number(c.montant_physique_fermeture) - Number(c.solde) : null;
                                 return (
                                     <button key={c.id} className="hist-card" onClick={() => router.push(`/caisse/historique/${c.id}`)}>
-                                        <div style={{ width: 44, height: 44, borderRadius: "0.75rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "#14b8a6", flexShrink: 0 }}>
+                                        <div style={{ width: 44, height: 44, borderRadius: "var(--radius-lg)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: "#14b8a6", flexShrink: 0 }}>
                                             <Archive size={20} />
                                         </div>
                                         <div style={{ flex: 1, minWidth: 0 }}>
@@ -113,7 +113,7 @@ export default function HistoriqueCaissesPage() {
                                             </p>
                                         </div>
                                         {ecart !== null && ecart !== 0 && (
-                                            <span style={{ fontSize: "0.68rem", fontWeight: 700, color: "#f59e0b", background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.3)", padding: "0.2rem 0.55rem", borderRadius: "9999px", whiteSpace: "nowrap" }}>
+                                            <span style={{ fontSize: "0.68rem", fontWeight: 700, color: "#f59e0b", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", padding: "0.2rem 0.55rem", borderRadius: "var(--radius-full)", whiteSpace: "nowrap" }}>
                                                 {ecart > 0 ? "Excédent" : "Manquant"} {Math.abs(ecart).toLocaleString("fr-FR")}
                                             </span>
                                         )}

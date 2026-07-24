@@ -152,7 +152,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                     onClick={() => setMobileOpen(true)}
                     aria-label="Ouvrir le menu"
                     style={{
-                        width: 40, height: 40, borderRadius: "0.65rem",
+                        width: 40, height: 40, borderRadius: "var(--radius-lg)",
                         background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)",
                         cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
                         color: "var(--amber-glow)",

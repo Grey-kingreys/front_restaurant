@@ -33,6 +33,28 @@ export interface User {
     dashboard_type: DashboardType | null;
 }
 
+// ─── Carnet d'adresses client ────────────────────────────────────────────────
+
+export interface AdresseClient {
+    id: number;
+    libelle: string;
+    description: string;
+    latitude: string | null;
+    longitude: string | null;
+    telephone: string | null;
+    is_default: boolean;
+    date_creation: string;
+}
+
+export interface AdresseClientPayload {
+    libelle: string;
+    description: string;
+    latitude?: number | null;
+    longitude?: number | null;
+    telephone?: string | null;
+    is_default?: boolean;
+}
+
 // ─── Types Rôles & Permissions ───────────────────────────────────────────────
 
 export interface Permission {

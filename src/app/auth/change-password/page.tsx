@@ -9,7 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 const inputStyle: React.CSSProperties = {
     width: "100%",
     padding: "0.65rem 0.875rem",
-    borderRadius: "0.65rem",
+    borderRadius: "var(--radius-lg)",
     border: "1px solid var(--border-subtle)",
     background: "var(--bg-section-alt)",
     color: "var(--text-primary)",
@@ -68,8 +68,8 @@ export default function ChangePasswordPage() {
                 background: "var(--bg-dark)", padding: "1.5rem",
             }}>
                 <div style={{
-                    background: "var(--bg-card)", border: "1px solid var(--border-amber)",
-                    borderRadius: "1.25rem", padding: "2.5rem", maxWidth: 400, width: "100%",
+                    background: "var(--bg-card)", border: "1px solid var(--border-subtle)",
+                    borderRadius: "var(--radius-2xl)", padding: "2.5rem", maxWidth: 400, width: "100%",
                     textAlign: "center", boxShadow: "var(--shadow-card)",
                 }}>
                     <div style={{
@@ -88,7 +88,7 @@ export default function ChangePasswordPage() {
                     </p>
                     <Link href="/dashboard" style={{
                         display: "inline-block", padding: "0.6rem 1.5rem",
-                        borderRadius: "0.65rem", background: "var(--gradient-btn)",
+                        borderRadius: "var(--radius-lg)", background: "var(--gradient-btn)",
                         color: "#0c0a09", fontWeight: 700, fontSize: "0.875rem", textDecoration: "none",
                     }}>
                         Retour au tableau de bord
@@ -105,19 +105,19 @@ export default function ChangePasswordPage() {
         }}>
             <div style={{
                 position: "absolute", inset: 0, pointerEvents: "none",
-                background: "radial-gradient(ellipse 60% 50% at 50% 0%, rgba(245,158,11,0.07) 0%, transparent 70%)",
+                background: "transparent",
             }} />
 
             <div style={{ width: "100%", maxWidth: 440, position: "relative", zIndex: 1 }}>
                 <div style={{
-                    background: "var(--bg-card)", border: "1px solid var(--border-amber)",
-                    borderRadius: "1.25rem", padding: "2rem", boxShadow: "var(--shadow-card)",
+                    background: "var(--bg-card)", border: "1px solid var(--border-subtle)",
+                    borderRadius: "var(--radius-2xl)", padding: "2rem", boxShadow: "var(--shadow-card)",
                 }}>
                     {/* Header */}
                     <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
                         <div style={{
-                            width: 44, height: 44, borderRadius: "0.75rem",
-                            background: "var(--icon-bg)", border: "1px solid var(--icon-border)",
+                            width: 44, height: 44, borderRadius: "var(--radius-lg)",
+                            background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)",
                             display: "flex", alignItems: "center", justifyContent: "center",
                             color: "var(--icon-primary)", flexShrink: 0,
                         }}>
@@ -139,8 +139,8 @@ export default function ChangePasswordPage() {
 
                     {isFirstLogin && (
                         <div style={{
-                            padding: "0.65rem 0.875rem", borderRadius: "0.65rem",
-                            background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)",
+                            padding: "0.65rem 0.875rem", borderRadius: "var(--radius-lg)",
+                            background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)",
                             fontSize: "0.8rem", color: "#f59e0b", marginBottom: "1.25rem",
                         }}>
                             ⚠️ Vous devez changer votre mot de passe temporaire avant de continuer.
@@ -258,14 +258,14 @@ export default function ChangePasswordPage() {
 
                         {error && (
                             <div style={{
-                                padding: "0.65rem 0.875rem", borderRadius: "0.6rem",
+                                padding: "0.65rem 0.875rem", borderRadius: "var(--radius-lg)",
                                 background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)",
                                 color: "#ef4444", fontSize: "0.82rem",
                             }}>{error}</div>
                         )}
 
                         <button type="submit" disabled={loading} style={{
-                            padding: "0.75rem", borderRadius: "0.75rem", border: "none",
+                            padding: "0.75rem", borderRadius: "var(--radius-lg)", border: "none",
                             background: loading ? "var(--border-subtle)" : "var(--gradient-btn)",
                             color: loading ? "var(--text-muted)" : "#0c0a09",
                             fontWeight: 700, fontSize: "0.95rem",

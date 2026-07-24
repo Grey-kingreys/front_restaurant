@@ -86,7 +86,7 @@ export default function ReservationsStaffPage() {
 
     const btn = (bg: string, color: string, border = "none"): React.CSSProperties => ({
         display: "flex", alignItems: "center", gap: "0.3rem", padding: "0.5rem 0.8rem",
-        borderRadius: "0.6rem", border, background: bg, color, fontWeight: 700, fontSize: "0.78rem", cursor: "pointer",
+        borderRadius: "var(--radius-lg)", border, background: bg, color, fontWeight: 700, fontSize: "0.78rem", cursor: "pointer",
     });
 
     return (
@@ -102,7 +102,7 @@ export default function ReservationsStaffPage() {
                 <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: spacing["5"] }}>
                     {TABS.map((t) => (
                         <button key={t.value} onClick={() => setFiltre(t.value)}
-                            style={{ padding: "0.45rem 0.95rem", borderRadius: "99px", cursor: "pointer", border: `1px solid ${filtre === t.value ? cssVar.amberGlow : cssVar.borderSubtle}`, background: filtre === t.value ? "rgba(245,158,11,0.12)" : "transparent", color: filtre === t.value ? cssVar.amberGlow : cssVar.textMuted, fontSize: typography.sm, fontWeight: 600 }}>
+                            style={{ padding: "0.45rem 0.95rem", borderRadius: "var(--radius-full)", cursor: "pointer", border: `1px solid ${filtre === t.value ? cssVar.amberGlow : cssVar.borderSubtle}`, background: filtre === t.value ? "var(--bg-section-alt)" : "transparent", color: filtre === t.value ? cssVar.amberGlow : cssVar.textMuted, fontSize: typography.sm, fontWeight: 600 }}>
                             {t.label}
                         </button>
                     ))}
@@ -131,7 +131,7 @@ export default function ReservationsStaffPage() {
                             const actif = r.statut === "en_attente" || r.statut === "confirmee";
                             return (
                                 <div key={r.id} style={{ background: cssVar.bgCard, border: `1px solid ${r.client_a_risque ? "rgba(239,68,68,0.4)" : cssVar.borderSubtle}`, borderRadius: radius.xl, padding: "1rem 1.25rem", display: "flex", gap: "1rem", alignItems: "flex-start", flexWrap: "wrap" }}>
-                                    <div style={{ width: 44, height: 44, borderRadius: "0.7rem", flexShrink: 0, background: sc.bg, border: `1px solid ${sc.border}`, display: "flex", alignItems: "center", justifyContent: "center", color: sc.color }}>
+                                    <div style={{ width: 44, height: 44, borderRadius: "var(--radius-lg)", flexShrink: 0, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "center", color: sc.color }}>
                                         <Armchair size={20} />
                                     </div>
                                     <div style={{ flex: 1, minWidth: 220 }}>
@@ -139,9 +139,9 @@ export default function ReservationsStaffPage() {
                                             <span style={{ fontWeight: 800, color: cssVar.textPrimary, fontSize: typography.base }}>
                                                 {r.table_numero ? `Table ${r.table_numero}` : "Table non attribuée"}
                                             </span>
-                                            <span style={{ padding: "2px 9px", borderRadius: "99px", background: sc.bg, border: `1px solid ${sc.border}`, color: sc.color, fontSize: "0.7rem", fontWeight: 700 }}>{r.statut_label}</span>
+                                            <span style={{ padding: "2px 9px", borderRadius: "var(--radius-full)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color: sc.color, fontSize: "0.7rem", fontWeight: 700 }}>{r.statut_label}</span>
                                             {r.client_bloque && (
-                                                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", padding: "2px 9px", borderRadius: "99px", background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)", color: "#ef4444", fontSize: "0.68rem", fontWeight: 700 }}>
+                                                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", padding: "2px 9px", borderRadius: "var(--radius-full)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color: "#ef4444", fontSize: "0.68rem", fontWeight: 700 }}>
                                                     <Ban size={11} />Bloqué
                                                 </span>
                                             )}
@@ -167,7 +167,7 @@ export default function ReservationsStaffPage() {
                                         {actif && reaffectId === r.id && (
                                             <div style={{ marginTop: "0.6rem", display: "flex", gap: "0.4rem", alignItems: "center", flexWrap: "wrap" }}>
                                                 <select defaultValue="" disabled={busy} onChange={(e) => handleReaffecter(r.id, Number(e.target.value))}
-                                                    style={{ padding: "0.4rem 0.6rem", borderRadius: "0.5rem", border: `1px solid ${cssVar.borderSubtle}`, background: cssVar.bgDark, color: cssVar.textPrimary, fontSize: "0.78rem" }}>
+                                                    style={{ padding: "0.4rem 0.6rem", borderRadius: "var(--radius-md)", border: `1px solid ${cssVar.borderSubtle}`, background: cssVar.bgDark, color: cssVar.textPrimary, fontSize: "0.78rem" }}>
                                                     <option value="" disabled>Choisir une table…</option>
                                                     {tables.filter((t) => t.nombre_places >= r.nombre_personnes).map((t) => (
                                                         <option key={t.id} value={t.id}>Table {t.numero_table} ({t.nombre_places} pl.)</option>

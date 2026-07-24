@@ -80,7 +80,7 @@ export default function HeroSection() {
         className="absolute inset-0 pointer-events-none z-[1]"
         style={{
           background:
-            "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(245,158,11,0.15) 0%, transparent 70%)",
+            "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(245,158,11,0.06) 0%, transparent 70%)",
         }}
       />
 
@@ -115,8 +115,8 @@ export default function HeroSection() {
         <span
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-widest uppercase"
           style={{
-            background: "rgba(245,158,11,0.12)",
-            border: "1px solid rgba(245,158,11,0.35)",
+            background: "rgba(255,255,255,0.08)",
+            border: "1px solid rgba(255,255,255,0.15)",
             color: "#fbbf24",
           }}
         >
@@ -152,10 +152,10 @@ export default function HeroSection() {
           href="/auth/client/register"
           style={{
             flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-            gap: "0.375rem", padding: "1.25rem 1.5rem", borderRadius: "1rem",
+            gap: "0.375rem", padding: "1.25rem 1.5rem", borderRadius: "var(--radius-xl)",
             background: "linear-gradient(135deg, #f59e0b, #d97706)",
             color: "#0c0a09", textDecoration: "none", fontWeight: 800, fontSize: "1rem",
-            boxShadow: "0 0 32px rgba(245,158,11,0.3)",
+            boxShadow: "0 2px 12px rgba(245,158,11,0.22)",
           }}
         >
           <Truck size={22} />
@@ -175,7 +175,7 @@ export default function HeroSection() {
           href="/auth/login"
           style={{
             flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-            gap: "0.375rem", padding: "1.25rem 1.5rem", borderRadius: "1rem",
+            gap: "0.375rem", padding: "1.25rem 1.5rem", borderRadius: "var(--radius-xl)",
             background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)",
             color: "#f5f5f4", textDecoration: "none", fontWeight: 700, fontSize: "1rem",
             backdropFilter: "blur(8px)",

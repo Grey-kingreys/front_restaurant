@@ -21,7 +21,7 @@ export default function StatCard({ title, value, icon: Icon, trend, color = "var
         <div style={{
             background: "var(--bg-card)",
             border: "1px solid var(--border-subtle)",
-            borderRadius: "1.25rem",
+            borderRadius: "var(--radius-2xl)",
             padding: "clamp(0.875rem, 3vw, 1.25rem)",
             display: "flex",
             flexDirection: "column",
@@ -66,9 +66,8 @@ export default function StatCard({ title, value, icon: Icon, trend, color = "var
                 <div style={{
                     width: "2.5rem",
                     height: "2.5rem",
-                    borderRadius: "0.75rem",
+                    borderRadius: "var(--radius-lg)",
                     background: "var(--bg-section-alt)",
-                    border: "1px solid var(--border-subtle)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",

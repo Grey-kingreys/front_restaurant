@@ -20,7 +20,7 @@
   --bg-dark: #fafaf9;
   --bg-card: #ffffff;
   --bg-card-hover: #f5f5f4;
-  --bg-section-alt: rgba(245, 158, 11, 0.04);
+  --bg-section-alt: rgba(28, 25, 23, 0.035);
 
   /* Text */
   --text-primary: #1c1917;
@@ -34,8 +34,8 @@
   --border-subtle: rgba(28, 25, 23, 0.08);
 
   /* Shadows */
-  --shadow-card: 0 2px 24px rgba(28, 25, 23, 0.08), 0 1px 4px rgba(28, 25, 23, 0.04);
-  --shadow-card-hover: 0 12px 40px rgba(28, 25, 23, 0.12), 0 0 20px rgba(217, 119, 6, 0.08);
+  --shadow-card: 0 1px 3px rgba(28, 25, 23, 0.10), 0 1px 2px rgba(28, 25, 23, 0.06);
+  --shadow-card-hover: 0 6px 16px rgba(28, 25, 23, 0.12);
 
   /* Navbar */
   --navbar-bg: rgba(250, 250, 249, 0.9);
@@ -50,6 +50,16 @@
   --icon-secondary: #78716c;
   --icon-bg: rgba(217, 119, 6, 0.1);
   --icon-border: rgba(217, 119, 6, 0.2);
+
+  /* Border-radius — barème unique (partagé par l'objet `radius` de theme.ts et var(--radius-*)).
+     Échelle resserrée (retour incubateur #2 : rayons trop mous/uniformes) — haut compressé
+     pour un rendu plus net et des cartes visuellement cohérentes (variance ≤ 2px). */
+  --radius-sm: 0.375rem;  /* 6px  — petites puces */
+  --radius-md: 0.5rem;    /* 8px  — champs, petits boutons */
+  --radius-lg: 0.625rem;  /* 10px — boutons, éléments de liste */
+  --radius-xl: 0.75rem;   /* 12px — boutons proéminents, cartes de contenu */
+  --radius-2xl: 0.875rem; /* 14px — grandes cartes / sections */
+  --radius-full: 9999px;
 }
 
 /* ══════════════════════════════════════════
@@ -71,7 +81,7 @@
   --border-subtle: rgba(245, 245, 244, 0.06);
 
   --shadow-card: none;
-  --shadow-card-hover: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 30px rgba(245, 158, 11, 0.1);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.45);
 
   --navbar-bg: rgba(12, 10, 9, 0.92);
   --navbar-border: rgba(245, 158, 11, 0.15);
@@ -100,7 +110,7 @@
     --border-amber-hover: rgba(245, 158, 11, 0.4);
     --border-subtle: rgba(245, 245, 244, 0.06);
     --shadow-card: none;
-    --shadow-card-hover: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 30px rgba(245, 158, 11, 0.1);
+    --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.45);
     --navbar-bg: rgba(12, 10, 9, 0.92);
     --navbar-border: rgba(245, 158, 11, 0.15);
     --gradient-text: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #d97706 100%);
@@ -132,6 +142,22 @@ body {
   margin: 0;
   padding: 0;
   transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* ── Focus visible : anneau cohérent (accessibilité + retour incubateur #2) ──
+   Auparavant les champs avaient outline:none SANS remplaçant → aucun état focus
+   visible. On rétablit un anneau discret, au clavier uniquement (:focus-visible). */
+:focus-visible {
+  outline: 2px solid var(--amber-glow);
+  outline-offset: 2px;
+}
+
+/* Les inputs/selects/textarea posent outline:none en inline (l'inline gagne sur
+   la CSS globale) → on passe par box-shadow, qui n'est pas surchargé en inline. */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18);
 }
 
 /* ── Scrollbar ── */
@@ -321,8 +347,8 @@ body {
   background: var(--bg-card);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-amber);
-  border-radius: 1.25rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-card);
   transition: all 0.35s ease;
 }
@@ -348,7 +374,7 @@ body {
   color: #0c0a09;
   font-weight: 700;
   padding: 0.85rem 2.2rem;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   border: none;
   cursor: pointer;
   font-size: 1rem;
@@ -360,22 +386,10 @@ body {
   text-decoration: none;
 }
 
-.btn-primary::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.btn-primary:hover::before {
-  opacity: 1;
-}
-
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(245, 158, 11, 0.45);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.22);
+  filter: brightness(1.04);
 }
 
 .btn-primary span {
@@ -388,7 +402,7 @@ body {
   color: var(--amber-glow);
   font-weight: 600;
   padding: 0.85rem 2.2rem;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   border: 1.5px solid var(--border-amber-hover);
   cursor: pointer;
   font-size: 1rem;
@@ -408,25 +422,25 @@ body {
 .stat-card {
   text-align: center;
   padding: 2rem 1.5rem;
-  border-radius: 1.25rem;
-  background: var(--icon-bg);
-  border: 1px solid var(--border-amber);
+  border-radius: var(--radius-2xl);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   transition: all 0.35s ease;
 }
 
 .stat-card:hover {
-  background: rgba(245, 158, 11, 0.12);
-  border-color: var(--border-amber-hover);
-  transform: scale(1.04);
+  background: var(--bg-card-hover);
+  border-color: var(--border-subtle);
+  transform: scale(1.02);
 }
 
 /* ── Feature icon ── */
 .feature-icon {
   width: 3.5rem;
   height: 3.5rem;
-  border-radius: 1rem;
-  background: var(--icon-bg);
-  border: 1px solid var(--icon-border);
+  border-radius: var(--radius-xl);
+  background: var(--bg-section-alt);
+  border: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -436,9 +450,9 @@ body {
 }
 
 .glass-card:hover .feature-icon {
-  background: rgba(245, 158, 11, 0.18);
-  border-color: var(--border-amber-hover);
-  transform: scale(1.1) rotate(5deg);
+  background: var(--bg-card-hover);
+  border-color: var(--border-subtle);
+  transform: scale(1.05);
 }
 
 /* ── Role badge ── */
@@ -447,11 +461,11 @@ body {
   align-items: center;
   gap: 0.4rem;
   padding: 0.35rem 0.85rem;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   font-size: 0.78rem;
   font-weight: 600;
-  background: var(--icon-bg);
-  border: 1px solid var(--icon-border);
+  background: var(--bg-section-alt);
+  border: 1px solid var(--border-subtle);
   color: var(--amber-glow);
   letter-spacing: 0.04em;
 }
@@ -462,7 +476,7 @@ body {
   align-items: flex-start;
   gap: 1rem;
   padding: 1.25rem 1.5rem;
-  border-radius: 1rem;
+  border-radius: var(--radius-xl);
   border: 1px solid var(--border-subtle);
   background: var(--bg-card);
   transition: all 0.3s ease;
@@ -619,7 +633,7 @@ body {
   display: flex;
   align-items: center;
   padding: 0.875rem 0.75rem;
-  border-radius: 0.75rem;
+  border-radius: var(--radius-lg);
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-secondary);
@@ -657,7 +671,7 @@ body {
   justify-content: center;
   width: 40px;
   height: 40px;
-  border-radius: 0.65rem;
+  border-radius: var(--radius-lg);
   background: var(--bg-section-alt);
   border: 1px solid var(--border-subtle);
   cursor: pointer;
@@ -693,7 +707,6 @@ body {
   top: -4px;
   left: 50%;
   transform: translateX(-50%);
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
 }
 
 /* ── Section label ── */
@@ -705,10 +718,10 @@ body {
   text-transform: uppercase;
   margin-bottom: 1rem;
   padding: 0.3rem 0.85rem;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   color: var(--amber-glow);
-  background: var(--icon-bg);
-  border: 1px solid var(--icon-border);
+  background: var(--bg-section-alt);
+  border: 1px solid var(--border-subtle);
 }
 
 /* ══════════════════════════════════════════
@@ -849,7 +862,7 @@ textarea {
   min-height: 44px;
   min-width: 44px;
   padding: 0.5rem 0.875rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-md);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
@@ -874,7 +887,7 @@ textarea {
   gap: 1rem;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-radius: 1.25rem;
+  border-radius: var(--radius-2xl);
   padding: 1.25rem;
   margin-bottom: 1.5rem;
   position: relative;

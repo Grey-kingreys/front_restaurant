@@ -9,8 +9,9 @@ import Logo from "../ui/Logo";
 import { Menu, X, ChefHat, ShoppingBag } from "lucide-react";
 
 const NAV_LINKS = [
-  { label: "Fonctionnalités", href: "#features" },
-  { label: "Workflow",        href: "#workflow" },
+  { label: "Fonctionnalités", href: "/#features" },
+  { label: "Workflow",        href: "/#workflow" },
+  { label: "Tarifs",          href: "/#tarifs" },
 ];
 
 interface NavbarProps {
@@ -77,8 +78,8 @@ export default function Navbar({ scrolled }: NavbarProps) {
                   href="/auth/client/register"
                   style={{
                     display: "flex", alignItems: "center", gap: "0.4rem",
-                    padding: "0.55rem 1.1rem", borderRadius: "0.625rem",
-                    background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.3)",
+                    padding: "0.55rem 1.1rem", borderRadius: "var(--radius-lg)",
+                    background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)",
                     color: "#fbbf24", fontSize: "0.85rem", fontWeight: 600,
                     textDecoration: "none", whiteSpace: "nowrap",
                   }}
@@ -115,7 +116,7 @@ export default function Navbar({ scrolled }: NavbarProps) {
               <Logo size={30} />
               <button
                 onClick={closeMobile}
-                style={{ width: 36, height: 36, borderRadius: "0.6rem", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-muted)" }}
+                style={{ width: 36, height: 36, borderRadius: "var(--radius-lg)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-muted)" }}
                 aria-label="Fermer"
               >
                 <X size={16} />
@@ -153,7 +154,7 @@ export default function Navbar({ scrolled }: NavbarProps) {
               {!isAuthenticated && (
                 <>
                   <Link href="/auth/client/register" onClick={closeMobile}
-                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", minHeight: "48px", fontSize: "1rem", borderRadius: "0.75rem", background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.35)", color: "#fbbf24", fontWeight: 700, textDecoration: "none" }}>
+                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", minHeight: "48px", fontSize: "1rem", borderRadius: "var(--radius-lg)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", color: "#fbbf24", fontWeight: 700, textDecoration: "none" }}>
                     <ShoppingBag size={16} /> Commander
                   </Link>
                   <Link href="/auth/login" className="btn-primary" onClick={closeMobile} style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "48px", fontSize: "1rem" }}>

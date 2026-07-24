@@ -4,8 +4,8 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { CheckCircle2, Clock, Truck, Package, BadgeCheck, Home, RefreshCw, ShoppingBag, MapPin, AlertCircle } from "lucide-react";
-import { getSuiviCommande, type SuiviCommande } from "@/lib/api/public";
+import { CheckCircle2, Clock, Truck, Package, BadgeCheck, Home, RefreshCw, ShoppingBag, MapPin, AlertCircle, Download, MessageCircle, Smartphone, Copy, Check } from "lucide-react";
+import { getSuiviCommande, recuPdfUrl, renvoyerRecuSms, type SuiviCommande } from "@/lib/api/public";
 
 const STEPS_LIVRAISON = [
     { key: "en_attente",   label: "Commande reçue",          icon: Clock,        color: "#f59e0b" },
@@ -26,6 +26,33 @@ export default function ConfirmationPage() {
     const [commande, setCommande] = useState<SuiviCommande | null>(null);
     const [loading, setLoading] = useState(true);
     const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
+    const [smsState, setSmsState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+    const [copied, setCopied] = useState(false);
+
+    const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+
+    const handleSms = async () => {
+        setSmsState("sending");
+        try {
+            const res = await renvoyerRecuSms(cle);
+            setSmsState(res.success ? "sent" : "error");
+        } catch {
+            setSmsState("error");
+        }
+        setTimeout(() => setSmsState("idle"), 4000);
+    };
+    const handleWhatsapp = () => {
+        const txt = `Suivi & reçu de ma commande chez ${commande?.restaurant ?? "resfly"} : ${shareUrl}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, "_blank", "noopener");
+    };
+    const handleCopy = async () => {
+        try {
+            if (navigator.share) { await navigator.share({ url: shareUrl }); return; }
+            await navigator.clipboard.writeText(shareUrl);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch { /* annulé */ }
+    };
 
     const load = useCallback(async () => {
         try {
@@ -73,7 +100,7 @@ export default function ConfirmationPage() {
 
                 {/* Header statut */}
                 <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 56, height: 56, borderRadius: "50%", margin: "0 auto 0.75rem", background: isDone ? "rgba(34,197,94,0.12)" : "rgba(245,158,11,0.12)", border: `1px solid ${isDone ? "rgba(34,197,94,0.3)" : "rgba(245,158,11,0.3)"}` }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 56, height: 56, borderRadius: "50%", margin: "0 auto 0.75rem", background: isDone ? "rgba(34,197,94,0.12)" : "var(--bg-section-alt)", border: `1px solid ${isDone ? "rgba(34,197,94,0.3)" : "var(--border-subtle)"}` }}>
                         {isDone
                             ? <CheckCircle2 size={28} style={{ color: "#22c55e" }} />
                             : commande.statut === "en_livraison"
@@ -90,7 +117,7 @@ export default function ConfirmationPage() {
                         Commande #{commande.commande_id} — {commande.restaurant}
                     </p>
                     {lastRefresh && (
-                        <button onClick={load} style={{ marginTop: "0.5rem", display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.25rem 0.625rem", borderRadius: "99px", border: "1px solid var(--border-subtle)", background: "none", color: "var(--text-muted)", fontSize: "0.72rem", cursor: "pointer" }}>
+                        <button onClick={load} style={{ marginTop: "0.5rem", display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.25rem 0.625rem", borderRadius: "var(--radius-full)", border: "1px solid var(--border-subtle)", background: "none", color: "var(--text-muted)", fontSize: "0.72rem", cursor: "pointer" }}>
                             <RefreshCw size={10} />
                             Actualiser
                         </button>
@@ -98,7 +125,7 @@ export default function ConfirmationPage() {
                 </div>
 
                 {/* Étapes progressives */}
-                <div style={{ marginBottom: "2rem", padding: "1.25rem", borderRadius: "1rem", background: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}>
+                <div style={{ marginBottom: "2rem", padding: "1.25rem", borderRadius: "var(--radius-xl)", background: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}>
                     {steps.map((step, idx) => {
                         const StepIcon = step.icon;
                         const done = idx <= currentIndex;
@@ -125,7 +152,7 @@ export default function ConfirmationPage() {
                 {/* Récap commande */}
                 <section style={{ marginBottom: "1.25rem" }}>
                     <h2 style={{ margin: "0 0 0.75rem", fontSize: "0.82rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Détail</h2>
-                    <div style={{ borderRadius: "0.875rem", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", overflow: "hidden" }}>
+                    <div style={{ borderRadius: "var(--radius-xl)", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", overflow: "hidden" }}>
                         {commande.items.map((item, i) => (
                             <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "0.75rem 1rem", borderBottom: i < commande.items.length - 1 ? "1px solid var(--border-subtle)" : "none" }}>
                                 <span style={{ color: "var(--text-secondary)", fontSize: "0.85rem" }}>{item.quantite}× {item.nom}</span>
@@ -147,14 +174,41 @@ export default function ConfirmationPage() {
 
                 {/* Adresse livraison */}
                 {commande.adresse_livraison && (
-                    <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem", padding: "0.875rem 1rem", borderRadius: "0.875rem", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", marginBottom: "1.25rem", fontSize: "0.85rem", color: "var(--text-muted)" }}>
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem", padding: "0.875rem 1rem", borderRadius: "var(--radius-xl)", background: "var(--bg-card)", border: "1px solid var(--border-subtle)", marginBottom: "1.25rem", fontSize: "0.85rem", color: "var(--text-muted)" }}>
                         <MapPin size={14} style={{ flexShrink: 0, marginTop: "0.1rem" }} />
                         {commande.adresse_livraison}
                     </div>
                 )}
 
+                {/* Votre reçu — téléchargement + partage */}
+                <section style={{ marginBottom: "1.25rem" }}>
+                    <h2 style={{ margin: "0 0 0.75rem", fontSize: "0.82rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Votre reçu</h2>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                        <a href={recuPdfUrl(cle)} target="_blank" rel="noopener noreferrer"
+                            style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", padding: "0.875rem", borderRadius: "var(--radius-xl)", border: "none", background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "#0c0a09", fontWeight: 700, fontSize: "0.875rem", textDecoration: "none" }}>
+                            <Download size={16} /> Télécharger le reçu (PDF)
+                        </a>
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.5rem" }}>
+                            <button onClick={handleSms} disabled={smsState === "sending"}
+                                style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.7rem 0.4rem", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)", background: "var(--bg-card)", color: smsState === "sent" ? "#22c55e" : smsState === "error" ? "#ef4444" : "var(--text-secondary)", fontWeight: 600, fontSize: "0.72rem", cursor: smsState === "sending" ? "wait" : "pointer" }}>
+                                <Smartphone size={16} />
+                                {smsState === "sending" ? "Envoi…" : smsState === "sent" ? "Envoyé ✓" : smsState === "error" ? "Indispo." : "Par SMS"}
+                            </button>
+                            <button onClick={handleWhatsapp}
+                                style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.7rem 0.4rem", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)", background: "var(--bg-card)", color: "#25D366", fontWeight: 600, fontSize: "0.72rem", cursor: "pointer" }}>
+                                <MessageCircle size={16} /> WhatsApp
+                            </button>
+                            <button onClick={handleCopy}
+                                style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.3rem", padding: "0.7rem 0.4rem", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)", background: "var(--bg-card)", color: copied ? "#22c55e" : "var(--text-secondary)", fontWeight: 600, fontSize: "0.72rem", cursor: "pointer" }}>
+                                {copied ? <Check size={16} /> : <Copy size={16} />}
+                                {copied ? "Copié" : "Copier"}
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
                 {/* Retour menu */}
-                <button onClick={() => router.push(`/restaurant/${slug}`)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", padding: "0.875rem", borderRadius: "0.875rem", border: "1px solid var(--border-subtle)", background: "var(--bg-card)", color: "var(--text-muted)", fontWeight: 600, fontSize: "0.875rem", cursor: "pointer" }}>
+                <button onClick={() => router.push(`/restaurant/${slug}`)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", padding: "0.875rem", borderRadius: "var(--radius-xl)", border: "1px solid var(--border-subtle)", background: "var(--bg-card)", color: "var(--text-muted)", fontWeight: 600, fontSize: "0.875rem", cursor: "pointer" }}>
                     <Home size={15} />
                     Retour au menu
                 </button>
