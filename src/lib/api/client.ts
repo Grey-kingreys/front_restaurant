@@ -95,13 +95,15 @@ export function getStoredUser<T = unknown>(): T | null {
 // ── Refresh automatique ────────────────────────────────────────────────────
 
 let isRefreshing = false;
-let refreshSubscribers: ((token: string) => void)[] = [];
+// Le token passé aux abonnés vaut null quand le refresh partagé a échoué :
+// on les réveille quand même pour qu'ils échouent proprement (anti-blocage).
+let refreshSubscribers: ((token: string | null) => void)[] = [];
 
-function subscribeTokenRefresh(cb: (token: string) => void) {
+function subscribeTokenRefresh(cb: (token: string | null) => void) {
     refreshSubscribers.push(cb);
 }
 
-function onRefreshed(token: string) {
+function onRefreshed(token: string | null) {
     refreshSubscribers.forEach((cb) => cb(token));
     refreshSubscribers = [];
 }
@@ -170,9 +172,10 @@ export async function apiRequest<T = unknown>(
             isRefreshing = true;
             const newToken = await refreshAccessToken();
             isRefreshing = false;
+            // Réveille TOUJOURS les requêtes en attente : token si succès, null si échec.
+            onRefreshed(newToken);
 
             if (newToken) {
-                onRefreshed(newToken);
                 headers["Authorization"] = `Bearer ${newToken}`;
                 response = await fetch(url, { ...fetchOptions, headers });
             } else {
@@ -184,13 +187,15 @@ export async function apiRequest<T = unknown>(
                 throw new Error("Session expirée. Veuillez vous reconnecter.");
             }
         } else {
-            // Un refresh est déjà en cours → attendre
-            await new Promise<void>((resolve) => {
-                subscribeTokenRefresh((token) => {
-                    headers["Authorization"] = `Bearer ${token}`;
-                    resolve();
-                });
+            // Un refresh est déjà en cours → attendre son issue
+            const newToken = await new Promise<string | null>((resolve) => {
+                subscribeTokenRefresh((token) => resolve(token));
             });
+            // Le refresh partagé a échoué → échouer proprement au lieu de rester bloqué.
+            if (!newToken) {
+                throw new Error("Session expirée. Veuillez vous reconnecter.");
+            }
+            headers["Authorization"] = `Bearer ${newToken}`;
             response = await fetch(url, { ...fetchOptions, headers });
         }
     }
