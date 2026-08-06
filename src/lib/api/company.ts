@@ -142,7 +142,8 @@ export async function getPlatformStats(): Promise<ApiResponse<PlatformStats>> {
 }
 
 /**
- * Mon restaurant — infos (Admin uniquement)
+ * Mon restaurant — infos (lecture ouverte à tout le staff ;
+ * la prise de commande a besoin des frais/flags livraison)
  */
 export async function getMonRestaurant(): Promise<ApiResponse<Restaurant>> {
     return apiRequest("/company/mon-restaurant/");

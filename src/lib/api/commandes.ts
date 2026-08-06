@@ -26,8 +26,9 @@ export interface CommandeItem {
 export interface Commande {
     id: number;
     restaurant: number;
-    table: number;
-    table_login?: string;
+    // null pour une commande livraison/emporter d'un client de passage (sans compte)
+    table: number | null;
+    table_login?: string | null;
     table_numero?: string;
     session: string | null;
     // Type de commande : sur place (table) ou en ligne (client)
@@ -110,10 +111,14 @@ export async function validerPanier(): Promise<ApiResponse<Commande>> {
     return apiRequest("/commandes/valider/", { method: "POST" });
 }
 
-// ── Prise de commande par le serveur (pour une table) ───────────────────────
+// ── Prise de commande par le staff (sur table / livraison / à emporter) ─────
 
 export async function creerCommandeServeur(payload: {
-    table_id: number;
+    type_commande?: "sur_table" | "livraison" | "emporter";
+    table_id?: number;
+    client_nom?: string;
+    client_telephone?: string;
+    client_adresse_livraison?: string; // adresse texte libre (pas de GPS)
     items: { plat_id: number; quantite: number }[];
 }): Promise<ApiResponse<Commande>> {
     return apiRequest("/commandes/creer/", {
