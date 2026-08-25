@@ -109,7 +109,7 @@ export default function HistoriqueCaissesPage() {
                                             <p style={{ margin: 0, fontSize: typography.base, fontWeight: 700, color: cssVar.textPrimary }}>Caisse du {dateLabel(c.opened_at)}</p>
                                             <p style={{ margin: "2px 0 0", fontSize: typography.xs, color: cssVar.textMuted }}>
                                                 {isSupervisor && `${c.comptable_nom || c.comptable_login} · `}
-                                                Fermée à {c.closed_at ? heure(c.closed_at) : "—"} · Physique {fmtMontant(c.montant_physique_fermeture ?? "0")}
+                                                Fermée à {c.closed_at ? heure(c.closed_at) : "-"} · Physique {fmtMontant(c.montant_physique_fermeture ?? "0")}
                                             </p>
                                         </div>
                                         {ecart !== null && ecart !== 0 && (

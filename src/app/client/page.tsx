@@ -1,5 +1,5 @@
 "use client";
-// src/app/client/page.tsx — Tableau de bord client (Rclient)
+// src/app/client/page.tsx - Tableau de bord client (Rclient)
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";

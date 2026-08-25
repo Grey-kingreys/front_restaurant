@@ -1,6 +1,6 @@
 "use client";
 // src/app/caisse/globale/page.tsx
-// Caisse Globale — vue journalière du restaurant (read-only pour le comptable)
+// Caisse Globale - vue journalière du restaurant (read-only pour le comptable)
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -17,9 +17,9 @@ import { apiErrorMessage } from "@/lib/apiErrors";
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 const gnf = (v: string | number | null | undefined) => {
-    if (v === null || v === undefined) return "—";
+    if (v === null || v === undefined) return "-";
     const n = typeof v === "string" ? parseFloat(v) : v;
-    return isNaN(n) ? "—" : n.toLocaleString("fr-FR") + " GNF";
+    return isNaN(n) ? "-" : n.toLocaleString("fr-FR") + " GNF";
 };
 
 const fmtDate = (iso: string) =>
@@ -238,7 +238,7 @@ export default function CaisseGlobalePage() {
                     Caisse Globale
                 </h1>
                 <p style={{ margin: "0.25rem 0 0", fontSize: typography.sm, color: cssVar.textMuted }}>
-                    Caisse journalière du restaurant — se réinitialise chaque jour à 05h00
+                    Caisse journalière du restaurant - se réinitialise chaque jour à 05h00
                 </p>
             </div>
 

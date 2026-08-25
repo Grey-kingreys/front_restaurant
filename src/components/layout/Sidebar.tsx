@@ -170,7 +170,7 @@ function SidebarInner({
                     variant={isCollapsed ? "icon" : "wordmark"}
                     size={30}
                 />
-                {/* Bouton réduire — visible uniquement en mode étendu */}
+                {/* Bouton réduire - visible uniquement en mode étendu */}
                 {toggleCollapse && !isCollapsed && (
                     <button onClick={toggleCollapse} title="Réduire" style={{
                         background: "transparent", border: "none", color: cssVar.textMuted,
@@ -297,7 +297,7 @@ function SidebarInner({
                 ))}
             </nav>
 
-            {/* ── Footer — mode réduit uniquement ──
+            {/* ── Footer - mode réduit uniquement ──
                 En mode étendu, profil / sécurité / thème / déconnexion sont dans le
                 menu du compte (en haut) : plus rien ne rogne la hauteur de la nav. */}
             {isCollapsed && (
@@ -308,7 +308,7 @@ function SidebarInner({
                     alignItems: "center", gap: spacing["2"],
                     flexShrink: 0,
                 }}>
-                    {/* Profil — la page /profil porte aussi le mot de passe et le thème */}
+                    {/* Profil - la page /profil porte aussi le mot de passe et le thème */}
                     {iconBtn(
                         <User size={16} />,
                         () => { window.location.href = "/profil"; },

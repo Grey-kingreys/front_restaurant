@@ -1,6 +1,6 @@
 "use client";
 // src/app/livraisons/page.tsx
-// Livraisons à traiter — Livreur (Rlivreur) + staff (serveur/manager/admin).
+// Livraisons à traiter - Livreur (Rlivreur) + staff (serveur/manager/admin).
 // Actions : mettre en livraison, marquer livrée, valider paiement (staff),
 // générer un lien / QR de livraison externe (permission manage_livraison_links).
 
@@ -187,7 +187,7 @@ export default function LivraisonsPage() {
                                         <div style={{ display: "grid", gap: "0.35rem", marginBottom: "0.85rem" }}>
                                             <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", color: cssVar.textPrimary, fontSize: typography.sm, fontWeight: 600 }}>
                                                 <User2 size={14} style={{ color: cssVar.textMuted, flexShrink: 0 }} />
-                                                {c.client_display ?? c.client_nom ?? "—"}
+                                                {c.client_display ?? c.client_nom ?? "-"}
                                             </div>
                                             {c.client_adresse_livraison && (
                                                 <div style={{ display: "flex", alignItems: "flex-start", gap: "0.45rem", color: cssVar.textMuted, fontSize: typography.sm }}>
@@ -259,11 +259,11 @@ export default function LivraisonsPage() {
                 <div onClick={() => setQrModal(null)} style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
                     <div onClick={(e) => e.stopPropagation()} style={{ ...modalCard, maxWidth: 380, borderRadius: radius.xl, textAlign: "center" }}>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
-                            <h3 style={{ margin: 0, fontSize: typography.base, fontWeight: 800, color: cssVar.textPrimary }}>Lien de livraison — #{qrModal.commandeId}</h3>
+                            <h3 style={{ margin: 0, fontSize: typography.base, fontWeight: 800, color: cssVar.textPrimary }}>Lien de livraison - #{qrModal.commandeId}</h3>
                             <button onClick={() => setQrModal(null)} style={{ background: "none", border: "none", color: cssVar.textMuted, cursor: "pointer" }}><X size={18} /></button>
                         </div>
                         <p style={{ margin: "0 0 1rem", fontSize: "0.78rem", color: cssVar.textMuted }}>
-                            Le livreur scanne ce QR ou ouvre le lien pour voir la commande et la faire avancer — sans compte.
+                            Le livreur scanne ce QR ou ouvre le lien pour voir la commande et la faire avancer - sans compte.
                         </p>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={qrModal.data.qr_code_url} alt="QR de livraison" style={{ width: 220, height: 220, borderRadius: radius.lg, background: "#fff", padding: "0.5rem" }} />

@@ -125,7 +125,7 @@ export default function HeroSection() {
         </span>
       </div>
 
-      {/* Title — always white on hero (image bg) */}
+      {/* Title - always white on hero (image bg) */}
       <h1
         ref={titleRef}
         className="hero-anim relative z-10 max-w-4xl text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-6"
@@ -140,14 +140,14 @@ export default function HeroSection() {
         className="hero-anim relative z-10 max-w-2xl text-lg sm:text-xl mb-10"
         style={{ color: "#c8b89a", lineHeight: 1.75 }}
       >
-        De la prise de commande au paiement, en passant par la cuisine et la caisse — pilotez
+        De la prise de commande au paiement, en passant par la cuisine et la caisse - pilotez
         chaque aspect de votre service en temps réel avec une plateforme pensée pour la Guinée.
       </p>
 
-      {/* CTA — deux chemins distincts */}
+      {/* CTA - deux chemins distincts */}
       <div className="hero-anim relative z-10 flex flex-col sm:flex-row items-stretch justify-center gap-4 w-full max-w-2xl">
 
-        {/* Chemin client — commander */}
+        {/* Chemin client - commander */}
         <Link
           href="/auth/client/register"
           style={{
@@ -170,7 +170,7 @@ export default function HeroSection() {
           <div style={{ flex: 1, width: 1, background: "rgba(255,255,255,0.12)" }} />
         </div>
 
-        {/* Chemin restaurant — gérer */}
+        {/* Chemin restaurant - gérer */}
         <Link
           href="/auth/login"
           style={{

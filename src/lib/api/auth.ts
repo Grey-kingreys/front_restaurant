@@ -37,7 +37,7 @@ export async function loginWithEmail(
 }
 
 /**
- * Connexion par login (Rtable — via QR Code ou formulaire)
+ * Connexion par login (Rtable - via QR Code ou formulaire)
  */
 export async function loginWithLogin(
     login: string,
@@ -74,7 +74,7 @@ export async function loginWithLogin(
 
 /**
  * Connexion automatique via QR Code avec validation GPS.
- * Envoie la position GPS si disponible — requise si le restaurant a des coordonnées.
+ * Envoie la position GPS si disponible - requise si le restaurant a des coordonnées.
  */
 export async function loginViaQR(
     qrToken: string,
@@ -109,7 +109,7 @@ export async function loginViaQR(
 // ── LOGOUT ─────────────────────────────────────────────────────────────────
 
 /**
- * Déconnexion — blackliste le refresh token côté serveur
+ * Déconnexion - blackliste le refresh token côté serveur
  */
 export async function logout(refreshToken: string): Promise<ApiResponse> {
     try {

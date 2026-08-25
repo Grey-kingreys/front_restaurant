@@ -37,7 +37,7 @@ export interface DemandeApprovisionnement {
     validated_at: string | null;
 }
 
-/** Caisse comptable en version liste (sans mouvements) — pour l'historique */
+/** Caisse comptable en version liste (sans mouvements) - pour l'historique */
 export interface CaisseComptableListItem {
     id: number;
     comptable: number;

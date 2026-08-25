@@ -1,6 +1,6 @@
 "use client";
 // src/app/caisse/depenses/page.tsx
-// Dépenses — enregistrer et consulter les dépenses de la session
+// Dépenses - enregistrer et consulter les dépenses de la session
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -21,9 +21,9 @@ import { apiErrorMessage } from "@/lib/apiErrors";
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 const gnf = (v: string | number | null | undefined) => {
-    if (v === null || v === undefined) return "—";
+    if (v === null || v === undefined) return "-";
     const n = typeof v === "string" ? parseFloat(v) : v;
-    return isNaN(n) ? "—" : n.toLocaleString("fr-FR") + " GNF";
+    return isNaN(n) ? "-" : n.toLocaleString("fr-FR") + " GNF";
 };
 
 const fmtDate = (iso: string) =>

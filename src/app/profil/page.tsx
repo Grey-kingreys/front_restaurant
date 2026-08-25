@@ -278,7 +278,7 @@ export default function ProfilPage() {
                             <InfoRow label="ID" value={<span style={{ fontFamily: "monospace", fontSize: typography.sm }}>#{user.id}</span>} />
                         </Card>
 
-                        {/* Card Apparence — ThemeSwitcher */}
+                        {/* Card Apparence - ThemeSwitcher */}
                         <Card title="Apparence" icon={iconPalette}>
                             <div style={{ padding: `${spacing["4"]} 0 ${spacing["3"]}` }}>
                                 <p style={{ fontSize: typography.xs, color: cssVar.textMuted, margin: `0 0 ${spacing["3"]}`, lineHeight: 1.5 }}>
@@ -292,14 +292,14 @@ export default function ProfilPage() {
 
                     </div>
 
-                    {/* Carnet d'adresses de livraison — clients uniquement */}
+                    {/* Carnet d'adresses de livraison - clients uniquement */}
                     {role === "Rclient" && (
                         <div style={{ marginTop: spacing["4"] }}>
                             <AdresseBook />
                         </div>
                     )}
 
-                    {/* Note — comptes table uniquement (non éditables) */}
+                    {/* Note - comptes table uniquement (non éditables) */}
                     {role === "Rtable" && (
                         <div style={{ marginTop: spacing["4"], padding: `${spacing["3"]} ${spacing["4"]}`, borderRadius: radius.xl, background: cssVar.bgSectionAlt, border: `1px solid ${cssVar.borderSubtle}`, display: "flex", alignItems: "flex-start", gap: spacing["2"] }}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: 15, height: 15, color: cssVar.textMuted, flexShrink: 0, marginTop: 1 }}>

@@ -70,7 +70,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     });
 
     // Table login+password : on applique UNIQUEMENT la restriction de distance
-    // (pas d'expiration de session ni de déconnexion post-paiement — celles-ci
+    // (pas d'expiration de session ni de déconnexion post-paiement - celles-ci
     // restent réservées aux sessions QR).
     const isManualTable = isRtable && !hasQrTableSession();
     useTableDistanceCheck(isManualTable, {
@@ -78,7 +78,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         onDisconnect: () => logout(),
     });
 
-    // Loader global — uniquement pendant la vérification initiale du token
+    // Loader global - uniquement pendant la vérification initiale du token
     if (isLoading) {
         return (
             <div style={{
@@ -139,7 +139,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                 topOffset={topOffset}
             />
 
-            {/* Header Mobile — hamburger + theme switcher */}
+            {/* Header Mobile - hamburger + theme switcher */}
             <div className="rp-mobile-header" style={{
                 position: "fixed", top: 0, left: 0, right: 0, zIndex: 45,
                 height: "3.5rem", display: "flex", alignItems: "center",

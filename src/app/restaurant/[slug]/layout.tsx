@@ -1,5 +1,5 @@
 "use client";
-// Layout public restaurant — pas de sidebar, header client avec panier
+// Layout public restaurant - pas de sidebar, header client avec panier
 
 import { ReactNode } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -34,7 +34,7 @@ function PublicHeader({ slug, inApp }: { slug: string; inApp: boolean }) {
 
             {/* Actions */}
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                {/* Connexion — uniquement pour un visiteur anonyme (le client connecté a la sidebar) */}
+                {/* Connexion - uniquement pour un visiteur anonyme (le client connecté a la sidebar) */}
                 {!isClient && (
                     <button onClick={() => router.push(`/auth/login?next=/restaurant/${slug}`)} style={{ display: "flex", alignItems: "center", gap: "0.35rem", padding: "0.4rem 0.875rem", borderRadius: "var(--radius-md)", border: "1px solid var(--border-subtle)", background: "none", color: "var(--text-muted)", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer" }}>
                         <User size={14} />

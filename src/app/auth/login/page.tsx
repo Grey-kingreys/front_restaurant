@@ -1,5 +1,5 @@
 "use client";
-// src/app/auth/login/page.tsx — Page de connexion unifiée (staff, table, client)
+// src/app/auth/login/page.tsx - Page de connexion unifiée (staff, table, client)
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
@@ -104,7 +104,7 @@ export default function LoginPage() {
                 <div style={{ textAlign: "center", marginBottom: spacing["8"] }}>
                     <Logo href="/" size={44} priority />
                     <p style={{ marginTop: spacing["2"], fontSize: typography.md, color: cssVar.textMuted }}>
-                        Bienvenue — connectez-vous à votre espace
+                        Bienvenue - connectez-vous à votre espace
                     </p>
                 </div>
 
@@ -134,7 +134,7 @@ export default function LoginPage() {
                     <p style={{ fontSize: typography.xs, color: cssVar.textMuted, marginBottom: spacing["5"] }}>
                         {mode === "email"
                             ? "Clients, administrateurs, managers, serveurs, cuisiniers et comptables."
-                            : "Pour les tables — identifiants fournis par l'administrateur."}
+                            : "Pour les tables - identifiants fournis par l'administrateur."}
                     </p>
 
                     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: spacing["4"] }}>

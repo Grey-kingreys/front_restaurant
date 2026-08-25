@@ -1,6 +1,6 @@
 "use client";
 // src/app/remises/page.tsx
-// Historique des remises — Rserveur (ses propres remises)
+// Historique des remises - Rserveur (ses propres remises)
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -80,7 +80,7 @@ export default function RemisesPage() {
     const fmt = (iso: string) =>
         new Date(iso).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
     const fmtMontant = (v: string | null) =>
-        v ? `${Number(v).toLocaleString("fr-FR")} GNF` : "—";
+        v ? `${Number(v).toLocaleString("fr-FR")} GNF` : "-";
 
     if (isLoading || !user) return <PageLoader />;
     if (!hasPermission("view_remises")) return null;

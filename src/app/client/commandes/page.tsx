@@ -1,5 +1,5 @@
 "use client";
-// src/app/client/commandes/page.tsx — Historique des commandes (Rclient)
+// src/app/client/commandes/page.tsx - Historique des commandes (Rclient)
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
@@ -147,7 +147,7 @@ export default function ClientCommandesPage() {
                                     <ChevronRight size={18} style={{ color: "var(--text-muted)", flexShrink: 0 }} />
                                 </button>
 
-                                {/* Annulation — uniquement tant que la commande est « en attente » */}
+                                {/* Annulation - uniquement tant que la commande est « en attente » */}
                                 {c.annulable && (
                                     <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderTop: "1px dashed var(--border-subtle)", borderRadius: "0 0 var(--radius-xl) var(--radius-xl)", padding: confirming ? "0.9rem 1.1rem" : "0.5rem 1.1rem" }}>
                                         {confirming ? (

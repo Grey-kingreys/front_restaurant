@@ -1,5 +1,5 @@
 "use client";
-// src/app/client/plats/page.tsx — Tous les plats de tous les restaurants (Rclient)
+// src/app/client/plats/page.tsx - Tous les plats de tous les restaurants (Rclient)
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import Link from "next/link";
@@ -135,7 +135,7 @@ export default function TousLesPlatsPage() {
 
             {sortBy === "distance" && !location && status !== "loading" && (
                 <p style={{ margin: "-0.5rem 0 1rem", fontSize: "0.76rem", color: "#ef4444" }}>
-                    {status === "denied" ? "Localisation refusée — le tri par distance est indisponible." : "Activez votre position pour trier par distance."}
+                    {status === "denied" ? "Localisation refusée - le tri par distance est indisponible." : "Activez votre position pour trier par distance."}
                 </p>
             )}
 

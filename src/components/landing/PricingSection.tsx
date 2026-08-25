@@ -1,6 +1,6 @@
 "use client";
 // src/components/landing/PricingSection.tsx
-// Tarifs — modules cumulables (section #tarifs). Le visiteur ACTIVE la combinaison
+// Tarifs - modules cumulables (section #tarifs). Le visiteur ACTIVE la combinaison
 // qu'il veut (1, 2 ou 3 modules) ; le total se met à jour en direct.
 
 import { useState } from "react";
@@ -83,7 +83,7 @@ export default function PricingSection() {
             Des modules <span className="text-gradient">à activer</span>
           </h2>
           <p className="max-w-xl mx-auto text-lg" style={{ color: "var(--text-secondary)" }}>
-            Activez un, deux ou les trois modules — vous composez votre formule et ne payez que
+            Activez un, deux ou les trois modules - vous composez votre formule et ne payez que
             ce que vous activez. Prix en GNF, par mois, sans engagement.
           </p>
         </div>

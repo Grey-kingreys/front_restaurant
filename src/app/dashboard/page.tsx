@@ -497,7 +497,7 @@ function LivreurDashboard({ d }: { d: LivreurData }) {
                     d.livraisons.map((l) => (
                         <div key={l.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", padding: "0.75rem 1.25rem", borderTop: `1px solid ${cssVar.borderSubtle}` }}>
                             <div style={{ minWidth: 0 }}>
-                                <p style={{ margin: 0, fontWeight: 600, color: cssVar.textPrimary, fontSize: typography.sm }}>{l.client || "—"}</p>
+                                <p style={{ margin: 0, fontWeight: 600, color: cssVar.textPrimary, fontSize: typography.sm }}>{l.client || "-"}</p>
                                 <p style={{ margin: "2px 0 0", color: cssVar.textMuted, fontSize: typography.xs, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{l.adresse || "Adresse non précisée"}</p>
                             </div>
                             <div style={{ textAlign: "right", flexShrink: 0 }}>

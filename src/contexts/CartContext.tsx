@@ -1,6 +1,6 @@
 "use client";
 // src/contexts/CartContext.tsx
-// Panier client public — persisté en localStorage par slug de restaurant.
+// Panier client public - persisté en localStorage par slug de restaurant.
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 
@@ -52,7 +52,7 @@ export function CartProvider({ slug, restaurantNom, children }: { slug: string; 
         setReady(true);
     }, [slug]);
 
-    // Persistance automatique — uniquement après le chargement initial
+    // Persistance automatique - uniquement après le chargement initial
     useEffect(() => {
         if (!ready) return;
         const state: CartState = { restaurantSlug: slug, restaurantNom, items };

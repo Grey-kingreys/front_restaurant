@@ -1,6 +1,6 @@
 "use client";
 // src/app/menu/[id]/modifier/page.tsx
-// Modification d'un plat existant — Chef Cuisinier, Admin, Manager
+// Modification d'un plat existant - Chef Cuisinier, Admin, Manager
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";

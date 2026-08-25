@@ -177,7 +177,7 @@ export default function MapPicker({ lat, lng, onChange, radiusMetres, height = 3
             <div style={{ height, borderRadius: "var(--radius-lg)", border: "1px dashed var(--border-subtle)", background: "var(--bg-section-alt)", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", color: "var(--text-muted)", fontSize: "0.82rem", padding: "1rem" }}>
                 <div>
                     <MapPin size={22} style={{ opacity: 0.5, marginBottom: 6 }} />
-                    <p style={{ margin: 0 }}>Carte indisponible — token Mapbox manquant (<code>NEXT_PUBLIC_MAPBOX_TOKEN</code>).</p>
+                    <p style={{ margin: 0 }}>Carte indisponible - token Mapbox manquant (<code>NEXT_PUBLIC_MAPBOX_TOKEN</code>).</p>
                 </div>
             </div>
         );

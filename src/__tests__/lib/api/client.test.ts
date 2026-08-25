@@ -6,7 +6,7 @@ import { apiRequest } from "@/lib/api/client";
  * n'était appelé qu'en cas de succès) → leur `await` restait bloqué à vie.
  * Elles doivent désormais rejeter proprement.
  */
-describe("apiRequest — refresh concurrent", () => {
+describe("apiRequest - refresh concurrent", () => {
     beforeEach(() => {
         localStorage.clear();
         localStorage.setItem("access_token", "old-access");

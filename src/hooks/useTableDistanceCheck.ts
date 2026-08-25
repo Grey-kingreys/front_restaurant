@@ -1,7 +1,7 @@
 "use client";
 // src/hooks/useTableDistanceCheck.ts
 // Vérification périodique de DISTANCE pour une table connectée en login+password
-// (sans session QR). N'applique QUE la restriction de distance — pas d'expiration
+// (sans session QR). N'applique QUE la restriction de distance - pas d'expiration
 // de session ni de déconnexion post-paiement (celles-ci restent spécifiques au QR).
 
 import { useEffect, useRef, useCallback } from "react";

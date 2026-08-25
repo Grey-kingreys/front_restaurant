@@ -1,6 +1,6 @@
 "use client";
 // src/app/statistiques/page.tsx
-// Statistiques globales de la plateforme — Super Admin uniquement
+// Statistiques globales de la plateforme - Super Admin uniquement
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";

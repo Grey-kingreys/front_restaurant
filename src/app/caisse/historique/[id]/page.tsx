@@ -123,7 +123,7 @@ export default function CaisseDetailPage() {
                         <StatCard title="Physique compté" value={fmtMontant(caisse.montant_physique_fermeture)} icon={<Banknote size={18} />} color="#3b82f6" />
                         <StatCard
                             title="Écart"
-                            value={ecart == null ? "—" : ecart === 0 ? "Aucun" : `${ecart > 0 ? "+" : ""}${ecart.toLocaleString("fr-FR")}`}
+                            value={ecart == null ? "-" : ecart === 0 ? "Aucun" : `${ecart > 0 ? "+" : ""}${ecart.toLocaleString("fr-FR")}`}
                             icon={<Scale size={18} />}
                             color={ecart == null || ecart === 0 ? "#22c55e" : "#f59e0b"}
                         />

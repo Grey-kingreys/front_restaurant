@@ -1,6 +1,6 @@
 "use client";
 // src/app/auth/qr/[token]/page.tsx
-// Connexion automatique via QR Code — demande GPS avant connexion
+// Connexion automatique via QR Code - demande GPS avant connexion
 
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";

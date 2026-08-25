@@ -1,6 +1,6 @@
 "use client";
 // src/app/commandes/page.tsx
-// Toutes les commandes — Serveur, Chef Cuisinier, Admin, Manager
+// Toutes les commandes - Serveur, Chef Cuisinier, Admin, Manager
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -48,7 +48,7 @@ const STATUT_CONFIG: Record<StatutCommande, { label: string; color: string; bg: 
     annulee:      { label: "Annulée",       color: "#6b7280", bg: "rgba(107,114,128,0.1)", border: "rgba(107,114,128,0.25)" },
 };
 
-// Règles de transition (miroir du backend) — évitent de sauter une étape.
+// Règles de transition (miroir du backend) - évitent de sauter une étape.
 // Une livraison part en course depuis son état « prêt à expédier » :
 // 'prete' si un plat passe par la cuisine, sinon 'en_attente' directement.
 const peutPartirEnLivraison = (c: Commande) =>
@@ -62,7 +62,7 @@ const peutEtreServie = (c: Commande) =>
         ? c.statut === "en_livraison"
         : c.statut === "prete" || (c.statut === "en_attente" && c.necessite_passage_cuisine === false);
 
-// Type de commande — différencie une commande sur place (table) d'une commande client en ligne
+// Type de commande - différencie une commande sur place (table) d'une commande client en ligne
 const TYPE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
     sur_table: { label: "Sur table", color: "#22c55e", bg: "rgba(34,197,94,0.1)",  border: "rgba(34,197,94,0.25)" },
     livraison: { label: "Livraison", color: "#8b5cf6", bg: "rgba(139,92,246,0.1)", border: "rgba(139,92,246,0.25)" },
@@ -383,7 +383,7 @@ export default function CommandesPage() {
                                                     </td>
                                                     <td>
                                                         <span style={{ fontSize: typography.sm, color: cssVar.textMuted }}>
-                                                            {(cmd as unknown as { nb_items: number }).nb_items ?? "—"} article{((cmd as unknown as { nb_items: number }).nb_items ?? 0) > 1 ? "s" : ""}
+                                                            {(cmd as unknown as { nb_items: number }).nb_items ?? "-"} article{((cmd as unknown as { nb_items: number }).nb_items ?? 0) > 1 ? "s" : ""}
                                                         </span>
                                                     </td>
                                                     <td>
@@ -393,7 +393,7 @@ export default function CommandesPage() {
                                                     </td>
                                                     <td>
                                                         <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
-                                                            {/* Cuisinier — marquer PRÊTE */}
+                                                            {/* Cuisinier - marquer PRÊTE */}
                                                             {isCuisinier && cmd.statut === "en_attente" && (
                                                                 <ActionButton
                                                                     onClick={() => handleAction(cmd.id, "prete")}
@@ -403,7 +403,7 @@ export default function CommandesPage() {
                                                                     label="Prête"
                                                                 />
                                                             )}
-                                                            {/* Serveur — marquer EN LIVRAISON (livraison uniquement, après cuisine) */}
+                                                            {/* Serveur - marquer EN LIVRAISON (livraison uniquement, après cuisine) */}
                                                             {isServeur && peutPartirEnLivraison(cmd) && (
                                                                 <ActionButton
                                                                     onClick={() => handleAction(cmd.id, "en_livraison")}
@@ -413,7 +413,7 @@ export default function CommandesPage() {
                                                                     label="En livraison"
                                                                 />
                                                             )}
-                                                            {/* Serveur — marquer SERVIE / LIVRÉE */}
+                                                            {/* Serveur - marquer SERVIE / LIVRÉE */}
                                                             {isServeur && peutEtreServie(cmd) && (
                                                                 <ActionButton
                                                                     onClick={() => handleAction(cmd.id, "servie")}
@@ -423,7 +423,7 @@ export default function CommandesPage() {
                                                                     label={cmd.type_commande === "livraison" ? "Livrée" : "Servie"}
                                                                 />
                                                             )}
-                                                            {/* Serveur — valider PAIEMENT */}
+                                                            {/* Serveur - valider PAIEMENT */}
                                                             {isServeur && cmd.statut === "servie" && (
                                                                 <ActionButton
                                                                     onClick={() => handleAction(cmd.id, "payee")}
@@ -695,11 +695,11 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
                                     const isOnline = cmd.type_commande === "livraison" || cmd.type_commande === "emporter";
                                     const nb = cmd.nb_items ?? cmd.items?.length ?? 0;
                                     const rows: { label: string; value: string }[] = [
-                                        { label: isOnline ? "Client" : "Table", value: cmd.client_display ?? cmd.table_login ?? "—" },
+                                        { label: isOnline ? "Client" : "Table", value: cmd.client_display ?? cmd.table_login ?? "-" },
                                         { label: "Type", value: cmd.type_commande_display ?? (isOnline ? "En ligne" : "Sur table") },
                                         { label: "Montant", value: `${Number(cmd.montant_total).toLocaleString("fr-FR")} GNF` },
                                         { label: "Articles", value: `${nb} article${nb > 1 ? "s" : ""}` },
-                                        { label: "Passée le", value: fmt(cmd.date_commande) ?? "—" },
+                                        { label: "Passée le", value: fmt(cmd.date_commande) ?? "-" },
                                     ];
                                     if (isOnline && cmd.client_telephone) rows.push({ label: "Téléphone", value: cmd.client_telephone });
                                     if (cmd.type_commande === "livraison" && cmd.client_adresse_livraison) rows.push({ label: "Adresse", value: cmd.client_adresse_livraison });
@@ -835,7 +835,7 @@ function CommandeDrawer({ cmd, loading, onClose, isServeur, isCuisinier, actionL
                                 </button>
                             )}
 
-                            {/* Annulation (staff) — possible jusqu'à « en livraison » inclus */}
+                            {/* Annulation (staff) - possible jusqu'à « en livraison » inclus */}
                             {isServeur && cmd.peut_annuler_staff && (
                                 confirmCancel ? (
                                     <div style={{ border: "1px solid var(--border-subtle)", borderRadius: radius.lg, padding: "0.75rem", background: "var(--bg-section-alt)", display: "flex", flexDirection: "column", gap: "0.5rem" }}>

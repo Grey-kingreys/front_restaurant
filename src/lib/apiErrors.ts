@@ -84,7 +84,7 @@ export const FIELD_LABELS: Record<string, string> = {
     note: "Note",
 };
 
-/** `client_telephone` → « Client telephone » — filet de sécurité lisible. */
+/** `client_telephone` → « Client telephone » - filet de sécurité lisible. */
 function libelleParDefaut(champ: string): string {
     const mots = champ.replace(/_/g, " ").trim();
     return mots.charAt(0).toUpperCase() + mots.slice(1);

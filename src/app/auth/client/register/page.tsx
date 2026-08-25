@@ -105,7 +105,7 @@ export default function ClientRegisterPage() {
                 <div style={{ textAlign: "center", marginBottom: spacing["8"] }}>
                     <Logo href="/" size={44} priority />
                     <p style={{ marginTop: spacing["2"], fontSize: typography.md, color: cssVar.textMuted }}>
-                        Créez votre compte — commandez en quelques clics
+                        Créez votre compte - commandez en quelques clics
                     </p>
                 </div>
 

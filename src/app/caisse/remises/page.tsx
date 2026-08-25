@@ -1,6 +1,6 @@
 "use client";
 // src/app/caisse/remises/page.tsx
-// Remises serveurs — liste des remises physiques à valider
+// Remises serveurs - liste des remises physiques à valider
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -17,9 +17,9 @@ import { apiErrorMessage } from "@/lib/apiErrors";
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 const gnf = (v: string | number | null | undefined) => {
-    if (v === null || v === undefined) return "—";
+    if (v === null || v === undefined) return "-";
     const n = typeof v === "string" ? parseFloat(v) : v;
-    return isNaN(n) ? "—" : n.toLocaleString("fr-FR") + " GNF";
+    return isNaN(n) ? "-" : n.toLocaleString("fr-FR") + " GNF";
 };
 
 const fmtDate = (iso: string) =>
@@ -86,7 +86,7 @@ function ModalValider({
                     Valider la remise
                 </h3>
                 <p style={{ margin: "0 0 1rem", fontSize: typography.sm, color: cssVar.textSecondary }}>
-                    Serveur : <strong>{remise.serveur_login ?? "—"}</strong> · Commande #{remise.commande_id} · Montant virtuel : <strong style={{ color: cssVar.textPrimary }}>{gnf(remise.montant_virtuel)}</strong>
+                    Serveur : <strong>{remise.serveur_login ?? "-"}</strong> · Commande #{remise.commande_id} · Montant virtuel : <strong style={{ color: cssVar.textPrimary }}>{gnf(remise.montant_virtuel)}</strong>
                 </p>
                 {err && <div style={{ ...alertError, marginBottom: "0.75rem" }}>{err}</div>}
                 <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>

@@ -44,7 +44,7 @@ export default function AProposPage() {
           <p className="text-lg leading-relaxed" style={{ color: "var(--text-secondary)" }}>
             resfly est une solution tout-en-un qui aide les restaurants guinéens à moderniser
             leur service, maîtriser leurs revenus et offrir une meilleure expérience à leurs
-            clients — sans complexité ni gros investissement.
+            clients - sans complexité ni gros investissement.
           </p>
         </div>
       </section>

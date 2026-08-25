@@ -11,7 +11,7 @@ const features = [
   {
     icon: <QrCode className="w-6 h-6" />,
     title: "QR Code par table",
-    desc: "Le client scanne, commande, suit sa session — sans application à installer. La table se libère automatiquement après paiement.",
+    desc: "Le client scanne, commande, suit sa session - sans application à installer. La table se libère automatiquement après paiement.",
   },
   {
     icon: <Banknote className="w-6 h-6" />,
@@ -21,7 +21,7 @@ const features = [
   {
     icon: <ShieldCheck className="w-6 h-6" />,
     title: "Multi-restaurant isolé",
-    desc: "Chaque restaurant est étanche. Données, équipe et caisse complètement séparés — même plateforme, zéro mélange.",
+    desc: "Chaque restaurant est étanche. Données, équipe et caisse complètement séparés - même plateforme, zéro mélange.",
   },
 ];
 

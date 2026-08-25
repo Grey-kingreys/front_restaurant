@@ -296,7 +296,7 @@ export async function actionLivraisonPublique(token: string, action: LivraisonAc
     });
 }
 
-// Labels et helpers paiement — icon est une clé résolue dans le composant via PAYMENT_ICONS
+// Labels et helpers paiement - icon est une clé résolue dans le composant via PAYMENT_ICONS
 export const MODES_PAIEMENT: { value: ModePaiement; label: string; icon: "banknote" | "smartphone" | "credit-card" | "globe"; disponible: boolean }[] = [
     { value: "livraison",    label: "Paiement à la livraison", icon: "banknote",    disponible: true },
     { value: "orange_money", label: "Orange Money",            icon: "smartphone",  disponible: false },

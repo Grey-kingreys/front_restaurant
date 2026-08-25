@@ -1,6 +1,6 @@
 "use client";
 // src/app/auth/first-login/page.tsx
-// Première connexion Admin — activation du compte via token d'onboarding
+// Première connexion Admin - activation du compte via token d'onboarding
 
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";

@@ -1,5 +1,5 @@
 "use client";
-// src/app/client/reservations/page.tsx — Réserver une table + mes réservations (Rclient)
+// src/app/client/reservations/page.tsx - Réserver une table + mes réservations (Rclient)
 
 import { useEffect, useState, useCallback } from "react";
 import { CalendarDays, Users, Clock, Armchair, Check, X, AlertCircle, Store, Info } from "lucide-react";
@@ -109,7 +109,7 @@ export default function ReservationsPage() {
         <div style={{ maxWidth: 900, margin: "0 auto", padding: "clamp(1rem, 4vw, 2rem)" }}>
             <div style={{ marginBottom: "1.5rem" }}>
                 <h1 style={{ margin: "0 0 0.25rem", fontSize: "clamp(1.4rem,4vw,1.9rem)", fontWeight: 900, color: "var(--text-primary)" }}>Réserver une table</h1>
-                <p style={{ margin: 0, fontSize: "0.9rem", color: "var(--text-muted)" }}>Indiquez le créneau et le nombre de personnes — une table vous est attribuée automatiquement.</p>
+                <p style={{ margin: 0, fontSize: "0.9rem", color: "var(--text-muted)" }}>Indiquez le créneau et le nombre de personnes - une table vous est attribuée automatiquement.</p>
             </div>
 
             {/* Formulaire de réservation */}
@@ -156,7 +156,7 @@ export default function ReservationsPage() {
                 {dispo && (
                     <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.7rem 0.9rem", borderRadius: "var(--radius-lg)", fontSize: "0.82rem", background: dispo.disponible ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)", border: `1px solid ${dispo.disponible ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}`, color: dispo.disponible ? "#22c55e" : "#ef4444" }}>
                         {dispo.disponible ? <Check size={15} /> : <AlertCircle size={15} />}
-                        <span>{dispo.message}{dispo.disponible && ` — durée prévue ${dispo.duree_minutes} min (jusqu'à ${dispo.heure_fin}).`}</span>
+                        <span>{dispo.message}{dispo.disponible && ` - durée prévue ${dispo.duree_minutes} min (jusqu'à ${dispo.heure_fin}).`}</span>
                     </div>
                 )}
 
@@ -193,7 +193,7 @@ export default function ReservationsPage() {
                                 <div style={{ flex: 1, minWidth: 0 }}>
                                     <div style={{ fontWeight: 800, color: "var(--text-primary)", fontSize: "0.95rem" }}>{r.restaurant}</div>
                                     <div style={{ fontSize: "0.76rem", color: "var(--text-muted)", marginTop: "0.2rem" }}>
-                                        {formatDateFr(r.date_reservation)} · {r.heure}–{r.heure_fin} · {r.nombre_personnes} pers.
+                                        {formatDateFr(r.date_reservation)} · {r.heure}-{r.heure_fin} · {r.nombre_personnes} pers.
                                     </div>
                                 </div>
                                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.4rem", flexShrink: 0 }}>
