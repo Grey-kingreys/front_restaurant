@@ -42,26 +42,45 @@ if (apiUrl) {
  * D'où une redirection **permanente** (308, qui préserve la méthode et le corps de
  * requête, contrairement à un 301/302) et **qui conserve le chemin et la query**.
  *
- * Pilotage par variables d'environnement, lues au démarrage du serveur :
+ * ⚠️ Next fige `redirects()` au BUILD, dans `.next/routes-manifest.json` : une
+ * variable d'environnement posée au seul démarrage du conteneur n'aurait aucun
+ * effet. On applique donc la même technique que pour les `NEXT_PUBLIC_*` : on
+ * compile des **sentinelles** que `docker/entrypoint.sh` remplace au démarrage.
+ * Un emplacement laissé à sa sentinelle est inerte — aucun en-tête `Host` réel ne
+ * peut valoir « RUNTIME_LEGACY_HOST_1_PLACEHOLDER ».
+ *
+ * Configuration : voir `backend/DEPLOY-DOKPLOY.md` §8.
  *   CANONICAL_HOST=resfly.org
  *   LEGACY_HOSTS=resfly.kingreys.fr,www.resfly.kingreys.fr
- * Sans `CANONICAL_HOST`, aucune redirection n'est installée (cas du dev local).
  */
+const NB_EMPLACEMENTS_ANCIENS_DOMAINES = 3;
+
 function redirectionsAncienDomaine() {
-  const canonique = process.env.CANONICAL_HOST?.trim();
-  const anciens = (process.env.LEGACY_HOSTS ?? "")
+  const canoniqueEnv = process.env.CANONICAL_HOST?.trim();
+  const anciensEnv = (process.env.LEGACY_HOSTS ?? "")
     .split(",")
     .map((h) => h.trim())
-    .filter((h) => h && h !== canonique);
+    .filter(Boolean);
 
-  if (!canonique || anciens.length === 0) return [];
+  // Valeurs fournies au build (--build-arg) : elles sont figées telles quelles.
+  // Sinon on compile des sentinelles, substituées au démarrage du conteneur.
+  const canonique = canoniqueEnv || "RUNTIME_CANONICAL_HOST_PLACEHOLDER";
+  const anciens =
+    anciensEnv.length > 0
+      ? anciensEnv
+      : Array.from(
+          { length: NB_EMPLACEMENTS_ANCIENS_DOMAINES },
+          (_, i) => `RUNTIME_LEGACY_HOST_${i + 1}_PLACEHOLDER`,
+        );
 
-  return anciens.map((ancien) => ({
-    source: "/:chemin*",
-    has: [{ type: "host" as const, value: ancien }],
-    destination: `https://${canonique}/:chemin*`,
-    permanent: true,
-  }));
+  return anciens
+    .filter((ancien) => ancien !== canonique)
+    .map((ancien) => ({
+      source: "/:chemin*",
+      has: [{ type: "host" as const, value: ancien }],
+      destination: `https://${canonique}/:chemin*`,
+      permanent: true,
+    }));
 }
 
 const nextConfig: NextConfig = {

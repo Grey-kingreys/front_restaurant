@@ -31,4 +31,33 @@ replace_placeholder "http://RUNTIME_API_URL_PLACEHOLDER" "${NEXT_PUBLIC_API_URL:
 # la carte ne s'affiche pas mais le reste de l'app fonctionne).
 replace_placeholder "RUNTIME_MAPBOX_TOKEN_PLACEHOLDER" "${NEXT_PUBLIC_MAPBOX_TOKEN}"
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Redirection des anciens domaines vers le domaine canonique.
+#
+# Next fige `redirects()` au build dans `.next/routes-manifest.json` : mêmes
+# sentinelles, même substitution au démarrage.
+#
+#   CANONICAL_HOST=resfly.org
+#   LEGACY_HOSTS=resfly.kingreys.fr,www.resfly.kingreys.fr   (3 emplacements max)
+#
+# Rien n'est substitué sans CANONICAL_HOST : on enverrait sinon les visiteurs de
+# l'ancien domaine vers l'hôte bidon « RUNTIME_CANONICAL_HOST_PLACEHOLDER ».
+# Une sentinelle laissée en place est inerte — aucun `Host` réel ne peut valoir ça.
+# ─────────────────────────────────────────────────────────────────────────────
+if [ -n "${CANONICAL_HOST}" ]; then
+  replace_placeholder "RUNTIME_CANONICAL_HOST_PLACEHOLDER" "${CANONICAL_HOST}"
+
+  i=1
+  echo "${LEGACY_HOSTS}" | tr ',' '\n' | while IFS= read -r ancien; do
+    ancien=$(echo "$ancien" | tr -d '[:space:]')
+    [ -z "$ancien" ] && continue
+    if [ "$i" -gt 3 ]; then
+      echo "entrypoint: LEGACY_HOSTS ignore « $ancien » (3 emplacements maximum)" >&2
+      continue
+    fi
+    replace_placeholder "RUNTIME_LEGACY_HOST_${i}_PLACEHOLDER" "$ancien"
+    i=$((i + 1))
+  done
+fi
+
 exec node server.js
