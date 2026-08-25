@@ -12,8 +12,9 @@ import {
     type DemandeApprovisionnement,
     type StatutDemandeAppro,
 } from "@/lib/api/paiements";
-import { cssVar, typography, radius } from "@/theme/theme";
+import { cssVar, typography, radius, modalCard } from "@/theme/theme";
 import { Wallet, Check, X, RefreshCw, Clock } from "lucide-react";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 function PageLoader() {
     return (
@@ -71,7 +72,7 @@ export default function ApprovisionnementsPage() {
         try {
             const res = await approuverDemandeAppro(id);
             if (res.success) { showToast("Approvisionnement approuvé et transféré."); await fetchDemandes(); }
-            else showToast(res.message || "Impossible d'approuver.", "error");
+            else showToast(apiErrorMessage(res, "Impossible d'approuver."), "error");
         } catch { showToast("Erreur réseau.", "error"); }
         setActionId(null);
     };
@@ -82,7 +83,7 @@ export default function ApprovisionnementsPage() {
         try {
             const res = await refuserDemandeAppro(refusId, motifRefus);
             if (res.success) { showToast("Demande refusée."); setRefusId(null); setMotifRefus(""); await fetchDemandes(); }
-            else showToast(res.message || "Impossible de refuser.", "error");
+            else showToast(apiErrorMessage(res, "Impossible de refuser."), "error");
         } catch { showToast("Erreur réseau.", "error"); }
         setActionId(null);
     };
@@ -193,7 +194,7 @@ export default function ApprovisionnementsPage() {
             {/* Modal refus */}
             {refusId != null && (
                 <div onClick={() => setRefusId(null)} style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-                    <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: 380, background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: radius.xl, padding: "1.5rem" }}>
+                    <div onClick={(e) => e.stopPropagation()} style={{ ...modalCard, maxWidth: 380, borderRadius: radius.xl }}>
                         <h3 style={{ margin: "0 0 1rem", fontSize: typography.base, fontWeight: 800, color: cssVar.textPrimary }}>Refuser la demande</h3>
                         <label style={{ display: "block", fontSize: typography.xs, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: cssVar.textMuted, marginBottom: "0.375rem" }}>Motif du refus *</label>
                         <input type="text" value={motifRefus} onChange={e => setMotifRefus(e.target.value)} autoFocus placeholder="Expliquez le refus" style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box", marginBottom: "1rem" }} />

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Truck, ShoppingBag, ClipboardList, AlertCircle, ChevronRight, X } from "lucide-react";
 import { getMesCommandes, annulerCommandeClient, type MaCommande } from "@/lib/api/public";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 const STATUT_COLOR: Record<string, string> = {
     en_attente: "#f59e0b", prete: "#3b82f6", en_livraison: "#8b5cf6",
@@ -51,7 +52,7 @@ export default function ClientCommandesPage() {
                 setFlash({ type: "ok", text: "Commande annulée." });
                 await load();
             } else {
-                setFlash({ type: "err", text: res.message || "Annulation impossible." });
+                setFlash({ type: "err", text: apiErrorMessage(res, "Annulation impossible.") });
             }
         } catch {
             setFlash({ type: "err", text: "Serveur indisponible." });

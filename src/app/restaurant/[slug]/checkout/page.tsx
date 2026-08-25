@@ -12,6 +12,7 @@ import { getRestaurantPublic, type RestaurantPublic } from "@/lib/api/public";
 import { listAdresses, createAdresse } from "@/lib/api/adresses";
 import type { AdresseClient } from "@/types";
 import MapPicker from "@/components/map/MapPicker";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 const PAYMENT_ICONS: Record<string, LucideIcon> = {
     "banknote":    Banknote,
@@ -96,8 +97,8 @@ export default function CheckoutPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated, user]);
 
-    const fraisLivraison = typeCommande === "livraison" && resto?.frais_livraison ? Number(resto.frais_livraison) : 0;
-    const totalAvecFrais = total + fraisLivraison;
+    // Les frais de livraison n'entrent pas dans le total : ils varient avec la
+    // distance et se règlent directement avec le livreur.
 
     const validate = () => {
         const e: Record<string, string> = {};
@@ -143,7 +144,7 @@ export default function CheckoutPage() {
                 clearCart();
                 router.push(`/restaurant/${slug}/confirmation/${res.data.cle_suivi}`);
             } else {
-                setErrors({ submit: res.message || "Une erreur s'est produite." });
+                setErrors({ submit: apiErrorMessage(res, "Une erreur s'est produite.") });
                 setSubmitting(false);
             }
         } catch (e: unknown) {
@@ -366,12 +367,12 @@ export default function CheckoutPage() {
                     {typeCommande === "livraison" && (
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem", color: "var(--text-muted)", fontSize: "0.85rem" }}>
                             <span>Frais de livraison</span>
-                            <span>{fraisLivraison > 0 ? `${fraisLivraison.toLocaleString("fr-FR")} GNF` : "Gratuit"}</span>
+                            <span>À convenir avec le livreur</span>
                         </div>
                     )}
                     <div style={{ borderTop: "1px solid var(--border-subtle)", paddingTop: "0.75rem", display: "flex", justifyContent: "space-between", fontWeight: 800, color: "#f59e0b", fontSize: "1rem" }}>
                         <span>Total</span>
-                        <span>{totalAvecFrais.toLocaleString("fr-FR")} GNF</span>
+                        <span>{total.toLocaleString("fr-FR")} GNF</span>
                     </div>
                 </section>
 
@@ -392,7 +393,7 @@ export default function CheckoutPage() {
                     </div>
                 ) : (
                     <button onClick={handleSubmit} disabled={submitting} style={{ width: "100%", padding: "1rem", borderRadius: "var(--radius-xl)", border: "none", background: submitting ? "rgba(245,158,11,0.5)" : "linear-gradient(135deg,#f59e0b,#d97706)", color: "#0c0a09", fontWeight: 800, fontSize: "1rem", cursor: submitting ? "not-allowed" : "pointer" }}>
-                        {submitting ? "Envoi en cours…" : `Confirmer la commande • ${totalAvecFrais.toLocaleString("fr-FR")} GNF`}
+                        {submitting ? "Envoi en cours…" : `Confirmer la commande • ${total.toLocaleString("fr-FR")} GNF`}
                     </button>
                 )}
             </div>

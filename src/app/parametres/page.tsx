@@ -17,6 +17,7 @@ import {
     ChevronDown, ChevronRight, Truck, ShoppingBag, Repeat, MapPin, AlertTriangle,
     CalendarCheck, Zap, Hand, Banknote,
 } from "lucide-react";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 // ─── Types & constantes ───────────────────────────────────────────────────────
 
@@ -59,7 +60,6 @@ function TabRestaurant() {
     const [duree, setDuree]           = useState("60");
     const [acceptLivraison, setAcceptLivraison] = useState(false);
     const [acceptEmporter, setAcceptEmporter]   = useState(false);
-    const [fraisLivraison, setFraisLivraison]   = useState("");
     const [livraisonLienPaiement, setLivraisonLienPaiement] = useState(false);
     const [validationAuto, setValidationAuto]   = useState(true);
     const [delaiAnnulation, setDelaiAnnulation] = useState("2");
@@ -82,7 +82,6 @@ function TabRestaurant() {
                 setAcceptLivraison(res.data.accept_livraison ?? false);
                 setLivraisonLienPaiement(res.data.livraison_lien_autorise_paiement ?? false);
                 setAcceptEmporter(res.data.accept_emporter ?? false);
-                setFraisLivraison(res.data.frais_livraison ?? "");
                 setValidationAuto(res.data.reservation_validation_auto ?? true);
                 setDelaiAnnulation(String(res.data.reservation_delai_annulation_heures ?? 2));
             } else setError("Impossible de charger les informations du restaurant.");
@@ -113,7 +112,6 @@ function TabRestaurant() {
         payload.accept_livraison = acceptLivraison;
         payload.livraison_lien_autorise_paiement = livraisonLienPaiement;
         payload.accept_emporter = acceptEmporter;
-        payload.frais_livraison = fraisLivraison.trim() ? parseInt(fraisLivraison.trim()) : null;
         // Réservations
         payload.reservation_validation_auto = validationAuto;
         payload.reservation_delai_annulation_heures = delaiAnnulation.trim() ? parseInt(delaiAnnulation.trim()) : 2;
@@ -121,8 +119,7 @@ function TabRestaurant() {
             const res = await updateMonRestaurant(payload);
             if (res.success && res.data) { setRestaurant(res.data); showToast("Restaurant mis à jour."); }
             else {
-                const errs = res.errors;
-                setFormError(errs ? Object.values(errs).flat().join(" — ") : res.message || "Erreur.");
+                setFormError(apiErrorMessage(res, "Erreur."));
             }
         } catch { setFormError("Erreur de connexion."); }
         finally { setSaving(false); }
@@ -170,7 +167,7 @@ function TabRestaurant() {
 
                     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: spacing["3"] }}>
                         {formError && (
-                            <div style={{ padding: "0.55rem 0.75rem", borderRadius: radius.md, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm }}>{formError}</div>
+                            <div style={{ padding: "0.55rem 0.75rem", borderRadius: radius.md, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm, whiteSpace: "pre-line" }}>{formError}</div>
                         )}
                         {[
                             { label: "Nom du restaurant *", value: nom, set: setNom, type: "text", required: true },
@@ -215,12 +212,16 @@ function TabRestaurant() {
                                 <input type="checkbox" checked={acceptLivraison} onChange={e => setAcceptLivraison(e.target.checked)} style={{ width: 18, height: 18, cursor: "pointer", flexShrink: 0 }} />
                             </label>
 
-                            {/* Frais de livraison — visible si livraison activée */}
+                            {/* Frais de livraison — non paramétrables : ils dépendent de
+                                la distance et se conviennent avec le livreur. */}
                             {acceptLivraison && (
-                                <div style={{ marginBottom: spacing["2"], paddingLeft: "1.85rem" }}>
-                                    <label style={{ display: "block", fontSize: typography.xs, fontWeight: typography.bold, textTransform: "uppercase", letterSpacing: "0.06em", color: cssVar.textMuted, marginBottom: "4px" }}>Frais de livraison (GNF)</label>
-                                    <input type="number" min={0} step={500} value={fraisLivraison} onChange={e => setFraisLivraison(e.target.value)} placeholder="Laisser vide = gratuit"
-                                        style={{ width: "100%", maxWidth: 240, padding: "0.5rem 0.75rem", borderRadius: radius.md, border: `1px solid ${cssVar.borderSubtle}`, background: cssVar.bgSectionAlt, color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }} />
+                                <div style={{ marginBottom: spacing["2"], marginLeft: "1.85rem", padding: "0.6rem 0.75rem", borderRadius: radius.md, border: `1px solid ${cssVar.borderSubtle}`, background: cssVar.bgSectionAlt, display: "flex", gap: spacing["2"], alignItems: "flex-start" }}>
+                                    <Banknote size={16} style={{ color: cssVar.textMuted, flexShrink: 0, marginTop: 2 }} />
+                                    <p style={{ margin: 0, fontSize: "0.72rem", color: cssVar.textMuted, lineHeight: 1.5 }}>
+                                        Les frais de livraison ne sont pas facturés dans la commande : ils varient
+                                        selon la distance et se règlent directement avec le livreur. Le client voit
+                                        la mention « à convenir avec le livreur » au moment de commander.
+                                    </p>
                                 </div>
                             )}
 
@@ -381,8 +382,7 @@ function RoleModal({ initial, permissions, onClose, onSaved }: { initial?: RoleC
                 : await createRole({ nom, slug: slug || slugify(nom), dashboard_type: dashboard, permission_ids: [...selected] });
             if (res.success) { onSaved(isEdit ? "Rôle mis à jour." : "Rôle créé."); onClose(); }
             else {
-                const errs = res.errors;
-                setError(errs ? Object.values(errs).flat().join(" — ") : res.message || "Erreur.");
+                setError(apiErrorMessage(res, "Erreur."));
             }
         } catch { setError("Erreur de connexion."); }
         finally { setLoading(false); }
@@ -535,7 +535,7 @@ function TabRoles({ onToast }: { onToast: (msg: string, type?: "success" | "erro
         if (!window.confirm(msg)) return;
         const res = await deleteRole(role.id);
         if (res.success) { onToast(`Rôle « ${role.nom} » supprimé.`); fetchAll(); }
-        else onToast(res.message || "Suppression impossible.", "error");
+        else onToast(apiErrorMessage(res, "Suppression impossible."), "error");
     };
 
     const systemRoles = roles.filter(r => r.is_system);

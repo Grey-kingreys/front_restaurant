@@ -197,6 +197,36 @@ export const cardBase: React.CSSProperties = {
     boxShadow: cssVar.shadowCard,
 };
 
+/**
+ * Voile + centrage d'une modale. À poser sur le conteneur `position: fixed`.
+ * Le `padding` garantit une marge visible autour de la carte sur petit écran.
+ */
+export const modalOverlay: React.CSSProperties = {
+    position: "fixed",
+    inset: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: spacing["4"],
+};
+
+/**
+ * Carte de modale : ne dépasse jamais la hauteur de l'écran et défile
+ * quand son contenu est plus long.
+ *
+ * `dvh` et non `vh` : sur mobile, `vh` ignore la barre d'adresse du navigateur,
+ * si bien qu'une modale haute déborde sous le bas de l'écran — le bouton de
+ * validation devient alors inatteignable, sans possibilité de faire défiler.
+ */
+export const modalCard: React.CSSProperties = {
+    ...cardBase,
+    width: "100%",
+    padding: spacing["6"],
+    boxSizing: "border-box",
+    maxHeight: "90dvh",
+    overflowY: "auto",
+};
+
 /** Section card (bordure subtile) */
 export const cardSection: React.CSSProperties = {
     background: cssVar.bgCard,

@@ -10,8 +10,9 @@ import type { CaisseGlobale } from "@/lib/api/paiements";
 import {
     cssVar, typography, radius, spacing,
     cardBase, cardSection, btnPrimary, btnOutline,
-    inputStyle, alertAmber, alertError, sectionHead, sectionHeadTitle,
+    inputStyle, alertAmber, alertError, sectionHead, sectionHeadTitle, modalCard
 } from "@/theme/theme";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -105,7 +106,7 @@ function ModalFermerGlobale({
             if (showMotifEcart) payload.motif_ecart = motifEcart.trim();
             const res = await fermerCaisseGlobale(payload);
             if (res.success) { onDone(); }
-            else setErr(res.message || "Erreur lors de la fermeture.");
+            else setErr(apiErrorMessage(res, "Erreur lors de la fermeture."));
         } catch {
             setErr("Erreur lors de la fermeture.");
         } finally {
@@ -115,7 +116,7 @@ function ModalFermerGlobale({
 
     return (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-            <div style={{ ...cardBase, padding: "1.5rem", width: "100%", maxWidth: 460 }}>
+            <div style={{ ...modalCard, maxWidth: 460 }}>
                 <h3 style={{ margin: "0 0 0.25rem", fontSize: typography.lg, fontWeight: typography.bold, color: cssVar.textPrimary }}>Clôturer la caisse globale</h3>
                 <p style={{ margin: "0 0 1rem", fontSize: typography.sm, color: cssVar.textSecondary }}>
                     Solde virtuel du jour : <strong style={{ color: cssVar.textPrimary }}>{gnf(caisse.solde)}</strong>
@@ -212,7 +213,7 @@ export default function CaisseGlobalePage() {
                 setShowOuvrirModal(false);
                 fetchAll();
             } else {
-                alert(res.message || "Erreur lors de l'ouverture.");
+                alert(apiErrorMessage(res, "Erreur lors de l'ouverture."));
             }
         } catch {
             alert("Erreur lors de l'ouverture.");
@@ -324,7 +325,7 @@ export default function CaisseGlobalePage() {
 
             {showOuvrirModal && (
                 <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-                    <div style={{ ...cardBase, padding: "1.5rem", width: "100%", maxWidth: 460 }}>
+                    <div style={{ ...modalCard, maxWidth: 460 }}>
                         <h3 style={{ margin: "0 0 0.25rem", fontSize: typography.lg, fontWeight: typography.bold, color: cssVar.textPrimary }}>Ouvrir la caisse globale</h3>
                         <p style={{ margin: "0 0 1rem", fontSize: typography.sm, color: cssVar.textSecondary }}>
                             Voulez-vous ouvrir manuellement la caisse globale pour aujourd&apos;hui ?

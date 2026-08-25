@@ -23,6 +23,7 @@ import {
     spacing,
     palette,
 } from "@/theme/theme";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 // ── Formulaire de demande ──────────────────────────────────────
 
@@ -109,7 +110,7 @@ function ConfirmForm({ token }: { token: string }) {
         try {
             const res = await confirmPasswordReset({ token, password, password_confirm: confirm });
             if (res.success) setDone(true);
-            else setError(res.message || "Lien invalide ou expiré.");
+            else setError(apiErrorMessage(res, "Lien invalide ou expiré."));
         } catch (err: unknown) {
             const e = err as { message?: string };
             setError(e?.message || "Lien invalide ou expiré.");

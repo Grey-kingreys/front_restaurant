@@ -5,6 +5,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { changePassword } from "@/lib/api/auth";
 import { useAuth } from "@/contexts/AuthContext";
+import { apiErrorMessage, thrownErrorMessage } from "@/lib/apiErrors";
 
 const inputStyle: React.CSSProperties = {
     width: "100%",
@@ -49,13 +50,10 @@ export default function ChangePasswordPage() {
             else {
                 // Le vrai motif (ex. « Mot de passe actuel incorrect. ») est dans res.errors,
                 // pas dans res.message — l'afficher au lieu d'un message générique.
-                const fieldErrs = res.errors ? Object.values(res.errors).flat().join(" — ") : "";
-                setError(fieldErrs || res.message || "Erreur lors du changement de mot de passe.");
+                setError(apiErrorMessage(res, "Erreur lors du changement de mot de passe."));
             }
         } catch (err: unknown) {
-            const e = err as { errors?: Record<string, string[]>; message?: string };
-            const firstErr = e?.errors ? Object.values(e.errors).flat()[0] : e?.message;
-            setError(firstErr || "Une erreur est survenue.");
+            setError(thrownErrorMessage(err, "Une erreur est survenue."));
         } finally {
             setLoading(false);
         }

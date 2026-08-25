@@ -17,7 +17,7 @@ import {
     type PlatformStats,
 } from "@/lib/api/company";
 import type { Role } from "@/types";
-import { cssVar, typography, radius } from "@/theme/theme";
+import { cssVar, typography, radius, modalCard } from "@/theme/theme";
 import {
     Building2,
     Plus,
@@ -32,6 +32,7 @@ import {
     Eye,
     EyeOff,
 } from "lucide-react";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 const ROLES_AUTORISES: Role[] = ["Rsuper_admin"];
 
@@ -84,7 +85,7 @@ function RestaurantForm({ initial, onSubmit, onClose, loading, error }: {
     return (
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}>
             {error && (
-                <div style={{ padding: "0.625rem 0.875rem", borderRadius: radius.lg, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm }}>
+                <div style={{ padding: "0.625rem 0.875rem", borderRadius: radius.lg, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm, whiteSpace: "pre-line" }}>
                     {error}
                 </div>
             )}
@@ -198,8 +199,7 @@ export default function RestaurantsPage() {
                 closeModal();
                 fetchAll();
             } else {
-                const errs = res.errors;
-                setFormError(errs ? Object.values(errs).flat().join(" — ") : "Erreur de création.");
+                setFormError(apiErrorMessage(res, "Erreur de création."));
             }
         } catch {
             setFormError("Erreur de connexion.");
@@ -262,7 +262,7 @@ export default function RestaurantsPage() {
                 setDeletePassword("");
                 fetchAll();
             } else {
-                setDeleteError(res.message || "Erreur lors de la suppression.");
+                setDeleteError(apiErrorMessage(res, "Erreur lors de la suppression."));
             }
         } catch {
             setDeleteError("Erreur lors de la suppression.");
@@ -319,7 +319,7 @@ export default function RestaurantsPage() {
                 <>
                     <div onClick={closeModal} style={{ position: "fixed", inset: 0, zIndex: 90, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} />
                     <div style={{ position: "fixed", inset: 0, zIndex: 91, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-                        <div style={{ width: "100%", maxWidth: 480, background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-2xl)", padding: "1.5rem", animation: "modalIn 0.25s ease", maxHeight: "90vh", overflowY: "auto" }}>
+                        <div style={{ ...modalCard, maxWidth: 480, animation: "modalIn 0.25s ease" }}>
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
                                 <h2 style={{ margin: 0, fontSize: typography.lg, fontWeight: 800, color: cssVar.textPrimary }}>
                                     {modal === "create" ? "Nouveau restaurant" : modal === "edit" ? "Modifier le restaurant" : selected?.is_active ? "Suspendre le restaurant" : "Activer le restaurant"}
@@ -364,7 +364,7 @@ export default function RestaurantsPage() {
                                     <p style={{ margin: "0 0 1.25rem", fontSize: typography.sm, color: cssVar.textMuted }}>
                                         La suppression de <strong style={{ color: cssVar.textPrimary }}>«{selected.nom}»</strong> supprimera définitivement le restaurant et <strong>TOUTES ses données</strong> (utilisateurs, plats, commandes, paiements, etc.).
                                     </p>
-                                    {deleteError && <div style={{ padding: "0.625rem 0.875rem", borderRadius: radius.lg, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm, marginBottom: "0.75rem" }}>{deleteError}</div>}
+                                    {deleteError && <div style={{ padding: "0.625rem 0.875rem", borderRadius: radius.lg, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm, whiteSpace: "pre-line", marginBottom: "0.75rem" }}>{deleteError}</div>}
                                     <div>
                                         <label style={{ display: "block", fontSize: typography.xs, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: cssVar.textMuted, marginBottom: "0.375rem" }}>Votre mot de passe Super Admin</label>
                                         <div style={{ position: "relative", marginBottom: "1rem" }}>

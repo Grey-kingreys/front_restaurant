@@ -14,7 +14,7 @@ import {
     deleteUser,
 } from "@/lib/api/auth";
 import type { User, Role, UserCreatePayload, UserUpdatePayload } from "@/types";
-import { cssVar, typography, radius } from "@/theme/theme";
+import { cssVar, typography, radius, modalCard } from "@/theme/theme";
 import { ROLE_LABELS, ROLE_COLORS } from "@/lib/navigation";
 import {
     Users,
@@ -33,6 +33,7 @@ import {
     Eye,
     EyeOff,
 } from "lucide-react";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 const ROLES_CREABLES: { value: Role; label: string }[] = [
     { value: "Rmanager",        label: "Manager" },
@@ -150,7 +151,7 @@ function UserForm({ initial, isAdmin, onSubmit, onClose, loading, error }: UserF
     return (
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}>
             {(error || validationError) && (
-                <div style={{ padding: "0.625rem 0.875rem", borderRadius: radius.lg, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm }}>
+                <div style={{ padding: "0.625rem 0.875rem", borderRadius: radius.lg, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm, whiteSpace: "pre-line" }}>
                     {validationError || error}
                 </div>
             )}
@@ -299,7 +300,7 @@ function ResetPasswordForm({ user, onSubmit, onClose, loading, error }: {
                 Réinitialiser le mot de passe de <strong style={{ color: cssVar.textPrimary }}>{user.nom_complet ?? user.login}</strong>
             </p>
             {(error || localErr) && (
-                <div style={{ padding: "0.625rem 0.875rem", borderRadius: radius.lg, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm }}>
+                <div style={{ padding: "0.625rem 0.875rem", borderRadius: radius.lg, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm, whiteSpace: "pre-line" }}>
                     {error ?? localErr}
                 </div>
             )}
@@ -393,8 +394,7 @@ export default function EquipePage() {
                 closeModal();
                 fetchUsers();
             } else {
-                const errs = res.errors;
-                const msg = errs ? Object.values(errs).flat().join(" — ") : "Erreur de création.";
+                const msg = apiErrorMessage(res, "Erreur de création.");
                 setFormError(msg);
             }
         } catch {
@@ -415,8 +415,7 @@ export default function EquipePage() {
                 closeModal();
                 fetchUsers();
             } else {
-                const errs = res.errors;
-                setFormError(errs ? Object.values(errs).flat().join(" — ") : "Erreur.");
+                setFormError(apiErrorMessage(res, "Erreur."));
             }
         } catch {
             setFormError("Erreur de connexion.");
@@ -469,7 +468,7 @@ export default function EquipePage() {
                 closeModal();
                 fetchUsers();
             } else {
-                setFormError(res.message || "Impossible de désactiver l'utilisateur.");
+                setFormError(apiErrorMessage(res, "Impossible de désactiver l'utilisateur."));
             }
         } catch {
             setFormError("Erreur de connexion.");
@@ -542,7 +541,7 @@ export default function EquipePage() {
                 <>
                     <div onClick={closeModal} style={{ position: "fixed", inset: 0, zIndex: 90, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} />
                     <div style={{ position: "fixed", inset: 0, zIndex: 91, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-                        <div style={{ width: "100%", maxWidth: 460, background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-2xl)", padding: "1.5rem", animation: "modalIn 0.25s ease", maxHeight: "90vh", overflowY: "auto" }}>
+                        <div style={{ ...modalCard, maxWidth: 460, animation: "modalIn 0.25s ease" }}>
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
                                 <h2 style={{ margin: 0, fontSize: typography.lg, fontWeight: 800, color: cssVar.textPrimary }}>
                                     {modal === "create" ? "Ajouter un membre" : modal === "edit" ? "Modifier le membre" : "Réinitialiser le mot de passe"}
@@ -560,7 +559,7 @@ export default function EquipePage() {
                                     <p style={{ margin: "0 0 1.25rem", fontSize: typography.xs, color: "#f59e0b" }}>
                                         ⚠️ L'utilisateur sera désactivé mais ses données historiques (commandes, paiements) seront conservées.
                                     </p>
-                                    {formError && <div style={{ padding: "0.625rem 0.875rem", borderRadius: radius.lg, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm, marginBottom: "0.75rem" }}>{formError}</div>}
+                                    {formError && <div style={{ padding: "0.625rem 0.875rem", borderRadius: radius.lg, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm, whiteSpace: "pre-line", marginBottom: "0.75rem" }}>{formError}</div>}
                                     <div style={{ display: "flex", gap: "0.5rem" }}>
                                         <button onClick={closeModal} style={{ flex: 1, padding: "0.65rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textSecondary, fontWeight: 700, fontSize: typography.sm, cursor: "pointer" }}>Annuler</button>
                                         <button onClick={handleDelete} disabled={formLoading} style={{ flex: 2, padding: "0.65rem", borderRadius: radius.lg, border: "1px solid #ef4444", background: "rgba(239,68,68,0.08)", color: "#ef4444", fontWeight: 700, fontSize: typography.sm, cursor: formLoading ? "not-allowed" : "pointer", opacity: formLoading ? 0.7 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>

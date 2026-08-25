@@ -37,6 +37,7 @@ import {
     MapPin,
     Plus,
 } from "lucide-react";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 const STATUT_CONFIG: Record<StatutCommande, { label: string; color: string; bg: string; border: string }> = {
     en_attente:   { label: "En attente",    color: "#f59e0b", bg: "rgba(245,158,11,0.1)",  border: "rgba(245,158,11,0.25)" },
@@ -212,7 +213,7 @@ export default function CommandesPage() {
                 showToast(`Commande #${id} annulée.`);
                 fetchCommandes();
             } else {
-                showToast(res.message || "Annulation impossible.", "error");
+                showToast(apiErrorMessage(res, "Annulation impossible."), "error");
             }
         } catch (e: unknown) {
             showToast((e as { message?: string })?.message ?? "Erreur.", "error");

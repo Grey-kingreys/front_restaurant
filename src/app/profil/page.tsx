@@ -15,6 +15,7 @@ import {
     roleBadge, statusBadge, statusDot, avatarBase,
     iconContainer, cardSection, sectionHead, sectionHeadTitle,
 } from "@/theme/theme";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 function formatDate(iso: string) {
     return new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
@@ -107,8 +108,7 @@ export default function ProfilPage() {
                 setEditing(false);
                 setSaveMsg({ type: "ok", text: "Profil mis à jour." });
             } else {
-                const e = res.errors ? Object.values(res.errors as Record<string, string[]>).flat()[0] : null;
-                setSaveMsg({ type: "err", text: e || res.message || "Mise à jour impossible." });
+                setSaveMsg({ type: "err", text: apiErrorMessage(res, "Mise à jour impossible.") });
             }
         } catch {
             setSaveMsg({ type: "err", text: "Serveur indisponible." });

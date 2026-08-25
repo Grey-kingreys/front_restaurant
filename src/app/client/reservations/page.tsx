@@ -7,6 +7,7 @@ import {
     listRestaurantsPublics, checkDisponibilite, reserver, getMesReservations, annulerReservation,
     type RestaurantPublic, type DisponibiliteCheck, type MaReservation,
 } from "@/lib/api/public";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 const STATUT_COLOR: Record<string, string> = {
     en_attente: "#f59e0b", confirmee: "#22c55e", refusee: "#ef4444",
@@ -66,7 +67,7 @@ export default function ReservationsPage() {
         try {
             const res = await checkDisponibilite(slug, { date, heure, personnes });
             if (res.success && res.data) setDispo(res.data);
-            else setFormMsg({ type: "err", text: res.message || "Vérification impossible." });
+            else setFormMsg({ type: "err", text: apiErrorMessage(res, "Vérification impossible.") });
         } catch {
             setFormMsg({ type: "err", text: "Serveur indisponible." });
         }
@@ -82,8 +83,7 @@ export default function ReservationsPage() {
                 setDispo(null); setNote("");
                 loadResas();
             } else {
-                const e = res.errors ? Object.values(res.errors as Record<string, string[]>).flat()[0] : null;
-                setFormMsg({ type: "err", text: e || res.message || "Réservation impossible." });
+                setFormMsg({ type: "err", text: apiErrorMessage(res, "Réservation impossible.") });
             }
         } catch {
             setFormMsg({ type: "err", text: "Serveur indisponible. Réessayez." });
@@ -95,7 +95,7 @@ export default function ReservationsPage() {
         if (!window.confirm("Annuler cette réservation ?")) return;
         const res = await annulerReservation(id);
         if (res.success) loadResas();
-        else window.alert(res.message || "Annulation impossible.");
+        else window.alert(apiErrorMessage(res, "Annulation impossible."));
     };
 
     const inputStyle: React.CSSProperties = {

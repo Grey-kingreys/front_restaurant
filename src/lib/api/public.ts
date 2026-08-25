@@ -16,7 +16,6 @@ export interface RestaurantPublic {
     longitude: string | null;
     accept_livraison: boolean;
     accept_emporter: boolean;
-    frais_livraison: string | null;
 }
 
 export interface PlatPublic {
@@ -84,7 +83,6 @@ export interface SuiviCommande {
     type_commande: TypeCommande;
     mode_paiement: ModePaiement;
     montant_total: string;
-    frais_livraison: string | null;
     adresse_livraison: string | null;
     /** Au moins un plat passe par la cuisine → l'étape « Préparation » s'affiche */
     necessite_passage_cuisine: boolean;
