@@ -6,10 +6,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { getNavSections, ROLE_LABELS, ROLE_COLORS } from "@/lib/navigation";
-import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 import Logo from "@/components/ui/Logo";
 import type { Role } from "@/types";
 import { cssVar, typography, radius, spacing, roleBadge, avatarBase } from "@/theme/theme";
+import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 
 import {
     LayoutDashboard,
@@ -28,7 +28,7 @@ import {
     User,
     Key,
     LogOut,
-    ChevronRight,
+    ChevronDown,
     X,
     ShieldCheck,
     GitBranch,
@@ -81,6 +81,9 @@ function SidebarInner({
     const { user, logout } = useAuth();
     const pathname = usePathname();
     const [loggingOut, setLoggingOut] = useState(false);
+    // Menu du compte, ouvert depuis la carte utilisateur. Il remplace le bloc figé
+    // en bas de la sidebar, qui rognait la hauteur utile de la navigation métier.
+    const [menuOpen, setMenuOpen] = useState(false);
 
     if (!user) return null;
 
@@ -95,10 +98,10 @@ function SidebarInner({
 
     const isActive = (href: string) => href !== "#" && pathname === href;
 
-    const navLink = (href: string, icon: string, label: string) => {
+    const navLink = (href: string, icon: string, label: string, avantNav?: () => void) => {
         const active = isActive(href);
         return (
-            <Link key={label} href={href} onClick={onNavClick} style={{
+            <Link key={label} href={href} onClick={() => { avantNav?.(); onNavClick?.(); }} style={{
                 display: "flex", alignItems: "center", gap: isCollapsed ? 0 : spacing["2"],
                 justifyContent: isCollapsed ? "center" : "flex-start",
                 padding: "0.48rem 0.6rem", borderRadius: radius.md,
@@ -195,15 +198,19 @@ function SidebarInner({
                         <div style={avatarBase(34)}>{initials}</div>
                     </Link>
                 ) : (
-                    <div style={{ width: "100%" }}>
-                        <Link href="/profil" onClick={onNavClick} style={{
-                            display: "flex", alignItems: "center", gap: spacing["2"],
-                            padding: "0.55rem 0.65rem", borderRadius: radius.xl,
-                            background: cssVar.bgSectionAlt, border: `1px solid ${cssVar.borderSubtle}`,
-                            textDecoration: "none", transition: "border-color 0.2s",
-                        }}
-                            onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.borderColor = cssVar.borderAmberHover}
-                            onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.borderColor = cssVar.borderSubtle}
+                    <div style={{ width: "100%", position: "relative" }}>
+                        <button
+                            onClick={() => setMenuOpen((o) => !o)}
+                            aria-expanded={menuOpen}
+                            style={{
+                                display: "flex", alignItems: "center", gap: spacing["2"], width: "100%",
+                                padding: "0.55rem 0.65rem", borderRadius: radius.xl,
+                                background: cssVar.bgSectionAlt,
+                                border: `1px solid ${menuOpen ? cssVar.borderAmberHover : cssVar.borderSubtle}`,
+                                cursor: "pointer", textAlign: "left", transition: "border-color 0.2s",
+                            }}
+                            onMouseEnter={(e) => (e.currentTarget as HTMLButtonElement).style.borderColor = cssVar.borderAmberHover}
+                            onMouseLeave={(e) => { if (!menuOpen) (e.currentTarget as HTMLButtonElement).style.borderColor = cssVar.borderSubtle; }}
                         >
                             <div style={avatarBase(34)}>{initials}</div>
                             <div style={{ minWidth: 0, flex: 1 }}>
@@ -214,14 +221,59 @@ function SidebarInner({
                                     <p style={{ fontSize: typography.xs, color: cssVar.textMuted, margin: "1px 0 0" }}>{user.restaurant_nom}</p>
                                 )}
                             </div>
-                            <ChevronRight size={14} color={cssVar.textMuted} />
-                        </Link>
+                            <ChevronDown
+                                size={14}
+                                color={cssVar.textMuted}
+                                style={{ transform: menuOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s", flexShrink: 0 }}
+                            />
+                        </button>
                         <div style={{ marginTop: spacing["1"], paddingLeft: "0.2rem" }}>
                             <span style={roleBadge(rc.text)}>
                                 <span style={{ width: 5, height: 5, borderRadius: "50%", background: rc.text }} />
                                 {ROLE_LABELS[role]}
                             </span>
                         </div>
+
+                        {menuOpen && (
+                            <>
+                                {/* Capte le clic extérieur pour refermer le menu */}
+                                <div onClick={() => setMenuOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 30 }} />
+                                <div style={{
+                                    position: "absolute", top: "100%", left: 0, right: 0, zIndex: 31,
+                                    marginTop: spacing["2"], padding: spacing["1"],
+                                    background: cssVar.bgCard, border: `1px solid ${cssVar.borderSubtle}`,
+                                    borderRadius: radius.xl, boxShadow: cssVar.shadowCard,
+                                    display: "flex", flexDirection: "column", gap: "1px",
+                                }}>
+                                    {navLink("/profil", "profile", "Mon profil", () => setMenuOpen(false))}
+                                    {navLink("/auth/change-password", "key", "Sécurité", () => setMenuOpen(false))}
+                                    {/* variant "page" : le menu s'ouvre vers le bas.
+                                        "sidebar" déroulerait vers le haut et sortirait de l'écran ici. */}
+                                    <div style={{ padding: "0.15rem 0" }}>
+                                        <ThemeSwitcher variant="page" />
+                                    </div>
+                                    <button
+                                        onClick={async () => { setMenuOpen(false); setLoggingOut(true); await logout(); }}
+                                        disabled={loggingOut}
+                                        style={{
+                                            display: "flex", alignItems: "center", gap: spacing["2"],
+                                            justifyContent: "flex-start",
+                                            padding: "0.48rem 0.6rem", borderRadius: radius.md,
+                                            fontSize: typography.base, fontWeight: typography.medium,
+                                            color: loggingOut ? cssVar.textMuted : "#f87171",
+                                            background: "transparent", border: "none",
+                                            cursor: loggingOut ? "not-allowed" : "pointer",
+                                            width: "100%", textAlign: "left", transition: "all 0.15s",
+                                        }}
+                                        onMouseEnter={(e) => { if (!loggingOut) (e.currentTarget as HTMLButtonElement).style.background = "rgba(248,113,113,0.07)"; }}
+                                        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+                                    >
+                                        <Icon name="logout" />
+                                        {loggingOut ? "Déconnexion…" : "Se déconnecter"}
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 )}
             </div>
@@ -245,9 +297,10 @@ function SidebarInner({
                 ))}
             </nav>
 
-            {/* ── Footer ── */}
-            {isCollapsed ? (
-                /* Mode réduit : grille d'icônes centrées */
+            {/* ── Footer — mode réduit uniquement ──
+                En mode étendu, profil / sécurité / thème / déconnexion sont dans le
+                menu du compte (en haut) : plus rien ne rogne la hauteur de la nav. */}
+            {isCollapsed && (
                 <div style={{
                     borderTop: `1px solid ${cssVar.borderSubtle}`,
                     padding: `${spacing["3"]} 0`,
@@ -255,20 +308,12 @@ function SidebarInner({
                     alignItems: "center", gap: spacing["2"],
                     flexShrink: 0,
                 }}>
-                    {/* Profil */}
+                    {/* Profil — la page /profil porte aussi le mot de passe et le thème */}
                     {iconBtn(
                         <User size={16} />,
                         () => { window.location.href = "/profil"; },
                         "Mon profil",
                     )}
-                    {/* Sécurité */}
-                    {iconBtn(
-                        <Key size={16} />,
-                        () => { window.location.href = "/auth/change-password"; },
-                        "Sécurité",
-                    )}
-                    {/* Thème */}
-                    <ThemeSwitcher variant="collapsed" />
                     {/* Logout */}
                     {iconBtn(
                         loggingOut
@@ -288,39 +333,6 @@ function SidebarInner({
                         toggleCollapse,
                         "Agrandir la sidebar",
                     )}
-                </div>
-            ) : (
-                /* Mode étendu : liens texte normaux */
-                <div style={{
-                    padding: `${spacing["3"]} ${spacing["3"]}`,
-                    borderTop: `1px solid ${cssVar.borderSubtle}`,
-                    display: "flex", flexDirection: "column", gap: "1px",
-                    flexShrink: 0,
-                }}>
-                    {navLink("/profil", "profile", "Mon profil")}
-                    {navLink("/auth/change-password", "key", "Sécurité")}
-                    <div style={{ paddingTop: spacing["1"] }}>
-                        <ThemeSwitcher variant="sidebar" />
-                    </div>
-                    <button
-                        onClick={async () => { setLoggingOut(true); await logout(); }}
-                        disabled={loggingOut}
-                        style={{
-                            display: "flex", alignItems: "center", gap: spacing["2"],
-                            justifyContent: "flex-start",
-                            padding: "0.48rem 0.6rem", borderRadius: radius.md,
-                            fontSize: typography.base, fontWeight: typography.medium,
-                            color: loggingOut ? cssVar.textMuted : "#f87171",
-                            background: "transparent", border: "none",
-                            cursor: loggingOut ? "not-allowed" : "pointer",
-                            width: "100%", textAlign: "left", transition: "all 0.15s",
-                        }}
-                        onMouseEnter={(e) => { if (!loggingOut) (e.currentTarget as HTMLButtonElement).style.background = "rgba(248,113,113,0.07)"; }}
-                        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
-                    >
-                        <Icon name="logout" />
-                        {loggingOut ? "Déconnexion…" : "Se déconnecter"}
-                    </button>
                 </div>
             )}
         </div>
