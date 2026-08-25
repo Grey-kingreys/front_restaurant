@@ -3,14 +3,14 @@
  */
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import type { Role } from '@/types'
 
 // Mock du contexte
 const mockUser = {
   id: 1,
   login: 'testuser',
   email: 'test@example.com',
-  role: 'Radmin' as const,
+  role: 'Radmin' as Role,
   restaurant: { id: 1, nom: 'Test Restaurant' },
 }
 
@@ -23,7 +23,7 @@ describe('AuthContext', () => {
     })
 
     it('should handle isImpersonating state', () => {
-      const impersonatingUser = { ...mockUser, role: 'Rserveur' as const }
+      const impersonatingUser = { ...mockUser, role: 'Rserveur' as Role }
       expect(impersonatingUser.role).toBe('Rserveur')
       expect(impersonatingUser.role !== mockUser.role).toBe(true)
     })

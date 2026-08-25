@@ -12,11 +12,8 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Installe uniquement à partir du lockfile pour un build reproductible.
-# --legacy-peer-deps : le lockfile a été résolu avec React 19 alors que
-# @testing-library/react@14 (devDep) déclare un peer React 18. C'est le même
-# mode que l'install locale ; à retirer quand testing-library passera en v16+.
 COPY package.json package-lock.json ./
-RUN npm ci --legacy-peer-deps
+RUN npm ci
 
 # ---- 2. Build -----------------------------------------------
 FROM node:24-alpine AS builder
