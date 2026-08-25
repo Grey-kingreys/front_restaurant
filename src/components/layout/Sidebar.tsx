@@ -167,7 +167,7 @@ function SidebarInner({
                 <Logo
                     href={homeHref}
                     onClick={onNavClick}
-                    variant={isCollapsed ? "icon" : "full"}
+                    variant={isCollapsed ? "icon" : "wordmark"}
                     size={30}
                 />
                 {/* Bouton réduire — visible uniquement en mode étendu */}
