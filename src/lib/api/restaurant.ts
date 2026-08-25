@@ -11,6 +11,8 @@ export interface Table {
     nombre_places: number;
     utilisateur: number;
     utilisateur_login: string;
+    /** Nom affiché de la table (`nom_complet` du compte Rtable associé) */
+    utilisateur_nom: string | null;
     qr_code_url: string | null;
     date_creation: string;
     date_modification: string;

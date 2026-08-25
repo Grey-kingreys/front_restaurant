@@ -24,6 +24,7 @@ import {
     spacing,
     palette,
 } from "@/theme/theme";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 // ── États de la page ───────────────────────────────────────────────────────
 
@@ -110,7 +111,7 @@ function FirstLoginContent() {
             if (res.success) {
                 setState("done");
             } else {
-                setError(res.message || "Une erreur est survenue.");
+                setError(apiErrorMessage(res, "Une erreur est survenue."));
             }
         } catch (err: unknown) {
             const e = err as { message?: string; errors?: Record<string, string[]> };

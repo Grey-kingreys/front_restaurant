@@ -12,6 +12,7 @@ import {
 } from "@/lib/api/restaurant";
 import { cssVar, typography, radius, spacing } from "@/theme/theme";
 import { CalendarDays, Users, Clock, Armchair, Check, X, Phone, Mail, AlertCircle, AlertTriangle, Ban, ShieldCheck, Repeat, CheckCheck, UserX } from "lucide-react";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 const STATUT_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
     en_attente: { label: "En attente", color: "#f59e0b", bg: "rgba(245,158,11,0.1)", border: "rgba(245,158,11,0.25)" },
@@ -53,7 +54,7 @@ export default function ReservationsStaffPage() {
         try {
             const res = await listReservations(filtre || undefined);
             if (res.success && res.data) setResas(res.data.reservations);
-            else setError(res.message || "Impossible de charger les réservations.");
+            else setError(apiErrorMessage(res, "Impossible de charger les réservations."));
         } catch {
             setError("Serveur indisponible.");
         }
@@ -74,7 +75,7 @@ export default function ReservationsStaffPage() {
         try {
             const res = await fn();
             if (res.success) { setReaffectId(null); load(); }
-            else window.alert(res.message || "Action impossible.");
+            else window.alert(apiErrorMessage(res, "Action impossible."));
         } catch { window.alert("Serveur indisponible."); }
         setActionId(null);
     };

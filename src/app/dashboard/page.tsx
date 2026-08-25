@@ -24,6 +24,7 @@ import {
     AlertTriangle, ShoppingCart, Wallet, CheckCircle, MapPin,
     Truck, Package, Plus, Check,
 } from "lucide-react";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -346,7 +347,7 @@ function TableDashboard({ d }: { d: TableData }) {
                 setTimeout(() => setAddedId((cur) => (cur === s.id ? null : cur)), 1500);
                 setTimeout(() => setToast(null), 2500);
             } else {
-                setToast(res.message || "Impossible d'ajouter au panier.");
+                setToast(apiErrorMessage(res, "Impossible d'ajouter au panier."));
                 setTimeout(() => setToast(null), 3000);
             }
         } catch {

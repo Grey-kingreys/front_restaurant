@@ -19,7 +19,7 @@ import {
     type RemiseServeur,
     type DemandeApprovisionnement,
 } from "@/lib/api/paiements";
-import { cssVar, typography, radius } from "@/theme/theme";
+import { cssVar, typography, radius, modalCard } from "@/theme/theme";
 import {
     CreditCard,
     X,
@@ -33,6 +33,7 @@ import {
     Unlock,
     Clock,
 } from "lucide-react";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 // Style d'un statut de demande d'approvisionnement
 const DEM_STATUT: Record<string, { color: string; label: string }> = {
@@ -153,7 +154,7 @@ export default function CaissePage() {
         try {
             const res = await approvisionnerCaisse(caisse.id, { montant: parseFloat(fMontant), motif: fMotif });
             if (res.success) { showToast("Demande envoyée — en attente de validation."); closeModal(); setActiveTab("demandes"); fetchAll(); }
-            else setFormError(res.message || "Impossible d'envoyer la demande.");
+            else setFormError(apiErrorMessage(res, "Impossible d'envoyer la demande."));
         } catch { setFormError("Erreur."); }
         finally { setFormLoading(false); }
     };
@@ -235,7 +236,7 @@ export default function CaissePage() {
                 <>
                     <div onClick={closeModal} style={{ position: "fixed", inset: 0, zIndex: 90, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} />
                     <div style={{ position: "fixed", inset: 0, zIndex: 91, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-                        <div style={{ width: "100%", maxWidth: 420, background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-2xl)", padding: "1.5rem", animation: "modalIn 0.25s ease" }}>
+                        <div style={{ ...modalCard, maxWidth: 420, animation: "modalIn 0.25s ease" }}>
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
                                 <h2 style={{ margin: 0, fontSize: typography.lg, fontWeight: 800, color: cssVar.textPrimary }}>
                                     {modal === "ouvrir" ? "Ouvrir la caisse" : modal === "fermer" ? "Fermer la caisse" : modal === "appro" ? "Demande d'approvisionnement" : modal === "depense" ? "Enregistrer une dépense" : "Valider la remise"}
@@ -246,7 +247,7 @@ export default function CaissePage() {
                             </div>
 
                             {formError && (
-                                <div style={{ marginBottom: "1rem", padding: "0.625rem 0.875rem", borderRadius: radius.lg, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm }}>
+                                <div style={{ marginBottom: "1rem", padding: "0.625rem 0.875rem", borderRadius: radius.lg, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm, whiteSpace: "pre-line" }}>
                                     {formError}
                                 </div>
                             )}

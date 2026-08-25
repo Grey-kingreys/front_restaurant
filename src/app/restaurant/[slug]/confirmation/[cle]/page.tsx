@@ -159,10 +159,10 @@ export default function ConfirmationPage() {
                                 <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>{Number(item.sous_total).toLocaleString("fr-FR")} GNF</span>
                             </div>
                         ))}
-                        {commande.frais_livraison && Number(commande.frais_livraison) > 0 && (
+                        {commande.type_commande === "livraison" && (
                             <div style={{ display: "flex", justifyContent: "space-between", padding: "0.75rem 1rem", borderTop: "1px solid var(--border-subtle)", color: "var(--text-muted)", fontSize: "0.85rem" }}>
                                 <span>Frais de livraison</span>
-                                <span>{Number(commande.frais_livraison).toLocaleString("fr-FR")} GNF</span>
+                                <span>À convenir avec le livreur</span>
                             </div>
                         )}
                         <div style={{ display: "flex", justifyContent: "space-between", padding: "0.875rem 1rem", borderTop: "1px solid var(--border-subtle)", fontWeight: 800, color: "#f59e0b" }}>

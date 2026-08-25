@@ -14,6 +14,7 @@ import {
 import {
     Truck, MapPin, Phone, Package, CheckCircle2, Banknote, Store, AlertCircle,
 } from "lucide-react";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 const STATUT_LABEL: Record<string, { label: string; color: string }> = {
     en_attente:   { label: "À récupérer",  color: "#f59e0b" },
@@ -52,7 +53,7 @@ export default function LivraisonPubliquePage() {
         try {
             const res = await actionLivraisonPublique(token, action);
             if (res.success && res.data) { setData(res.data); showToast(okMsg); }
-            else showToast(res.message || "Action impossible.", "error");
+            else showToast(apiErrorMessage(res, "Action impossible."), "error");
         } catch { showToast("Erreur réseau.", "error"); }
         setBusy(false);
     };

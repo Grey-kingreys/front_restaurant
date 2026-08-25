@@ -5,6 +5,7 @@ import { useState } from "react";
 import PublicShell from "@/components/landing/PublicShell";
 import { envoyerContact } from "@/lib/api/public";
 import { Phone, Mail, MapPin, MessageCircle, Send, CheckCircle2, Loader2 } from "lucide-react";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 // Coordonnées (temporaires jusqu'à l'achat du domaine).
 const TEL_DISPLAY = "+224 624 81 59 98";
@@ -58,7 +59,7 @@ export default function ContactPage() {
         setMessage("");
       } else {
         setStatus("error");
-        setFeedback(res.message || "L'envoi a échoué. Réessayez.");
+        setFeedback(apiErrorMessage(res, "L'envoi a échoué. Réessayez."));
       }
     } catch {
       setStatus("error");

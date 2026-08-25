@@ -16,11 +16,12 @@ import {
     type Commande,
     type LivraisonLien,
 } from "@/lib/api/commandes";
-import { cssVar, typography, radius } from "@/theme/theme";
+import { cssVar, typography, radius, modalCard } from "@/theme/theme";
 import {
     Truck, Package, MapPin, Phone, RefreshCw, Check, X,
     QrCode, Copy, CreditCard, User2, ExternalLink,
 } from "lucide-react";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 function PageLoader() {
     return (
@@ -90,7 +91,7 @@ export default function LivraisonsPage() {
         try {
             const res = await fn();
             if (res.success) { showToast(okMsg); await fetchLivraisons(); }
-            else showToast(res.message || "Action impossible.", "error");
+            else showToast(apiErrorMessage(res, "Action impossible."), "error");
         } catch { showToast("Erreur réseau.", "error"); }
         setActionId(null);
     };
@@ -100,7 +101,7 @@ export default function LivraisonsPage() {
         try {
             const res = await genererLivraisonLien(id);
             if (res.success && res.data) { setQrModal({ commandeId: id, data: res.data }); setCopied(false); }
-            else showToast(res.message || "Impossible de générer le lien.", "error");
+            else showToast(apiErrorMessage(res, "Impossible de générer le lien."), "error");
         } catch { showToast("Erreur réseau.", "error"); }
         setQrLoadingId(null);
     };
@@ -256,7 +257,7 @@ export default function LivraisonsPage() {
             {/* Modal lien / QR */}
             {qrModal && (
                 <div onClick={() => setQrModal(null)} style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-                    <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: 380, background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: radius.xl, padding: "1.5rem", textAlign: "center" }}>
+                    <div onClick={(e) => e.stopPropagation()} style={{ ...modalCard, maxWidth: 380, borderRadius: radius.xl, textAlign: "center" }}>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
                             <h3 style={{ margin: 0, fontSize: typography.base, fontWeight: 800, color: cssVar.textPrimary }}>Lien de livraison — #{qrModal.commandeId}</h3>
                             <button onClick={() => setQrModal(null)} style={{ background: "none", border: "none", color: cssVar.textMuted, cursor: "pointer" }}><X size={18} /></button>

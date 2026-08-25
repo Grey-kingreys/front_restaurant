@@ -9,9 +9,10 @@ import { listRemises, validerRemise } from "@/lib/api/paiements";
 import type { RemiseServeur } from "@/lib/api/paiements";
 import {
     cssVar, typography, radius, spacing,
-    cardBase, cardSection, btnPrimary, btnOutline,
-    inputStyle, alertAmber, alertError, sectionHead, sectionHeadTitle,
+    cardSection, btnPrimary, btnOutline,
+    inputStyle, alertAmber, alertError, sectionHead, sectionHeadTitle, modalCard
 } from "@/theme/theme";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -70,7 +71,7 @@ function ModalValider({
             if (showMotifEcart) payload.motif_ecart = motifEcart.trim();
             const res = await validerRemise(remise.id, payload);
             if (res.success) { onDone(); }
-            else setErr(res.message || "Erreur lors de la validation.");
+            else setErr(apiErrorMessage(res, "Erreur lors de la validation."));
         } catch {
             setErr("Erreur lors de la validation.");
         } finally {
@@ -80,7 +81,7 @@ function ModalValider({
 
     return (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-            <div style={{ ...cardBase, padding: "1.5rem", width: "100%", maxWidth: 460 }}>
+            <div style={{ ...modalCard, maxWidth: 460 }}>
                 <h3 style={{ margin: "0 0 0.25rem", fontSize: typography.lg, fontWeight: typography.bold, color: cssVar.textPrimary }}>
                     Valider la remise
                 </h3>
@@ -191,7 +192,7 @@ export default function RemisesPage() {
             const params = f === "en_attente" ? { valide: false } : undefined;
             const res = await listRemises(params);
             if (res.success && res.data) setRemises(res.data.remises);
-            else setErr(res.message || "Impossible de charger les remises.");
+            else setErr(apiErrorMessage(res, "Impossible de charger les remises."));
         } catch {
             setErr("Erreur lors du chargement des remises.");
         } finally {

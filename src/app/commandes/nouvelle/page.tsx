@@ -11,12 +11,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { listTables, type Table } from "@/lib/api/restaurant";
 import { listPlats, type Plat, type Categorie } from "@/lib/api/menu";
 import { creerCommandeServeur } from "@/lib/api/commandes";
-import { getMonRestaurant } from "@/lib/api/company";
 import { cssVar, typography, radius, spacing as sp } from "@/theme/theme";
 import {
     ArrowLeft, Plus, Minus, Trash2, Check, Loader2, ClipboardList,
     Utensils, Bike, ShoppingBag, Search, Phone, MapPin, User as UserIcon,
 } from "lucide-react";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 // Alias nommés vers l'échelle numérique de `spacing` (Tailwind-like).
 const spacing = { xs: sp["1"], sm: sp["2"], md: sp["4"], lg: sp["5"], xl: sp["8"] };
@@ -54,7 +54,6 @@ export default function NouvelleCommandePage() {
 
     const [tables, setTables] = useState<Table[]>([]);
     const [plats, setPlats] = useState<Plat[]>([]);
-    const [fraisLivraison, setFraisLivraison] = useState(0);
     const [loading, setLoading] = useState(true);
 
     const [type, setType] = useState<TypeCommande>("sur_table");
@@ -78,14 +77,12 @@ export default function NouvelleCommandePage() {
 
     const fetchData = useCallback(async () => {
         setLoading(true);
-        const [t, p, r] = await Promise.all([
+        const [t, p] = await Promise.all([
             listTables(),
             listPlats({ disponible: true }),
-            getMonRestaurant(),
         ]);
         if (t.success && t.data) setTables(t.data.tables);
         if (p.success && p.data) setPlats(p.data.plats);
-        if (r.success && r.data) setFraisLivraison(Number(r.data.frais_livraison) || 0);
         setLoading(false);
     }, []);
 
@@ -130,8 +127,9 @@ export default function NouvelleCommandePage() {
         return { count, sousTotal };
     }, [cart, platsById]);
 
-    const frais = type === "livraison" ? fraisLivraison : 0;
-    const total = sousTotal + (count > 0 ? frais : 0);
+    // Les frais de livraison ne sont pas facturés : ils dépendent de la distance
+    // et se règlent directement avec le livreur.
+    const total = sousTotal;
 
     const manque = useMemo(() => {
         if (count === 0) return "ajoutez des plats";
@@ -165,8 +163,7 @@ export default function NouvelleCommandePage() {
             router.push(type === "livraison" ? "/livraisons" : "/commandes");
         } else {
             setSubmitting(false);
-            const details = res.errors ? Object.values(res.errors).flat().join(" ") : "";
-            setError([res.message || "La création de la commande a échoué.", details].filter(Boolean).join(" "));
+            setError(apiErrorMessage(res, "La création de la commande a échoué."));
         }
     };
 
@@ -438,7 +435,7 @@ export default function NouvelleCommandePage() {
                         <p style={{ margin: 0, fontWeight: 700, color: cssVar.textPrimary }}>{fmt(total)} GNF</p>
                         <p style={{ margin: 0, color: cssVar.textMuted, fontSize: typography.xs }}>
                             {count === 0 ? "Aucun article" : `${count} article${count > 1 ? "s" : ""}`}
-                            {count > 0 && frais > 0 ? ` · dont ${fmt(frais)} GNF de livraison` : ""}
+                            {count > 0 && type === "livraison" ? " · livraison à convenir avec le livreur" : ""}
                             {manque && count > 0 ? ` · ${manque}` : ""}
                         </p>
                     </div>

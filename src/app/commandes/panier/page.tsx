@@ -24,6 +24,7 @@ import {
     Minus,
     Plus,
 } from "lucide-react";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 export default function PanierPage() {
     const { user, isAuthenticated, isLoading } = useAuth();
@@ -119,7 +120,7 @@ export default function PanierPage() {
                 showToast("Commande validée avec succès !");
                 setTimeout(() => router.push("/commandes/mes-commandes"), 1500);
             } else {
-                showToast(res.message || "Erreur lors de la validation", "error");
+                showToast(apiErrorMessage(res, "Erreur lors de la validation"), "error");
             }
         } catch (e: any) {
             showToast(e.message || "Erreur réseau", "error");

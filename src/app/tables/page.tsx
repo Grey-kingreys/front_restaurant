@@ -16,7 +16,7 @@ import {
     type TableCreatePayload,
     type TableUpdatePayload,
 } from "@/lib/api/restaurant";
-import { cssVar, typography, radius } from "@/theme/theme";
+import { cssVar, typography, radius, modalCard } from "@/theme/theme";
 import {
     QrCode,
     Plus,
@@ -28,6 +28,7 @@ import {
     Download,
     ChevronDown,
 } from "lucide-react";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 const STATUT_TABLE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
     libre:       { label: "Libre",      color: "#22c55e", bg: "rgba(34,197,94,0.1)",   border: "rgba(34,197,94,0.25)" },
@@ -61,6 +62,25 @@ function slugifyLogin(s: string) {
     return s.toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
 }
 
+/** Longueur max de `numero_table` côté modèle — refusée par l'API au-delà. */
+const NUMERO_MAX = 10;
+
+/** Libellé d'une table : son nom affiché s'il existe, sinon « Table <numéro> ». */
+function titreTable(t: Table) {
+    return t.utilisateur_nom?.trim() || `Table ${t.numero_table}`;
+}
+
+/**
+ * Login suggéré à partir du numéro de table, sans doubler le mot « table » :
+ * « table 001 » → `table_001`, « VIP » → `table_vip`.
+ * Le préfixe du restaurant est ajouté côté serveur.
+ */
+function suggestLogin(numero: string) {
+    const base = slugifyLogin(numero);
+    if (!base) return "";
+    return base.startsWith("table") ? base : `table_${base}`;
+}
+
 function TableForm({ initial, onSubmitCreate, onSubmitUpdate, onClose, loading, error }: {
     initial?: Table | null;
     onSubmitCreate: (data: TableCreatePayload) => Promise<void>;
@@ -76,24 +96,26 @@ function TableForm({ initial, onSubmitCreate, onSubmitUpdate, onClose, loading, 
     const [login,       setLogin]       = useState("");
     const [loginTouched, setLoginTouched] = useState(false);
     const [password,    setPassword]    = useState("");
-    const [nomComplet,  setNomComplet]  = useState(
-        initial ? (initial as Table & { utilisateur_nom?: string }).utilisateur_nom ?? "" : ""
-    );
+    const [nomComplet,  setNomComplet]  = useState(initial?.utilisateur_nom ?? "");
 
     // Auto-suggestion du login à partir du numéro de table (création seulement)
     const handleNumeroChange = (val: string) => {
         setNumero(val);
         if (!isEdit && !loginTouched) {
-            setLogin(slugifyLogin(`table_${val}`));
+            setLogin(suggestLogin(val));
         }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (isEdit) {
-            const payload: TableUpdatePayload = { numero_table: numero, nombre_places: parseInt(places, 10) || 4 };
-            if (nomComplet.trim()) payload.nom_complet = nomComplet.trim();
-            await onSubmitUpdate(payload);
+            // Toujours transmis, même vide : le serveur retombe alors sur
+            // « Table <numéro> » — sinon on ne pourrait jamais effacer un nom affiché.
+            await onSubmitUpdate({
+                numero_table: numero,
+                nombre_places: parseInt(places, 10) || 4,
+                nom_complet: nomComplet.trim(),
+            });
         } else {
             await onSubmitCreate({
                 numero_table: numero,
@@ -119,7 +141,7 @@ function TableForm({ initial, onSubmitCreate, onSubmitUpdate, onClose, loading, 
     return (
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}>
             {error && (
-                <div style={{ padding: "0.625rem 0.875rem", borderRadius: radius.lg, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm }}>
+                <div style={{ padding: "0.625rem 0.875rem", borderRadius: radius.lg, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontSize: typography.sm, whiteSpace: "pre-line" }}>
                     {error}
                 </div>
             )}
@@ -128,7 +150,10 @@ function TableForm({ initial, onSubmitCreate, onSubmitUpdate, onClose, loading, 
             <div>
                 <label style={labelStyle}>Numéro / Nom de la table *</label>
                 <input type="text" value={numero} onChange={e => handleNumeroChange(e.target.value)}
-                    placeholder="Ex: 01, VIP, Terrasse 3…" required style={inputStyle} />
+                    placeholder="Ex: 01, VIP, Terrasse 3…" required maxLength={NUMERO_MAX} style={inputStyle} />
+                <p style={{ margin: "3px 0 0", fontSize: "0.68rem", color: cssVar.textMuted }}>
+                    {NUMERO_MAX} caractères maximum — utilisez « Nom affiché » pour un libellé plus long.
+                </p>
             </div>
 
             {/* Nombre de places */}
@@ -159,10 +184,12 @@ function TableForm({ initial, onSubmitCreate, onSubmitUpdate, onClose, loading, 
                     <label style={labelStyle}>Login du compte table *</label>
                     <input type="text" value={login}
                         onChange={e => { setLogin(slugifyLogin(e.target.value)); setLoginTouched(true); }}
-                        placeholder="Ex: lebaobab_table_01" required
+                        placeholder="Ex: table_01" required
                         style={{ ...inputStyle, fontFamily: "monospace" }} />
                     <p style={{ margin: "3px 0 0", fontSize: "0.68rem", color: cssVar.textMuted }}>
-                        Identifiant unique (lettres minuscules, chiffres, _). Utilisé pour la connexion QR.
+                        Identifiant unique <strong>dans votre restaurant</strong> (lettres minuscules, chiffres, _).
+                        Le préfixe de votre restaurant est ajouté automatiquement — un autre restaurant peut donc
+                        utiliser le même identifiant. Sert à la connexion QR.
                     </p>
                 </div>
             )}
@@ -248,8 +275,7 @@ export default function TablesPage() {
                 closeModal();
                 fetchTables();
             } else {
-                const errs = res.errors;
-                setFormError(errs ? Object.values(errs).flat().join(" — ") : res.message || "Erreur de création.");
+                setFormError(apiErrorMessage(res, "Erreur de création."));
             }
         } catch {
             setFormError("Erreur de connexion.");
@@ -269,8 +295,7 @@ export default function TablesPage() {
                 closeModal();
                 fetchTables();
             } else {
-                const errs = res.errors;
-                setFormError(errs ? Object.values(errs).flat().join(" — ") : "Erreur de mise à jour.");
+                setFormError(apiErrorMessage(res, "Erreur de mise à jour."));
             }
         } catch {
             setFormError("Erreur de connexion.");
@@ -408,7 +433,7 @@ export default function TablesPage() {
                 <>
                     <div onClick={closeModal} style={{ position: "fixed", inset: 0, zIndex: 90, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} />
                     <div style={{ position: "fixed", inset: 0, zIndex: 91, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-                        <div style={{ width: "100%", maxWidth: 420, background: "var(--bg-card)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-2xl)", padding: "1.5rem", animation: "modalIn 0.25s ease" }}>
+                        <div style={{ ...modalCard, maxWidth: 420, animation: "modalIn 0.25s ease" }}>
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
                                 <h2 style={{ margin: 0, fontSize: typography.lg, fontWeight: 800, color: cssVar.textPrimary }}>
                                     {modal === "create" ? "Nouvelle table" : modal === "edit" ? "Modifier la table" : modal === "delete" ? "Supprimer la table" : "QR Code"}
@@ -546,8 +571,17 @@ export default function TablesPage() {
                                     <div key={t.id} className="tbl-card">
                                         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
                                             <div>
-                                                <p style={{ margin: 0, fontSize: "1.125rem", fontWeight: 800, color: cssVar.textPrimary }}>Table {t.numero_table}</p>
-                                                <span style={{ fontSize: typography.xs, color: cssVar.textMuted }}>{t.nombre_places} place{t.nombre_places > 1 ? "s" : ""}</span>
+                                                {/* Le nom affiché prime sur le numéro : sans ça le champ
+                                                    « Nom affiché » n'apparaissait nulle part dans la liste.
+                                                    Le numéro n'est rappelé en dessous que s'il n'est pas
+                                                    déjà le titre, pour ne pas écrire deux fois la même chose. */}
+                                                <p style={{ margin: 0, fontSize: "1.125rem", fontWeight: 800, color: cssVar.textPrimary }}>
+                                                    {titreTable(t)}
+                                                </p>
+                                                <span style={{ fontSize: typography.xs, color: cssVar.textMuted }}>
+                                                    {titreTable(t) !== `Table ${t.numero_table}` && `Table ${t.numero_table} · `}
+                                                    {t.nombre_places} place{t.nombre_places > 1 ? "s" : ""}
+                                                </span>
                                             </div>
                                             <StatutBadge statut={ext.statut_courant ?? "libre"} />
                                         </div>

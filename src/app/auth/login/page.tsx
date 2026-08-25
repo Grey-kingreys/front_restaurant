@@ -22,6 +22,7 @@ import {
     btnPrimaryDisabled,
     spinnerBase,
 } from "@/theme/theme";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 type LoginMode = "email" | "login";
 
@@ -79,7 +80,7 @@ export default function LoginPage() {
                     router.push("/dashboard");
                 }
             } else {
-                setError(res.message || "Identifiants invalides.");
+                setError(apiErrorMessage(res, "Identifiants invalides."));
             }
         } catch (err: unknown) {
             const e = err as { message?: string; errors?: { non_field_errors?: string[] } };

@@ -16,6 +16,7 @@ import {
     cardBase, cardSection, btnPrimary,
     inputStyle, alertAmber, alertError, sectionHead, sectionHeadTitle,
 } from "@/theme/theme";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -126,7 +127,7 @@ export default function DepensesPage() {
                 // Recharger la liste + caisse (solde mis à jour)
                 fetchAll();
             } else {
-                setFormErr(res.message || "Erreur lors de l'enregistrement.");
+                setFormErr(apiErrorMessage(res, "Erreur lors de l'enregistrement."));
             }
         } catch {
             setFormErr("Erreur lors de l'enregistrement.");

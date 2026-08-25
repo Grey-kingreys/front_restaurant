@@ -12,6 +12,7 @@ import {
     cardBase, cardSection,
     sectionHead, sectionHeadTitle,
 } from "@/theme/theme";
+import { apiErrorMessage } from "@/lib/apiErrors";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -44,7 +45,7 @@ export default function CaisseGeneralePage() {
         try {
             const res = await getCaisseGenerale();
             if (res.success && res.data) setCaisse(res.data);
-            else setErr(res.message || "Impossible de charger la Caisse Générale.");
+            else setErr(apiErrorMessage(res, "Impossible de charger la Caisse Générale."));
         } catch {
             setErr("Erreur lors du chargement.");
         } finally {
@@ -66,7 +67,7 @@ export default function CaisseGeneralePage() {
                 setCaisse(res.data);
                 setErr("");
             } else {
-                setInitErr(res.message || "Échec de l'initialisation de la caisse.");
+                setInitErr(apiErrorMessage(res, "Échec de l'initialisation de la caisse."));
             }
         } catch {
             setInitErr("Erreur lors de l'initialisation.");
