@@ -70,7 +70,7 @@ export function useMenu(options?: { tableMode?: boolean }) {
                 );
             }
         } catch {
-            // silencieux — on recharge
+            // silencieux - on recharge
             fetchPlats();
         }
     };

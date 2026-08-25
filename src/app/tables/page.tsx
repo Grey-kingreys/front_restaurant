@@ -1,6 +1,6 @@
 "use client";
 // src/app/tables/page.tsx
-// Gestion des tables & QR Codes — Admin & Manager
+// Gestion des tables & QR Codes - Admin & Manager
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -62,7 +62,7 @@ function slugifyLogin(s: string) {
     return s.toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
 }
 
-/** Longueur max de `numero_table` côté modèle — refusée par l'API au-delà. */
+/** Longueur max de `numero_table` côté modèle - refusée par l'API au-delà. */
 const NUMERO_MAX = 10;
 
 /** Libellé d'une table : son nom affiché s'il existe, sinon « Table <numéro> ». */
@@ -110,7 +110,7 @@ function TableForm({ initial, onSubmitCreate, onSubmitUpdate, onClose, loading, 
         e.preventDefault();
         if (isEdit) {
             // Toujours transmis, même vide : le serveur retombe alors sur
-            // « Table <numéro> » — sinon on ne pourrait jamais effacer un nom affiché.
+            // « Table <numéro> » - sinon on ne pourrait jamais effacer un nom affiché.
             await onSubmitUpdate({
                 numero_table: numero,
                 nombre_places: parseInt(places, 10) || 4,
@@ -152,7 +152,7 @@ function TableForm({ initial, onSubmitCreate, onSubmitUpdate, onClose, loading, 
                 <input type="text" value={numero} onChange={e => handleNumeroChange(e.target.value)}
                     placeholder="Ex: 01, VIP, Terrasse 3…" required maxLength={NUMERO_MAX} style={inputStyle} />
                 <p style={{ margin: "3px 0 0", fontSize: "0.68rem", color: cssVar.textMuted }}>
-                    {NUMERO_MAX} caractères maximum — utilisez « Nom affiché » pour un libellé plus long.
+                    {NUMERO_MAX} caractères maximum - utilisez « Nom affiché » pour un libellé plus long.
                 </p>
             </div>
 
@@ -178,7 +178,7 @@ function TableForm({ initial, onSubmitCreate, onSubmitUpdate, onClose, loading, 
                 {!isEdit && <p style={{ margin: "3px 0 0", fontSize: "0.68rem", color: cssVar.textMuted }}>Si vide, le numéro de table est utilisé.</p>}
             </div>
 
-            {/* Login — création uniquement */}
+            {/* Login - création uniquement */}
             {!isEdit && (
                 <div>
                     <label style={labelStyle}>Login du compte table *</label>
@@ -188,18 +188,18 @@ function TableForm({ initial, onSubmitCreate, onSubmitUpdate, onClose, loading, 
                         style={{ ...inputStyle, fontFamily: "monospace" }} />
                     <p style={{ margin: "3px 0 0", fontSize: "0.68rem", color: cssVar.textMuted }}>
                         Identifiant unique <strong>dans votre restaurant</strong> (lettres minuscules, chiffres, _).
-                        Le préfixe de votre restaurant est ajouté automatiquement — un autre restaurant peut donc
+                        Le préfixe de votre restaurant est ajouté automatiquement - un autre restaurant peut donc
                         utiliser le même identifiant. Sert à la connexion QR.
                     </p>
                 </div>
             )}
 
-            {/* Mot de passe — création uniquement, optionnel */}
+            {/* Mot de passe - création uniquement, optionnel */}
             {!isEdit && (
                 <div>
                     <label style={labelStyle}>Mot de passe (optionnel)</label>
                     <input type="text" value={password} onChange={e => setPassword(e.target.value)}
-                        minLength={8} placeholder="Min. 8 caractères — vide = QR uniquement"
+                        minLength={8} placeholder="Min. 8 caractères - vide = QR uniquement"
                         style={inputStyle} />
                     <p style={{ margin: "3px 0 0", fontSize: "0.68rem", color: cssVar.textMuted }}>
                         Permet la connexion manuelle (login + mot de passe). Laissé vide, la table se connecte uniquement via QR code.
@@ -492,7 +492,7 @@ export default function TablesPage() {
                                             </div>
                                             <div style={{ marginTop: "0.75rem", paddingTop: "0.75rem", borderTop: "1px solid var(--border-subtle)" }}>
                                                 <p style={{ margin: "0 0 0.5rem", fontSize: "0.7rem", color: cssVar.textMuted }}>
-                                                    ⚠ Regénérer invalide l&apos;ancien QR — les QR déjà imprimés ne fonctionneront plus.
+                                                    ⚠ Regénérer invalide l&apos;ancien QR - les QR déjà imprimés ne fonctionneront plus.
                                                 </p>
                                                 <button
                                                     onClick={handleRegenerateQR}

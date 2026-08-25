@@ -1,6 +1,6 @@
-# Frontend — RestoPro
+# Frontend - RestoPro
 
-Next.js App Router (TypeScript) — interface SaaS multi-tenant pour la gestion de restaurants.
+Next.js App Router (TypeScript) - interface SaaS multi-tenant pour la gestion de restaurants.
 
 > **Attention** : Ce projet utilise une version de Next.js avec des changements breaking.
 > Lire `AGENTS.md` avant d'écrire du code. Respecter les avertissements de déprécation.
@@ -72,7 +72,7 @@ src/
 
 ## Dashboard (`app/dashboard/page.tsx`)
 
-Endpoint : `GET /api/dashboard/stats/` — retourne `DashboardData` avec un champ `type` discriminant.
+Endpoint : `GET /api/dashboard/stats/` - retourne `DashboardData` avec un champ `type` discriminant.
 
 | `type` | Rôles | Composant | Graphiques |
 | --- | --- | --- | --- |
@@ -85,7 +85,7 @@ Endpoint : `GET /api/dashboard/stats/` — retourne `DashboardData` avec un cham
 
 **Librairie graphiques** : `recharts` (BarChart, PieChart, Cell, ResponsiveContainer, Tooltip, Legend).
 
-**Règle formatter Tooltip** : toujours typer `v` en `unknown` — `formatter={(v: unknown) => [fn(Number(v ?? 0)), "label"]}`.
+**Règle formatter Tooltip** : toujours typer `v` en `unknown` - `formatter={(v: unknown) => [fn(Number(v ?? 0)), "label"]}`.
 
 **Types** (`lib/api/dashboard.ts`) : `DashboardData` (union discriminante), `AdminData`, `ServeurData`, `CuisineData`, `ComptableData`, `TableData`, `SuperadminData`.
 
@@ -141,13 +141,13 @@ Non simulables : `Radmin`, `Rsuper_admin`
 
 ### Fichiers concernés
 
-- `src/lib/api/client.ts` — `saveAdminSession`, `getAdminSession`, `clearAdminSession`
-- `src/lib/api/auth.ts` — `impersonateUser(userId)`
-- `src/contexts/AuthContext.tsx` — `impersonate`, `stopImpersonation`, `isImpersonating`
-- `src/components/layout/ImpersonationBanner.tsx` — bandeau + `BANNER_H`
-- `src/components/layout/AppLayout.tsx` — passe `topOffset` à Sidebar et au `<main>`
-- `src/components/layout/Sidebar.tsx` — prop `topOffset?: string` (défaut `"0px"`)
-- `src/app/equipe/page.tsx` — bouton ▶ Simuler (icône `Play`)
+- `src/lib/api/client.ts` - `saveAdminSession`, `getAdminSession`, `clearAdminSession`
+- `src/lib/api/auth.ts` - `impersonateUser(userId)`
+- `src/contexts/AuthContext.tsx` - `impersonate`, `stopImpersonation`, `isImpersonating`
+- `src/components/layout/ImpersonationBanner.tsx` - bandeau + `BANNER_H`
+- `src/components/layout/AppLayout.tsx` - passe `topOffset` à Sidebar et au `<main>`
+- `src/components/layout/Sidebar.tsx` - prop `topOffset?: string` (défaut `"0px"`)
+- `src/app/equipe/page.tsx` - bouton ▶ Simuler (icône `Play`)
 
 ## Navigation (`lib/navigation.ts`)
 
@@ -166,7 +166,7 @@ Non simulables : `Radmin`, `Rsuper_admin`
 | `Rtable` | `/dashboard`, `/menu`, `/commandes/panier`, `/commandes/mes-commandes` |
 | `Rsuper_admin` | `/dashboard`, `/restaurants` |
 
-## Responsive — règle double-vue
+## Responsive - règle double-vue
 
 Les pages avec tableau desktop + cards mobile utilisent deux classes CSS et des media queries dans leur bloc `<style>` :
 
@@ -191,19 +191,19 @@ Pages concernées : `equipe`, `commandes`, `restaurants`.
 | `listCaissesGlobales()` | `GET /paiements/caisse-globale/` |
 | `fermerCaisseGlobale(payload)` | `POST /paiements/caisse-globale/active/fermer/` |
 | `getCaisseGenerale()` | `GET /paiements/caisse-generale/` |
-| `initCaisseGenerale(payload)` | `POST /paiements/caisse-generale/init/` (Admin — 1ʳᵉ config) |
+| `initCaisseGenerale(payload)` | `POST /paiements/caisse-generale/init/` (Admin - 1ʳᵉ config) |
 | `listRemises(params?)` | `GET /paiements/remises/` |
 | `validerRemise(pk, payload)` | `POST /paiements/remises/<pk>/valider/` |
 
-**Important** : `CaisseComptable` retourne `mouvements: MouvementCaisse[]` embarqués — pas besoin d'appel séparé.
+**Important** : `CaisseComptable` retourne `mouvements: MouvementCaisse[]` embarqués - pas besoin d'appel séparé.
 
 ## Design System (`theme/theme.ts`)
 
-Tout le style est en CSS-in-JS via des objets exportés depuis `theme.ts`. Ne pas écrire de CSS arbitraire — utiliser les variables : `cssVar`, `spacing`, `typography`, `radius`, `palette`, `btnPrimary`, `cardBase`, `roleBadge`, `avatarBase`, etc.
+Tout le style est en CSS-in-JS via des objets exportés depuis `theme.ts`. Ne pas écrire de CSS arbitraire - utiliser les variables : `cssVar`, `spacing`, `typography`, `radius`, `palette`, `btnPrimary`, `cardBase`, `roleBadge`, `avatarBase`, etc.
 
 Le thème est dark par défaut avec des accents ambrés (`--amber-glow`, `--border-amber`).
 
-## API client — conventions
+## API client - conventions
 
 ```typescript
 import { getMaCaisseActive } from "@/lib/api/paiements";

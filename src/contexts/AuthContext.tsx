@@ -114,7 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return codes.some(c => hasPermission(c));
     }, [hasPermission]);
 
-    // Initialisation — lire l'utilisateur stocké et vérifier la session
+    // Initialisation - lire l'utilisateur stocké et vérifier la session
     useEffect(() => {
         const init = async () => {
             // Détecter si une simulation est en cours (survive au refresh de page)

@@ -1,5 +1,5 @@
 "use client";
-// src/hooks/useGeolocation.ts — géolocalisation navigateur (sur demande)
+// src/hooks/useGeolocation.ts - géolocalisation navigateur (sur demande)
 
 import { useState, useCallback } from "react";
 

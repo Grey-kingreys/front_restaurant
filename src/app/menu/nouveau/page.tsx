@@ -1,6 +1,6 @@
 "use client";
 // src/app/menu/nouveau/page.tsx
-// Création d'un nouveau plat — Chef Cuisinier, Admin, Manager
+// Création d'un nouveau plat - Chef Cuisinier, Admin, Manager
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";

@@ -1,4 +1,4 @@
-// src/lib/mapbox.ts — Configuration et helpers Mapbox
+// src/lib/mapbox.ts - Configuration et helpers Mapbox
 
 export const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
 

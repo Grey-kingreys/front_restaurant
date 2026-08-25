@@ -1,6 +1,6 @@
 "use client";
 // src/app/caisse-generale/page.tsx
-// Caisse Générale — coffre permanent du restaurant (lecture seule, Admin/Manager)
+// Caisse Générale - coffre permanent du restaurant (lecture seule, Admin/Manager)
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -17,9 +17,9 @@ import { apiErrorMessage } from "@/lib/apiErrors";
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 const gnf = (v: string | number | null | undefined) => {
-    if (v === null || v === undefined) return "—";
+    if (v === null || v === undefined) return "-";
     const n = typeof v === "string" ? parseFloat(v) : v;
-    return isNaN(n) ? "—" : n.toLocaleString("fr-FR") + " GNF";
+    return isNaN(n) ? "-" : n.toLocaleString("fr-FR") + " GNF";
 };
 
 const fmtDateTime = (iso: string) =>
@@ -106,11 +106,11 @@ export default function CaisseGeneralePage() {
                     Caisse Générale
                 </h1>
                 <p style={{ margin: "0.25rem 0 0", fontSize: typography.sm, color: cssVar.textMuted }}>
-                    Coffre permanent du restaurant — alimenté par les fermetures de caisses
+                    Coffre permanent du restaurant - alimenté par les fermetures de caisses
                 </p>
             </div>
 
-            {/* Caisse non initialisée — Admin : formulaire d'initialisation */}
+            {/* Caisse non initialisée - Admin : formulaire d'initialisation */}
             {needsInit && canInit && (
                 <div style={{ ...cardBase, padding: "1.5rem 2rem", marginBottom: spacing["4"] }}>
                     <p style={{ margin: 0, fontSize: "1.05rem", fontWeight: typography.bold, color: cssVar.textPrimary }}>
@@ -165,7 +165,7 @@ export default function CaisseGeneralePage() {
                 </div>
             )}
 
-            {/* Caisse non initialisée — Manager : pas le droit d'initialiser */}
+            {/* Caisse non initialisée - Manager : pas le droit d'initialiser */}
             {needsInit && !canInit && (
                 <div style={{ ...cardBase, padding: "2rem", textAlign: "center" }}>
                     <p style={{ margin: 0, color: cssVar.textMuted, fontSize: typography.sm, lineHeight: 1.6 }}>

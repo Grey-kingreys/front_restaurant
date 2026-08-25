@@ -1,5 +1,5 @@
 "use client";
-// src/app/reservations/page.tsx — Gestion des réservations (staff)
+// src/app/reservations/page.tsx - Gestion des réservations (staff)
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -149,7 +149,7 @@ export default function ReservationsStaffPage() {
                                         </div>
                                         <div style={{ fontSize: "0.8rem", color: cssVar.textSecondary, marginTop: "0.3rem", display: "flex", gap: "1rem", flexWrap: "wrap" }}>
                                             <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}><CalendarDays size={12} />{formatDateFr(r.date_reservation)}</span>
-                                            <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}><Clock size={12} />{r.heure}–{r.heure_fin}</span>
+                                            <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}><Clock size={12} />{r.heure}-{r.heure_fin}</span>
                                             <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}><Users size={12} />{r.nombre_personnes} pers.</span>
                                         </div>
                                         <div style={{ fontSize: "0.8rem", color: cssVar.textMuted, marginTop: "0.35rem" }}>
@@ -159,7 +159,7 @@ export default function ReservationsStaffPage() {
                                         </div>
                                         {r.client_a_risque && (
                                             <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", marginTop: "0.4rem", fontSize: "0.76rem", fontWeight: 700, color: "#ef4444" }}>
-                                                <AlertTriangle size={13} />Client à risque — {r.no_show_count} absence(s) enregistrée(s).
+                                                <AlertTriangle size={13} />Client à risque - {r.no_show_count} absence(s) enregistrée(s).
                                             </div>
                                         )}
                                         {r.note && <p style={{ margin: "0.4rem 0 0", fontSize: "0.78rem", color: cssVar.textMuted, fontStyle: "italic" }}>« {r.note} »</p>}

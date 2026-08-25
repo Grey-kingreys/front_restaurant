@@ -1,6 +1,6 @@
 "use client";
 // src/app/restaurants/page.tsx
-// Gestion de la plateforme — Super Admin uniquement
+// Gestion de la plateforme - Super Admin uniquement
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -359,7 +359,7 @@ export default function RestaurantsPage() {
                             {modal === "delete" && selected && (
                                 <div>
                                     <p style={{ margin: "0 0 1rem", fontSize: typography.sm, color: "#ef4444" }}>
-                                        <strong>⚠️ Attention — Opération IRREVERSIBLE</strong>
+                                        <strong>⚠️ Attention - Opération IRREVERSIBLE</strong>
                                     </p>
                                     <p style={{ margin: "0 0 1.25rem", fontSize: typography.sm, color: cssVar.textMuted }}>
                                         La suppression de <strong style={{ color: cssVar.textPrimary }}>«{selected.nom}»</strong> supprimera définitivement le restaurant et <strong>TOUTES ses données</strong> (utilisateurs, plats, commandes, paiements, etc.).
@@ -499,7 +499,7 @@ export default function RestaurantsPage() {
                                                     </div>
                                                 </td>
                                                 <td><span style={{ fontSize: typography.xs, color: cssVar.textMuted }}>{r.email_admin}</span></td>
-                                                <td><span style={{ fontSize: typography.xs, color: cssVar.textMuted }}>{r.telephone ?? "—"}</span></td>
+                                                <td><span style={{ fontSize: typography.xs, color: cssVar.textMuted }}>{r.telephone ?? "-"}</span></td>
                                                 <td><span style={{ fontSize: typography.xs, color: cssVar.textMuted }}>{fmt(r.created_at)}</span></td>
                                                 <td><StatutBadge active={r.is_active} /></td>
                                                 <td>

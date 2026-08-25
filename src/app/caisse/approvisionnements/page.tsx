@@ -1,6 +1,6 @@
 "use client";
 // src/app/caisse/approvisionnements/page.tsx
-// Validation des demandes d'approvisionnement — Admin / Manager (validate_approvisionnement).
+// Validation des demandes d'approvisionnement - Admin / Manager (validate_approvisionnement).
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -125,7 +125,7 @@ export default function ApprovisionnementsPage() {
                                 <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: cssVar.textPrimary }}>Approvisionnements</h1>
                             </div>
                             <p style={{ margin: 0, fontSize: typography.sm, color: cssVar.textMuted }}>
-                                Valider les demandes des comptables{enAttente > 0 && ` — ${enAttente} en attente`}
+                                Valider les demandes des comptables{enAttente > 0 && ` - ${enAttente} en attente`}
                             </p>
                         </div>
                         <button onClick={fetchDemandes} style={{ display: "flex", alignItems: "center", gap: "0.35rem", padding: "0.6rem 1rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "transparent", color: cssVar.textMuted, fontSize: "0.8rem", fontWeight: 600, cursor: "pointer" }}>
@@ -161,7 +161,7 @@ export default function ApprovisionnementsPage() {
                                             <div style={{ minWidth: 0 }}>
                                                 <p style={{ margin: 0, fontSize: typography.base, fontWeight: 800, color: cssVar.textPrimary }}>{fmtMontant(d.montant)}</p>
                                                 <p style={{ margin: "2px 0 0", fontSize: typography.xs, color: cssVar.textMuted }}>
-                                                    {d.comptable_nom ?? d.demande_par_login ?? "—"} · {fmt(d.created_at)}
+                                                    {d.comptable_nom ?? d.demande_par_login ?? "-"} · {fmt(d.created_at)}
                                                 </p>
                                             </div>
                                             <span style={{ fontSize: "0.7rem", fontWeight: 700, color: s.color, background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", padding: "0.2rem 0.6rem", borderRadius: "var(--radius-full)", whiteSpace: "nowrap" }}>{s.label}</span>

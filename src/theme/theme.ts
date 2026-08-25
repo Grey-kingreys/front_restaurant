@@ -215,7 +215,7 @@ export const modalOverlay: React.CSSProperties = {
  * quand son contenu est plus long.
  *
  * `dvh` et non `vh` : sur mobile, `vh` ignore la barre d'adresse du navigateur,
- * si bien qu'une modale haute déborde sous le bas de l'écran — le bouton de
+ * si bien qu'une modale haute déborde sous le bas de l'écran - le bouton de
  * validation devient alors inatteignable, sans possibilité de faire défiler.
  */
 export const modalCard: React.CSSProperties = {
@@ -245,7 +245,7 @@ export const spinnerBase: React.CSSProperties = {
     animation: "spin 0.7s linear infinite",
 };
 
-/** Badge rôle — prend les couleurs depuis ROLE_COLORS */
+/** Badge rôle - prend les couleurs depuis ROLE_COLORS */
 export const roleBadge = (text: string): React.CSSProperties => ({
     display: "inline-flex",
     alignItems: "center",

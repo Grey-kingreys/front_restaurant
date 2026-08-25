@@ -1,6 +1,6 @@
 // src/lib/partenaires.ts
 // Liste des partenaires affichés sur la landing (section #partenaires).
-// Vide pour l'instant — ajouter les entrées ici au fur et à mesure.
+// Vide pour l'instant - ajouter les entrées ici au fur et à mesure.
 // La section Partenaires se met à jour automatiquement : si la liste est vide,
 // elle affiche un encart « devenir partenaire » à la place de la grille de logos.
 
@@ -9,7 +9,7 @@ export interface Partenaire {
   nom: string;
   /** URL du logo (image accessible publiquement, ex. /partenaires/xxx.png ou une URL externe). */
   logoUrl: string;
-  /** Site web du partenaire (optionnel) — rend le logo cliquable. */
+  /** Site web du partenaire (optionnel) - rend le logo cliquable. */
   siteUrl?: string;
   /** Courte description / type de partenariat (optionnel). */
   description?: string;

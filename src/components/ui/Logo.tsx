@@ -1,6 +1,6 @@
 "use client";
 // ─────────────────────────────────────────────────────────────
-// <Logo /> — source unique de vérité pour la marque « resfly ».
+// <Logo /> - source unique de vérité pour la marque « resfly ».
 // Pour changer le logo partout dans l'app, il suffit de modifier
 // ce fichier (ou l'asset public/images/brand/logo-icon.png).
 //
@@ -13,7 +13,7 @@
 // cote sur une ligne, l'oeil lit « R resfly ». Le monogramme est donc
 // reserve aux contextes ou il apparait seul, sans ambiguite possible.
 // Le verrouillage officiel de la marque (public/images/brand/logo-full.png)
-// est vertical — R au-dessus du mot — et ne tient pas dans une barre.
+// est vertical - R au-dessus du mot - et ne tient pas dans une barre.
 //
 // Le wordmark est rendu en TEXTE adaptatif (« res » ambré + « fly »
 // en couleur de thème) pour rester lisible en dark ET en light,
@@ -45,7 +45,7 @@ export interface LogoProps {
     style?: CSSProperties;
 }
 
-/** Wordmark « resfly » — « res » ambré (dégradé du thème) + « fly » couleur de texte. */
+/** Wordmark « resfly » - « res » ambré (dégradé du thème) + « fly » couleur de texte. */
 function Wordmark({ fontSize }: { fontSize: number }) {
     return (
         <span
@@ -116,7 +116,7 @@ export default function Logo({
             <Link
                 href={href}
                 onClick={onClick}
-                aria-label="resfly — accueil"
+                aria-label="resfly - accueil"
                 style={{ display: "inline-flex", alignItems: "center", textDecoration: "none" }}
             >
                 {content}

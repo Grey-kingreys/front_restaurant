@@ -1,5 +1,5 @@
 "use client";
-// src/app/client/restaurants/page.tsx — Parcourir les restaurants (Rclient)
+// src/app/client/restaurants/page.tsx - Parcourir les restaurants (Rclient)
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import Link from "next/link";
@@ -91,7 +91,7 @@ export default function ClientRestaurantsPage() {
             </div>
 
             {status === "denied" && (
-                <p style={{ margin: "-0.75rem 0 1rem", fontSize: "0.76rem", color: "#ef4444" }}>Localisation refusée — activez-la pour trier par distance.</p>
+                <p style={{ margin: "-0.75rem 0 1rem", fontSize: "0.76rem", color: "#ef4444" }}>Localisation refusée - activez-la pour trier par distance.</p>
             )}
 
             {loading ? (

@@ -1,5 +1,5 @@
 // src/lib/api/index.ts
-// Point d'entrée unique — importer depuis '@/lib/api'
+// Point d'entrée unique - importer depuis '@/lib/api'
 
 export * from "./client";
 export * as authApi from "./auth";

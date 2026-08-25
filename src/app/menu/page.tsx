@@ -1,6 +1,6 @@
 "use client";
 // src/app/menu/page.tsx
-// Module Menu complet — liste, filtres, actions staff et table
+// Module Menu complet - liste, filtres, actions staff et table
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";

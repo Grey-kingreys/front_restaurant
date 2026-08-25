@@ -33,7 +33,7 @@ export default function Navbar({ scrolled }: NavbarProps) {
         {/* Logo */}
         <Logo size={34} className="nav-brand-text" />
 
-        {/* Nav links — desktop uniquement */}
+        {/* Nav links - desktop uniquement */}
         <div className="hidden md:flex items-center gap-8">
           {NAV_LINKS.map((item) => (
             <a
@@ -94,7 +94,7 @@ export default function Navbar({ scrolled }: NavbarProps) {
             )}
           </div>
 
-          {/* Hamburger — mobile uniquement */}
+          {/* Hamburger - mobile uniquement */}
           <button
             className="nav-hamburger"
             onClick={() => setMobileOpen(true)}

@@ -84,14 +84,14 @@ export async function deleteTable(id: number): Promise<ApiResponse> {
 }
 
 /**
- * Afficher le QR Code existant d'une table — sans régénérer le token
+ * Afficher le QR Code existant d'une table - sans régénérer le token
  */
 export async function getQRCode(id: number): Promise<ApiResponse<{ qr_code_url: string; qr_login_url: string; table: string; a_qr_code: boolean }>> {
     return apiRequest(`/restaurant/tables/${id}/qr/`);
 }
 
 /**
- * Regénérer le QR Code d'une table — invalide l'ancien QR
+ * Regénérer le QR Code d'une table - invalide l'ancien QR
  */
 export async function regenerateQRCode(id: number): Promise<ApiResponse<{ qr_code_url: string; qr_login_url: string; table: string }>> {
     return apiRequest(`/restaurant/tables/${id}/qr/generer/`, {
@@ -153,7 +153,7 @@ export interface CheckDistanceResult {
 }
 
 /**
- * Vérification de distance uniquement — pour une table connectée en login+password
+ * Vérification de distance uniquement - pour une table connectée en login+password
  * (sans session QR). N'applique QUE la restriction de distance (pas d'expiration).
  */
 export async function checkTableDistance(

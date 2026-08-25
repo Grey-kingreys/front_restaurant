@@ -1,6 +1,6 @@
 "use client";
 // src/app/equipe/page.tsx
-// Gestion de l'équipe — Admin & Manager uniquement
+// Gestion de l'équipe - Admin & Manager uniquement
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -698,7 +698,7 @@ export default function EquipePage() {
                                                             {(u.nom_complet ?? u.login).slice(0, 2).toUpperCase()}
                                                         </div>
                                                         <div>
-                                                            <p style={{ margin: 0, fontSize: typography.sm, fontWeight: 600, color: cssVar.textPrimary }}>{u.nom_complet ?? "—"}</p>
+                                                            <p style={{ margin: 0, fontSize: typography.sm, fontWeight: 600, color: cssVar.textPrimary }}>{u.nom_complet ?? "-"}</p>
                                                             {u.must_change_password && (
                                                                 <span style={{ fontSize: "0.65rem", color: "#f59e0b" }}>⚠ MDP à changer</span>
                                                             )}
@@ -707,7 +707,7 @@ export default function EquipePage() {
                                                 </td>
                                                 <td><RoleBadge role={u.role} /></td>
                                                 <td><span style={{ fontFamily: "monospace", fontSize: typography.xs, background: "var(--bg-section-alt)", padding: "0.15rem 0.4rem", borderRadius: "var(--radius-sm)", color: cssVar.textSecondary }}>{u.login}</span></td>
-                                                <td><span style={{ fontSize: typography.xs, color: cssVar.textMuted }}>{u.email ?? "—"}</span></td>
+                                                <td><span style={{ fontSize: typography.xs, color: cssVar.textMuted }}>{u.email ?? "-"}</span></td>
                                                 <td><StatutBadge actif={u.actif} /></td>
                                                 <td>
                                                     <div style={{ display: "flex", gap: "0.3rem" }}>
@@ -761,7 +761,7 @@ export default function EquipePage() {
                                                     {(u.nom_complet ?? u.login).slice(0, 2).toUpperCase()}
                                                 </div>
                                                 <div>
-                                                    <p style={{ margin: 0, fontSize: typography.sm, fontWeight: 700, color: cssVar.textPrimary }}>{u.nom_complet ?? "—"}</p>
+                                                    <p style={{ margin: 0, fontSize: typography.sm, fontWeight: 700, color: cssVar.textPrimary }}>{u.nom_complet ?? "-"}</p>
                                                     <span style={{ fontFamily: "monospace", fontSize: "0.7rem", color: cssVar.textMuted }}>{u.login}</span>
                                                 </div>
                                             </div>

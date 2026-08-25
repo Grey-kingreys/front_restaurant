@@ -1,5 +1,5 @@
 // src/lib/api/company.ts
-// Gestion des restaurants — réservé au Super Admin
+// Gestion des restaurants - réservé au Super Admin
 
 import { apiRequest } from "./client";
 import type { ApiResponse } from "@/types";
@@ -141,7 +141,7 @@ export async function getPlatformStats(): Promise<ApiResponse<PlatformStats>> {
 }
 
 /**
- * Mon restaurant — infos (lecture ouverte à tout le staff ;
+ * Mon restaurant - infos (lecture ouverte à tout le staff ;
  * la prise de commande a besoin des frais/flags livraison)
  */
 export async function getMonRestaurant(): Promise<ApiResponse<Restaurant>> {

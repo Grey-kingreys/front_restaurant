@@ -181,7 +181,7 @@ export default function LivraisonPubliquePage() {
                         )}
                         {done && (
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", padding: "1rem", borderRadius: "var(--radius-xl)", background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.25)", color: "#22c55e", fontWeight: 700, fontSize: "0.9rem" }}>
-                                <CheckCircle2 size={18} /> Livraison terminée — merci !
+                                <CheckCircle2 size={18} /> Livraison terminée - merci !
                             </div>
                         )}
                         {!a.peut_passer_en_livraison && !a.peut_etre_servie && !a.peut_encaisser && !done && (

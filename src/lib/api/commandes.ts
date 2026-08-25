@@ -176,14 +176,14 @@ export async function genererLivraisonLien(id: number): Promise<ApiResponse<Livr
 }
 
 /**
- * Mes commandes — Table uniquement (filtrées par session QR courante)
+ * Mes commandes - Table uniquement (filtrées par session QR courante)
  */
 export async function getMesCommandes(): Promise<ApiResponse<{ commandes: Commande[]; count: number }>> {
     return apiRequest("/commandes/mes-commandes/");
 }
 
 /**
- * File des commandes cuisine — Cuisinier / Chef Cuisinier
+ * File des commandes cuisine - Cuisinier / Chef Cuisinier
  */
 export async function listCommandesCuisine(statut: "en_attente" | "prete" = "en_attente"): Promise<ApiResponse<{ commandes: Commande[]; count: number }>> {
     return apiRequest(`/commandes/cuisine/?statut=${statut}`);

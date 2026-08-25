@@ -1,5 +1,5 @@
 // src/lib/blog.ts
-// Articles du blog. Vide pour l'instant — ajouter les entrées ici.
+// Articles du blog. Vide pour l'instant - ajouter les entrées ici.
 // La page /blog affiche automatiquement la grille d'articles si la liste est
 // remplie, sinon un état « bientôt ».
 

@@ -1,6 +1,6 @@
 "use client";
 // src/app/caisse/page.tsx
-// Gestion de la caisse comptable — Rcomptable uniquement
+// Gestion de la caisse comptable - Rcomptable uniquement
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -153,7 +153,7 @@ export default function CaissePage() {
         setFormError(null);
         try {
             const res = await approvisionnerCaisse(caisse.id, { montant: parseFloat(fMontant), motif: fMotif });
-            if (res.success) { showToast("Demande envoyée — en attente de validation."); closeModal(); setActiveTab("demandes"); fetchAll(); }
+            if (res.success) { showToast("Demande envoyée - en attente de validation."); closeModal(); setActiveTab("demandes"); fetchAll(); }
             else setFormError(apiErrorMessage(res, "Impossible d'envoyer la demande."));
         } catch { setFormError("Erreur."); }
         finally { setFormLoading(false); }
@@ -366,7 +366,7 @@ export default function CaissePage() {
                         <>
                             {/* Stat cards */}
                             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "1rem", marginBottom: "1.5rem" }}>
-                                <StatCard title="Solde caisse" value={caisse ? fmtMontant(caisse.solde) : "—"} icon={<Wallet size={20} />} color="#14b8a6" />
+                                <StatCard title="Solde caisse" value={caisse ? fmtMontant(caisse.solde) : "-"} icon={<Wallet size={20} />} color="#14b8a6" />
                                 <StatCard title="Statut" value={caisse ? (caisse.is_closed ? "Fermée" : "Ouverte") : "Non initialisée"} icon={caisse?.is_closed ? <Lock size={20} /> : <Unlock size={20} />} color={caisse?.is_closed ? "#ef4444" : "#22c55e"} />
                                 <StatCard title="Remises en attente" value={remisesEnAttente.length} icon={<ClipboardList size={20} />} color={remisesEnAttente.length > 0 ? "#f59e0b" : "#22c55e"} />
                                 <StatCard title="Mouvements" value={mouvements.length} icon={<ArrowUpCircle size={20} />} color="#3b82f6" />
@@ -449,7 +449,7 @@ export default function CaissePage() {
                                                 </div>
                                                 <div style={{ flex: 1, minWidth: 0 }}>
                                                     <p style={{ margin: 0, fontSize: typography.sm, fontWeight: 600, color: cssVar.textPrimary }}>
-                                                        Remise #{r.id} — Serveur #{r.serveur}
+                                                        Remise #{r.id} - Serveur #{r.serveur}
                                                     </p>
                                                     <p style={{ margin: "1px 0 0", fontSize: typography.xs, color: cssVar.textMuted }}>{fmt(r.created_at)} · Virtuel : {fmtMontant(r.montant_virtuel)}</p>
                                                 </div>

@@ -1,6 +1,6 @@
 "use client";
 // src/app/restaurant/[slug]/confirmation/[cle]/page.tsx
-// Suivi commande client — polling toutes les 30s
+// Suivi commande client - polling toutes les 30s
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -61,7 +61,7 @@ export default function ConfirmationPage() {
                 setCommande(res.data);
                 setLastRefresh(new Date());
             }
-        } catch { /* ignore — commande introuvable ou serveur indisponible */ }
+        } catch { /* ignore - commande introuvable ou serveur indisponible */ }
         setLoading(false);
     }, [cle]);
 
@@ -114,7 +114,7 @@ export default function ConfirmationPage() {
                         {commande.statut_label}
                     </h1>
                     <p style={{ margin: 0, fontSize: "0.8rem", color: "var(--text-muted)" }}>
-                        Commande #{commande.commande_id} — {commande.restaurant}
+                        Commande #{commande.commande_id} - {commande.restaurant}
                     </p>
                     {lastRefresh && (
                         <button onClick={load} style={{ marginTop: "0.5rem", display: "inline-flex", alignItems: "center", gap: "0.3rem", padding: "0.25rem 0.625rem", borderRadius: "var(--radius-full)", border: "1px solid var(--border-subtle)", background: "none", color: "var(--text-muted)", fontSize: "0.72rem", cursor: "pointer" }}>
@@ -180,7 +180,7 @@ export default function ConfirmationPage() {
                     </div>
                 )}
 
-                {/* Votre reçu — téléchargement + partage */}
+                {/* Votre reçu - téléchargement + partage */}
                 <section style={{ marginBottom: "1.25rem" }}>
                     <h2 style={{ margin: "0 0 0.75rem", fontSize: "0.82rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Votre reçu</h2>
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>

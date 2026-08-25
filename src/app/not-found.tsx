@@ -148,7 +148,7 @@ export default function NotFound() {
                         />
                     </div>
 
-                    {/* Plate with cloche — the main illustration */}
+                    {/* Plate with cloche - the main illustration */}
                     <div ref={plateRef} className="plate-float relative" style={{ zIndex: 1 }}>
                         {/* Steam wisps from under cloche */}
                         <div className="relative" style={{ height: 30 }}>
@@ -230,7 +230,7 @@ export default function NotFound() {
                             </svg>
                         </div>
 
-                        {/* Cutlery — fork & knife */}
+                        {/* Cutlery - fork & knife */}
                         <div className="absolute flex gap-36" style={{ top: 30, left: "50%", transform: "translateX(-50%)" }}>
                             {/* Fork */}
                             <svg width="16" height="80" viewBox="0 0 16 80" fill="none">
@@ -287,7 +287,7 @@ export default function NotFound() {
                     >
                         Le plat que vous cherchez n'existe pas, a été retiré du menu, ou la table a été libérée.
                         <br />
-                        Retournez en cuisine — il reste de bonnes choses à découvrir.
+                        Retournez en cuisine - il reste de bonnes choses à découvrir.
                     </p>
 
                     {/* Actions */}

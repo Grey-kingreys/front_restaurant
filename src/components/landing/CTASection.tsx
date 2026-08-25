@@ -58,7 +58,7 @@ export default function CTASection() {
           </h2>
           <p className="text-base mb-8 max-w-xl mx-auto" style={{ color: "var(--text-secondary)" }}>
             Créez votre compte client gratuitement, parcourez les menus de vos restaurants
-            préférés et commandez en livraison ou à emporter — en quelques secondes.
+            préférés et commandez en livraison ou à emporter - en quelques secondes.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">

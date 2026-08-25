@@ -294,7 +294,7 @@ export default function NouvelleCommandePage() {
                                             value={clientAdresse}
                                             onChange={(e) => setClientAdresse(e.target.value)}
                                             rows={2}
-                                            placeholder="Adresse de livraison * — quartier, rue, repère… (texte libre)"
+                                            placeholder="Adresse de livraison * - quartier, rue, repère… (texte libre)"
                                             style={{ ...inputStyle, resize: "vertical", fontFamily: "inherit" }}
                                         />
                                     </div>
@@ -303,7 +303,7 @@ export default function NouvelleCommandePage() {
                         )}
                     </section>
 
-                    {/* 3. Plats — recherche + catégories + cartes */}
+                    {/* 3. Plats - recherche + catégories + cartes */}
                     <section>
                         <p style={{ fontSize: typography.xs, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: cssVar.textMuted, margin: `0 0 ${spacing.sm}` }}>
                             3 · Plats

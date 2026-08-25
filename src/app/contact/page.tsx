@@ -90,7 +90,7 @@ export default function ContactPage() {
             Parlons de votre <span className="text-gradient">restaurant</span>
           </h1>
           <p className="text-lg leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-            Une question, une démo, un devis ? Écrivez-nous ou appelez directement — on répond
+            Une question, une démo, un devis ? Écrivez-nous ou appelez directement - on répond
             vite.
           </p>
         </div>

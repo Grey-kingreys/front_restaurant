@@ -1,5 +1,5 @@
 // src/components/icons/index.tsx
-// Centralized Heroicons — always use these, never inline SVG or emojis
+// Centralized Heroicons - always use these, never inline SVG or emojis
 // Source: https://heroicons.com/ (Outline 24px unless specified)
 
 interface IconProps {

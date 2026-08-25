@@ -162,7 +162,7 @@ function TabRestaurant() {
                         <div style={{ padding: "0.55rem 0.75rem", borderRadius: radius.md, border: `1px solid ${cssVar.borderSubtle}`, background: "rgba(255,255,255,0.02)", color: cssVar.textSecondary, fontSize: typography.sm }}>
                             {restaurant.email_admin}
                         </div>
-                        <p style={{ margin: "4px 0 0", fontSize: "0.7rem", color: cssVar.textMuted }}>Non modifiable — contactez le Super Admin.</p>
+                        <p style={{ margin: "4px 0 0", fontSize: "0.7rem", color: cssVar.textMuted }}>Non modifiable - contactez le Super Admin.</p>
                     </div>
 
                     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: spacing["3"] }}>
@@ -198,7 +198,7 @@ function TabRestaurant() {
                             {!acceptLivraison && !acceptEmporter && (
                                 <div style={{ display: "flex", alignItems: "flex-start", gap: spacing["2"], padding: "0.55rem 0.75rem", borderRadius: radius.md, background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.25)", color: "#f59e0b", fontSize: "0.75rem", marginBottom: spacing["3"] }}>
                                     <AlertTriangle size={14} style={{ flexShrink: 0, marginTop: 1 }} />
-                                    <span>Aucun mode activé — votre restaurant n'apparaît pas dans la liste des clients. Activez la livraison et/ou le retrait pour recevoir des commandes en ligne.</span>
+                                    <span>Aucun mode activé - votre restaurant n'apparaît pas dans la liste des clients. Activez la livraison et/ou le retrait pour recevoir des commandes en ligne.</span>
                                 </div>
                             )}
 
@@ -212,7 +212,7 @@ function TabRestaurant() {
                                 <input type="checkbox" checked={acceptLivraison} onChange={e => setAcceptLivraison(e.target.checked)} style={{ width: 18, height: 18, cursor: "pointer", flexShrink: 0 }} />
                             </label>
 
-                            {/* Frais de livraison — non paramétrables : ils dépendent de
+                            {/* Frais de livraison - non paramétrables : ils dépendent de
                                 la distance et se conviennent avec le livreur. */}
                             {acceptLivraison && (
                                 <div style={{ marginBottom: spacing["2"], marginLeft: "1.85rem", padding: "0.6rem 0.75rem", borderRadius: radius.md, border: `1px solid ${cssVar.borderSubtle}`, background: cssVar.bgSectionAlt, display: "flex", gap: spacing["2"], alignItems: "flex-start" }}>
@@ -225,7 +225,7 @@ function TabRestaurant() {
                                 </div>
                             )}
 
-                            {/* Encaissement par lien de livraison — visible si livraison activée */}
+                            {/* Encaissement par lien de livraison - visible si livraison activée */}
                             {acceptLivraison && (
                                 <label style={{ display: "flex", alignItems: "center", gap: spacing["2"], padding: "0.6rem 0.75rem", marginLeft: "1.85rem", borderRadius: radius.md, border: `1px solid ${livraisonLienPaiement ? "rgba(34,197,94,0.4)" : cssVar.borderSubtle}`, background: livraisonLienPaiement ? "rgba(34,197,94,0.06)" : cssVar.bgSectionAlt, cursor: "pointer", marginBottom: spacing["2"] }}>
                                     <Banknote size={16} style={{ color: livraisonLienPaiement ? "#22c55e" : cssVar.textMuted, flexShrink: 0 }} />
@@ -247,7 +247,7 @@ function TabRestaurant() {
                                 <input type="checkbox" checked={acceptEmporter} onChange={e => setAcceptEmporter(e.target.checked)} style={{ width: 18, height: 18, cursor: "pointer", flexShrink: 0 }} />
                             </label>
 
-                            {/* Toggle Aller Retour — service de livraison partenaire externe (projet d'un collègue) ; API à brancher plus tard */}
+                            {/* Toggle Aller Retour - service de livraison partenaire externe (projet d'un collègue) ; API à brancher plus tard */}
                             <div aria-disabled="true" title="Bientôt disponible"
                                 style={{ display: "flex", alignItems: "center", gap: spacing["2"], padding: "0.6rem 0.75rem", borderRadius: radius.md, border: `1px dashed ${cssVar.borderSubtle}`, background: cssVar.bgSectionAlt, opacity: 0.6, cursor: "not-allowed" }}>
                                 <Repeat size={16} style={{ color: cssVar.textMuted, flexShrink: 0 }} />
@@ -289,7 +289,7 @@ function TabRestaurant() {
                                 <label style={{ display: "block", fontSize: typography.xs, fontWeight: typography.bold, textTransform: "uppercase", letterSpacing: "0.06em", color: cssVar.textMuted, marginBottom: "4px" }}>Délai d'annulation (heures avant)</label>
                                 <input type="number" min={0} max={72} value={delaiAnnulation} onChange={e => setDelaiAnnulation(e.target.value)}
                                     style={{ width: "100%", maxWidth: 240, padding: "0.5rem 0.75rem", borderRadius: radius.md, border: `1px solid ${cssVar.borderSubtle}`, background: cssVar.bgSectionAlt, color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }} />
-                                <p style={{ margin: "3px 0 0", fontSize: "0.7rem", color: cssVar.textMuted }}>Le client peut annuler jusqu'à ce délai avant l'heure réservée (0–72 h).</p>
+                                <p style={{ margin: "3px 0 0", fontSize: "0.7rem", color: cssVar.textMuted }}>Le client peut annuler jusqu'à ce délai avant l'heure réservée (0-72 h).</p>
                             </div>
                         </div>
 
@@ -306,7 +306,7 @@ function TabRestaurant() {
                             {!latitude && !longitude && (
                                 <div style={{ display: "flex", alignItems: "flex-start", gap: spacing["2"], padding: "0.55rem 0.75rem", borderRadius: radius.md, background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.25)", color: "#f59e0b", fontSize: "0.75rem", marginBottom: spacing["3"] }}>
                                     <AlertTriangle size={14} style={{ flexShrink: 0, marginTop: 1 }} />
-                                    <span>Aucun emplacement défini — la restriction QR est désactivée. Placez votre restaurant sur la carte pour l'activer.</span>
+                                    <span>Aucun emplacement défini - la restriction QR est désactivée. Placez votre restaurant sur la carte pour l'activer.</span>
                                 </div>
                             )}
 
@@ -331,13 +331,13 @@ function TabRestaurant() {
                                     <label style={{ display: "block", fontSize: typography.xs, fontWeight: typography.bold, textTransform: "uppercase", letterSpacing: "0.06em", color: cssVar.textMuted, marginBottom: "4px" }}>Rayon de connexion (m)</label>
                                     <input type="number" min={50} max={2000} value={rayon} onChange={e => setRayon(e.target.value)}
                                         style={{ width: "100%", padding: "0.55rem 0.75rem", borderRadius: radius.md, border: `1px solid ${cssVar.borderSubtle}`, background: cssVar.bgSectionAlt, color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }} />
-                                    <p style={{ margin: "3px 0 0", fontSize: "0.7rem", color: cssVar.textMuted }}>Distance max depuis le restaurant (50–2000 m)</p>
+                                    <p style={{ margin: "3px 0 0", fontSize: "0.7rem", color: cssVar.textMuted }}>Distance max depuis le restaurant (50-2000 m)</p>
                                 </div>
                                 <div>
                                     <label style={{ display: "block", fontSize: typography.xs, fontWeight: typography.bold, textTransform: "uppercase", letterSpacing: "0.06em", color: cssVar.textMuted, marginBottom: "4px" }}>Durée de session (min)</label>
                                     <input type="number" min={15} max={480} value={duree} onChange={e => setDuree(e.target.value)}
                                         style={{ width: "100%", padding: "0.55rem 0.75rem", borderRadius: radius.md, border: `1px solid ${cssVar.borderSubtle}`, background: cssVar.bgSectionAlt, color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }} />
-                                    <p style={{ margin: "3px 0 0", fontSize: "0.7rem", color: cssVar.textMuted }}>Expiration automatique après ce délai (15–480 min)</p>
+                                    <p style={{ margin: "3px 0 0", fontSize: "0.7rem", color: cssVar.textMuted }}>Expiration automatique après ce délai (15-480 min)</p>
                                 </div>
                             </div>
                         </div>
@@ -545,7 +545,7 @@ function TabRoles({ onToast }: { onToast: (msg: string, type?: "success" | "erro
         <>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: spacing["4"] }}>
                 <p style={{ margin: 0, fontSize: typography.sm, color: cssVar.textMuted }}>
-                    {roles.length} rôle{roles.length !== 1 ? "s" : ""} — {customRoles.length} personnalisé{customRoles.length !== 1 ? "s" : ""}
+                    {roles.length} rôle{roles.length !== 1 ? "s" : ""} - {customRoles.length} personnalisé{customRoles.length !== 1 ? "s" : ""}
                 </p>
                 <button onClick={() => setShowCreate(true)} style={{ display: "inline-flex", alignItems: "center", gap: spacing["1"], padding: "0.5rem 1rem", background: "linear-gradient(135deg,#f59e0b,#d97706)", border: "none", borderRadius: radius.md, color: "#0c0a09", fontWeight: typography.bold, cursor: "pointer", fontSize: typography.sm }}>
                     <Plus size={14} /> Nouveau rôle
@@ -567,7 +567,7 @@ function TabRoles({ onToast }: { onToast: (msg: string, type?: "success" | "erro
                     {customRoles.length === 0 ? (
                         <div style={{ padding: spacing["6"], textAlign: "center", border: `2px dashed ${cssVar.borderSubtle}`, borderRadius: radius.xl, color: cssVar.textMuted }}>
                             <ShieldCheck size={28} style={{ opacity: 0.25, marginBottom: spacing["2"] }} />
-                            <p style={{ margin: 0, fontSize: typography.sm }}>Aucun rôle personnalisé — créez-en un ci-dessus.</p>
+                            <p style={{ margin: 0, fontSize: typography.sm }}>Aucun rôle personnalisé - créez-en un ci-dessus.</p>
                         </div>
                     ) : (
                         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: spacing["3"] }}>

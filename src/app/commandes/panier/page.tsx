@@ -1,6 +1,6 @@
 "use client";
 // src/app/commandes/panier/page.tsx
-// Page Panier — Consultation et validation de la commande (Table uniquement)
+// Page Panier - Consultation et validation de la commande (Table uniquement)
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";

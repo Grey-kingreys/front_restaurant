@@ -185,7 +185,7 @@ export default function CheckoutPage() {
                     <h1 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 800, color: "var(--text-primary)" }}>Votre commande</h1>
                 </div>
 
-                {/* Mode livraison / emporter — modes réellement proposés par le restaurant */}
+                {/* Mode livraison / emporter - modes réellement proposés par le restaurant */}
                 {resto && (() => {
                     const modes: TypeCommande[] = [
                         ...(resto.accept_livraison ? (["livraison"] as TypeCommande[]) : []),
@@ -299,7 +299,7 @@ export default function CheckoutPage() {
                                     <p style={{ margin: "0.4rem 0 0", fontSize: "0.75rem", color: "var(--text-muted)" }}>
                                         {coords
                                             ? `Position choisie : ${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}`
-                                            : "Touchez la carte pour placer votre position — ça aide le livreur à vous trouver."}
+                                            : "Touchez la carte pour placer votre position - ça aide le livreur à vous trouver."}
                                     </p>
                                 </div>
 
@@ -345,7 +345,7 @@ export default function CheckoutPage() {
                                     {MODES_PAIEMENT.map((mp) => (
                                         <option key={mp.value} value={mp.value} disabled={!mp.disponible}
                                             style={{ color: "var(--text-primary)", background: "var(--bg-card)" }}>
-                                            {mp.label}{mp.disponible ? "" : " — bientôt"}
+                                            {mp.label}{mp.disponible ? "" : " - bientôt"}
                                         </option>
                                     ))}
                                 </select>

@@ -1,5 +1,5 @@
 "use client";
-// src/components/map/MapControls.tsx — panneau overlay (style + 3D) sur une carte.
+// src/components/map/MapControls.tsx - panneau overlay (style + 3D) sur une carte.
 
 import type { MapStyleMode } from "@/lib/mapbox";
 import { Map as MapIcon, Satellite, Box } from "lucide-react";

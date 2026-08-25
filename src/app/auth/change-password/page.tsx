@@ -49,7 +49,7 @@ export default function ChangePasswordPage() {
             }
             else {
                 // Le vrai motif (ex. « Mot de passe actuel incorrect. ») est dans res.errors,
-                // pas dans res.message — l'afficher au lieu d'un message générique.
+                // pas dans res.message - l'afficher au lieu d'un message générique.
                 setError(apiErrorMessage(res, "Erreur lors du changement de mot de passe."));
             }
         } catch (err: unknown) {
@@ -129,7 +129,7 @@ export default function ChangePasswordPage() {
                             </h2>
                             <p style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
                                 {isFirstLogin
-                                    ? "Première connexion — définissez un mot de passe personnel."
+                                    ? "Première connexion - définissez un mot de passe personnel."
                                     : "Sécurisez votre compte avec un nouveau mot de passe."}
                             </p>
                         </div>

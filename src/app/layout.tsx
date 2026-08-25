@@ -18,7 +18,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "resfly — Gestion de Restaurant Intelligente",
+  title: "resfly - Gestion de Restaurant Intelligente",
   description:
     "Plateforme SaaS de gestion complète pour restaurants : menus, commandes, paiements, caisses et équipes. Simplifiez votre service, maximisez vos revenus.",
   keywords: ["restaurant", "gestion", "commandes", "menu", "caisse", "SaaS"],

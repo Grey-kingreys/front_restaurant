@@ -75,7 +75,7 @@ type PermissionNavBlock = {
 };
 
 const PERMISSION_NAV_BLOCKS: PermissionNavBlock[] = [
-    // Vue d'ensemble — toujours visible pour le staff
+    // Vue d'ensemble - toujours visible pour le staff
     {
         title: "Vue d'ensemble",
         items: [
@@ -219,7 +219,7 @@ export function getNavSections(user: User): NavSection[] {
 export const NAV_CONFIG: Record<Role, NavSection[]> = {
     Rsuper_admin: NAV_SUPER_ADMIN,
     Rtable: NAV_TABLE,
-    // Les rôles staff retournent un tableau vide — utiliser getNavSections()
+    // Les rôles staff retournent un tableau vide - utiliser getNavSections()
     Radmin: [],
     Rmanager: [],
     Rserveur: [],
