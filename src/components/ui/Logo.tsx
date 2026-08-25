@@ -4,10 +4,16 @@
 // Pour changer le logo partout dans l'app, il suffit de modifier
 // ce fichier (ou l'asset public/images/brand/logo-icon.png).
 //
-//   <Logo />                        → icône R + mot « resfly »
-//   <Logo variant="icon" />         → icône R seule (sidebar réduite, favicon…)
-//   <Logo variant="wordmark" />     → mot « resfly » seul
-//   <Logo size={44} href="/" />     → cliquable, plus grand (pages auth)
+//   <Logo />                    → mot « resfly » (défaut, toutes les barres)
+//   <Logo variant="icon" />     → monogramme R seul (sidebar réduite, favicon…)
+//   <Logo size={44} href="/" /> → cliquable, plus grand (pages auth)
+//
+// ⚠️ Le monogramme n'est JAMAIS pose a cote du mot a l'horizontale.
+// Le monogramme EST la lettre R et « resfly » commence par un r : cote a
+// cote sur une ligne, l'oeil lit « R resfly ». Le monogramme est donc
+// reserve aux contextes ou il apparait seul, sans ambiguite possible.
+// Le verrouillage officiel de la marque (public/images/brand/logo-full.png)
+// est vertical — R au-dessus du mot — et ne tient pas dans une barre.
 //
 // Le wordmark est rendu en TEXTE adaptatif (« res » ambré + « fly »
 // en couleur de thème) pour rester lisible en dark ET en light,
@@ -22,12 +28,12 @@ import { cssVar, typography } from "@/theme/theme";
 // Ratio natif de l'icône R (550 × 486)
 const ICON_RATIO = 550 / 486;
 
-export type LogoVariant = "full" | "icon" | "wordmark";
+export type LogoVariant = "wordmark" | "icon";
 
 export interface LogoProps {
-    /** Déclinaison à afficher. Défaut : "full" (icône + mot). */
+    /** Déclinaison à afficher. Défaut : "wordmark" (le mot seul). */
     variant?: LogoVariant;
-    /** Hauteur de l'icône en px ; le wordmark s'aligne dessus. Défaut 32. */
+    /** Hauteur nominale du logo en px ; le corps du mot s'y aligne. Défaut 32. */
     size?: number;
     /** Si fourni, tout le logo devient un lien vers cette URL. */
     href?: string;
@@ -68,7 +74,7 @@ function Wordmark({ fontSize }: { fontSize: number }) {
 }
 
 export default function Logo({
-    variant = "full",
+    variant = "wordmark",
     size = 32,
     href,
     onClick,
@@ -78,8 +84,6 @@ export default function Logo({
 }: LogoProps) {
     const iconW = Math.round(size * ICON_RATIO);
     const fontSize = Math.round(size * 0.6);
-    // L'image porte le nom accessible seulement si le mot n'est pas rendu à côté.
-    const iconAlt = variant === "icon" ? "resfly" : "";
 
     const content = (
         <span
@@ -92,17 +96,18 @@ export default function Logo({
                 ...style,
             }}
         >
-            {variant !== "wordmark" && (
+            {variant === "icon" ? (
                 <Image
                     src="/images/brand/logo-icon.png"
-                    alt={iconAlt}
+                    alt="resfly"
                     width={iconW}
                     height={size}
                     priority={priority}
                     style={{ width: iconW, height: size, objectFit: "contain", flexShrink: 0 }}
                 />
+            ) : (
+                <Wordmark fontSize={fontSize} />
             )}
-            {variant !== "icon" && <Wordmark fontSize={fontSize} />}
         </span>
     );
 
