@@ -30,11 +30,48 @@ if (apiUrl) {
   }
 }
 
+/**
+ * Redirection des anciens domaines vers le domaine canonique.
+ *
+ * Indispensable lors d'un changement de nom de domaine : les QR codes collés sur
+ * les tables encodent `FRONTEND_URL/auth/qr/<token>/` au moment de leur impression.
+ * Un QR imprimé sous l'ancien domaine doit continuer à fonctionner, sinon il faut
+ * réimprimer tous les QR de tous les restaurants. Même chose pour les liens de
+ * livraison déjà envoyés aux livreurs et les liens de suivi dans les SMS de reçu.
+ *
+ * D'où une redirection **permanente** (308, qui préserve la méthode et le corps de
+ * requête, contrairement à un 301/302) et **qui conserve le chemin et la query**.
+ *
+ * Pilotage par variables d'environnement, lues au démarrage du serveur :
+ *   CANONICAL_HOST=resfly.org
+ *   LEGACY_HOSTS=resfly.kingreys.fr,www.resfly.kingreys.fr
+ * Sans `CANONICAL_HOST`, aucune redirection n'est installée (cas du dev local).
+ */
+function redirectionsAncienDomaine() {
+  const canonique = process.env.CANONICAL_HOST?.trim();
+  const anciens = (process.env.LEGACY_HOSTS ?? "")
+    .split(",")
+    .map((h) => h.trim())
+    .filter((h) => h && h !== canonique);
+
+  if (!canonique || anciens.length === 0) return [];
+
+  return anciens.map((ancien) => ({
+    source: "/:chemin*",
+    has: [{ type: "host" as const, value: ancien }],
+    destination: `https://${canonique}/:chemin*`,
+    permanent: true,
+  }));
+}
+
 const nextConfig: NextConfig = {
   // Build autonome : bundle minimal (server.js + deps nécessaires) pour l'image Docker de prod
   output: "standalone",
   images: {
     remotePatterns,
+  },
+  async redirects() {
+    return redirectionsAncienDomaine();
   },
 };
 
