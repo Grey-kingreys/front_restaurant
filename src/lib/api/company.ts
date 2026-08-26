@@ -32,7 +32,6 @@ export interface RestaurantCreatePayload {
     email_admin: string;
     telephone?: string;
     adresse?: string;
-    solde_initial?: number;
 }
 
 export interface RestaurantParStats {

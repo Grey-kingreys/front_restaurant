@@ -68,7 +68,6 @@ function RestaurantForm({ initial, onSubmit, onClose, loading, error }: {
     const [email, setEmail]           = useState(initial?.email_admin ?? "");
     const [telephone, setTelephone]   = useState(initial?.telephone ?? "");
     const [adresse, setAdresse]       = useState(initial?.adresse ?? "");
-    const [solde, setSolde]           = useState("");
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -78,7 +77,6 @@ function RestaurantForm({ initial, onSubmit, onClose, loading, error }: {
             telephone: telephone || undefined,
             adresse: adresse || undefined,
         };
-        if (!isEdit && solde) payload.solde_initial = parseFloat(solde);
         await onSubmit(payload);
     };
 
@@ -111,12 +109,10 @@ function RestaurantForm({ initial, onSubmit, onClose, loading, error }: {
                 <input type="text" value={adresse} onChange={e => setAdresse(e.target.value)} placeholder="Conakry, Quartier…" style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }} />
             </div>
 
-            {!isEdit && (
-                <div>
-                    <label style={{ display: "block", fontSize: typography.xs, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: cssVar.textMuted, marginBottom: "0.375rem" }}>Solde initial caisse (GNF)</label>
-                    <input type="number" value={solde} onChange={e => setSolde(e.target.value)} min="0" placeholder="0" style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textPrimary, fontSize: typography.sm, boxSizing: "border-box" }} />
-                </div>
-            )}
+            {/* Pas de solde initial ici : le coffre appartient au restaurant, c'est
+                son Admin qui le renseigne depuis /caisse-generale. Ce champ etait de
+                surcroit fantome — l'API ne l'accepte pas (absent de Meta.fields du
+                serializer de creation), la valeur saisie etait donc perdue en silence. */}
 
             <div style={{ display: "flex", gap: "0.5rem", paddingTop: "0.25rem" }}>
                 <button type="button" onClick={onClose} style={{ flex: 1, padding: "0.65rem", borderRadius: radius.lg, border: "1px solid var(--border-subtle)", background: "var(--bg-section-alt)", color: cssVar.textSecondary, fontWeight: 700, fontSize: typography.sm, cursor: "pointer" }}>Annuler</button>
