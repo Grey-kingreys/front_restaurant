@@ -25,6 +25,8 @@ import {
     Truck, Package, Plus, Check,
 } from "lucide-react";
 import { apiErrorMessage } from "@/lib/apiErrors";
+import ConfigurationInitiale from "@/components/onboarding/ConfigurationInitiale";
+import { getMonRestaurant, type Restaurant } from "@/lib/api/company";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -531,11 +533,14 @@ const WELCOME: Record<Role, string> = {
 };
 
 export default function DashboardPage() {
-    const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+    const { user, isAuthenticated, isLoading: authLoading, hasPermission } = useAuth();
     const router = useRouter();
     const [data, setData] = useState<DashboardData | null>(null);
     const [loading, setLoading] = useState(true);
     const [date, setDate] = useState("");
+    // Assistant de configuration initiale (Admin uniquement).
+    const [resto, setResto] = useState<Restaurant | null>(null);
+    const [assistantMasque, setAssistantMasque] = useState(false);
 
     useEffect(() => {
         setDate(new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }));
@@ -547,6 +552,21 @@ export default function DashboardPage() {
             setData(await getDashboardStats());
         } catch { /* silencieux */ } finally { setLoading(false); }
     }, []);
+
+    // L'etat de configuration vient du backend : une etape faite depuis un autre
+    // poste doit apparaitre comme telle, on ne se fie pas au navigateur.
+    const chargerConfiguration = useCallback(async () => {
+        try {
+            const res = await getMonRestaurant();
+            if (res.success && res.data) setResto(res.data);
+        } catch { /* silencieux - l'assistant est un confort, pas un bloqueur */ }
+    }, []);
+
+    useEffect(() => {
+        if (!authLoading && isAuthenticated && hasPermission("manage_restaurant")) {
+            chargerConfiguration();
+        }
+    }, [authLoading, isAuthenticated, hasPermission, chargerConfiguration]);
 
     useEffect(() => {
         if (!authLoading && !isAuthenticated) router.replace("/auth/login");
@@ -567,8 +587,24 @@ export default function DashboardPage() {
     const initials = (user.nom_complet ?? user.login).slice(0, 2).toUpperCase();
     const firstName = user.nom_complet?.split(" ")[0] || user.login;
 
+    const configuration = resto?.configuration;
+    const afficherAssistant =
+        !assistantMasque &&
+        hasPermission("manage_restaurant") &&
+        configuration !== undefined &&
+        !configuration.terminee;
+
     return (
         <>
+            {afficherAssistant && configuration && (
+                <ConfigurationInitiale
+                    configuration={configuration}
+                    latitude={resto?.latitude ?? null}
+                    longitude={resto?.longitude ?? null}
+                    onTermine={chargerConfiguration}
+                    onFermer={() => setAssistantMasque(true)}
+                />
+            )}
             <style>{`
             @keyframes spin{to{transform:rotate(360deg)}}
             @keyframes pulse{0%,100%{opacity:.6}50%{opacity:.3}}

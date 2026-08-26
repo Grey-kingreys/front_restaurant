@@ -4,6 +4,13 @@
 import { apiRequest } from "./client";
 import type { ApiResponse } from "@/types";
 
+export interface ConfigurationRestaurant {
+    coffre_initialise: boolean;
+    position_definie: boolean;
+    caisse_du_jour_creee: boolean;
+    terminee: boolean;
+}
+
 export interface Restaurant {
     id: number;
     nom: string;
@@ -20,6 +27,8 @@ export interface Restaurant {
     reservation_validation_auto: boolean;
     reservation_delai_annulation_heures: number;
     has_geo: boolean;
+    /** Etat de la configuration initiale, pilote l'assistant affiche a l'Admin. */
+    configuration?: ConfigurationRestaurant;
     is_active: boolean;
     statut: string;
     nombre_utilisateurs: number;
