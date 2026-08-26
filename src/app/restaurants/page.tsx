@@ -322,7 +322,15 @@ export default function RestaurantsPage() {
                         <div style={{ ...modalCard, maxWidth: 480, animation: "modalIn 0.25s ease" }}>
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
                                 <h2 style={{ margin: 0, fontSize: typography.lg, fontWeight: 800, color: cssVar.textPrimary }}>
-                                    {modal === "create" ? "Nouveau restaurant" : modal === "edit" ? "Modifier le restaurant" : selected?.is_active ? "Suspendre le restaurant" : "Activer le restaurant"}
+                                    {/* Le mode `delete` doit avoir son propre libellé : sans lui,
+                                        il retombait sur celui de `toggle` et la modale de
+                                        suppression définitive s'intitulait « Suspendre le
+                                        restaurant » — deux actions très différentes. */}
+                                    {modal === "create" ? "Nouveau restaurant"
+                                        : modal === "edit" ? "Modifier le restaurant"
+                                        : modal === "delete" ? "Supprimer définitivement le restaurant"
+                                        : selected?.is_active ? "Suspendre le restaurant"
+                                        : "Activer le restaurant"}
                                 </h2>
                                 <button onClick={closeModal} style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--radius-md)", background: "var(--bg-section-alt)", border: "1px solid var(--border-subtle)", cursor: "pointer", color: cssVar.textMuted }}>
                                     <X size={15} />
