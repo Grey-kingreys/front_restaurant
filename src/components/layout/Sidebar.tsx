@@ -155,14 +155,17 @@ function SidebarInner({
     return (
         <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
 
-            {/* ── Logo & Toggle ── */}
+            {/* ── Logo & Toggle ──
+                Padding horizontal identique à celui de la carte utilisateur et de
+                la nav (spacing 3) : le logo était le seul élément de la colonne à
+                démarrer 4 px plus à droite, ce qui cassait la verticale. */}
             <div style={{
-                padding: isCollapsed ? `${spacing["4"]} ${spacing["3"]}` : `${spacing["5"]} ${spacing["4"]} ${spacing["4"]}`,
+                padding: `${spacing["4"]} ${spacing["3"]}`,
                 borderBottom: `1px solid ${cssVar.borderSubtle}`,
                 flexShrink: 0,
                 display: "flex", alignItems: "center",
                 justifyContent: isCollapsed ? "center" : "space-between",
-                minHeight: 60,
+                minHeight: 56,
             }}>
                 <Logo
                     href={homeHref}
@@ -172,9 +175,14 @@ function SidebarInner({
                 />
                 {/* Bouton réduire - visible uniquement en mode étendu */}
                 {toggleCollapse && !isCollapsed && (
-                    <button onClick={toggleCollapse} title="Réduire" style={{
+                    /* `rp-icon-btn` : échappe au min-height 44px impose a tous les boutons
+                       (cible tactile WCAG). Ce chevron n'existe que dans la sidebar desktop,
+                       jamais dans le tiroir mobile — aucun utilisateur tactile ne l'atteint,
+                       et ses 44px imposaient a eux seuls la hauteur de tout l'en-tête. */
+                    <button onClick={toggleCollapse} title="Réduire" className="rp-icon-btn" style={{
                         background: "transparent", border: "none", color: cssVar.textMuted,
-                        cursor: "pointer", display: "flex", alignItems: "center", padding: "0.25rem",
+                        cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                        width: 28, height: 28, padding: 0, flexShrink: 0,
                         borderRadius: radius.sm, transition: "color 0.15s",
                     }}
                         onMouseEnter={(e) => (e.currentTarget as HTMLButtonElement).style.color = cssVar.textPrimary}
